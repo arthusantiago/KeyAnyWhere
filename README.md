@@ -1,25 +1,19 @@
-# KAW - KeyAnyWhere
+# KeyAnyWhere
 
-Uma chaveiro para facilitar o gerenciamento de senhas.
+KeyAnyWhere ou para os íntimos: KAW 
 
-O KAW se divide em WEB (este projeto), mobile e desktop. Cada um desenvolvido em um projeto separado mas consumindo os dados de uma unica aplicação.
+É um chaveiro simples para facilitar o gerenciamento de senhas. O foco do KAW é nas principais funcionalidades de um chaveiro.
 
-A aplicação responsável por manipular os dados é o [keyanywhere-backend](https://github.com/arthusantiago/keyanywhere-backend)
+O KAW se divide em Web (este projeto), Mobile e Desktop. Cada um desenvolvido em um projeto separado mas consumindo os dados de uma única base de dados. 
 
-## Principais tecnologia utilizadas no projeto
+## Principais tecnologia utilizadas
 
-- [Bootstrap v5.0.2](https://getbootstrap.com/)
-
-- Linguagem de programação: PHP  
-	Versão mínima: 7.4 | Versão desejada: 8  
-	Extensões: mbstring, intl, xml, gd, json, sqlite3, zip, imap, curl
+- [Bootstrap](https://getbootstrap.com/)
+- [PHP](https://www.php.net/releases/8.1/en.php)
+- [CakePHP](https://cakephp.org/)
+- [PostgresSQL](https://www.postgresql.org/)
+-  [phpDocumentor](https://docs.phpdoc.org/)
 
 ## Documentação
-
-- Engenharia de Softwares
-
-	A Doc de Eng.software está na pasta `documentacao/` na raiz do projeto.
-
-- Métodos, Classes, Traits e etc
-
-	Todo o código é documentado/comentado utilizando o padrão do [phpDocumentor 3.0](https://docs.phpdoc.org/3.0/)
+- Os artefatos gerados durando o desenvolvimento estão na pasta `artefatos/`.
+- Todo o código é documentado utilizando o padrão do phpDocumentor
