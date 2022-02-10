@@ -1,0 +1,124 @@
+/*Estilização geral*/
+.logo{
+	display: block;
+	margin-left: 10px;
+}
+
+.titulo{
+ 	font-size: 1.50rem;
+ 	text-decoration: underline solid #03719c;
+ 	text-decoration-thickness: 5px;
+}
+
+.botoes{
+	box-shadow: 0px 1px 2px rgba(0,0,0,0.9);
+}
+
+.btn-novo{
+	border-radius: 4px;
+	background-color: #03719c;
+	font-size: 16px;
+	color: #ffffff;
+	text-decoration: rgb(255, 255, 255);
+	text-align: right;
+}
+
+.inputs{
+	box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
+}
+
+#logoKAW{
+	margin:13px 18px 0px 18px;
+}
+
+/*Menu fixo lateral esquerdo*/
+#divLateral{
+	float:left;
+	width: 25vw;
+	height: 100vh;
+	background-color: #343837;
+	overflow: auto;
+	box-shadow: 2px 1px 2px rgba(0,0,0,0.5);
+}
+
+#menuLateral{
+	margin: 5px 0 0 18px;
+}
+
+.categorias > a {
+	color: white;
+}
+
+.categorias > a:hover {
+	color: white;	
+}
+
+.categorias > img {
+	padding-left: 5px;
+}
+
+.categoriaSelecionada {
+	background-color: #03719c;
+	border-radius: 5px;
+	width: 95%;
+}
+
+/* menu superior  */
+#menuSuperior{
+	background-color: #343837; 
+	box-shadow: 2px 1px 2px rgba(0,0,0,0.5);
+	height: 50px; 
+	width: 74vw;
+	display: inline-block;
+}
+
+/*Conteúdo*/
+#corpoConteudo{
+	padding-left: 10px;
+	width: 74vw;
+	height: 90vh;
+	overflow-x: hidden;
+}
+
+.titulo-coluna-tabela{
+	border-bottom-color: black;
+	border-style: solid;
+	border-bottom-width:1px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* Alerts */
+#alert-do-sistema{
+	position: absolute;
+	z-index: 1;
+}
+
+
+/*Menu suspenso lateral direito*/
+#menuSuspenso{
+	position: fixed;
+	z-index: 1;
+	right: 1vw;
+	top: 80vh;
+	background-color: #0f9b8e;
+	border-radius: 30px;
+}
+
+#icone-btn-opcoes{
+	color: white;
+}
+
+.icone-interno-btn-opcoes{
+	color: black;
+	margin-right: 10px;
+}
