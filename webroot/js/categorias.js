@@ -5,7 +5,7 @@
  **/
 function categoriaSelecionada()
 {
-	let menuLateral = document.getElementById('menuLateral');
+	let menuLateral = document.getElementById('menu-lateral');
 
 	if (menuLateral !== null)
 	{
@@ -21,7 +21,7 @@ function categoriaSelecionada()
 			if (pathName[pathName.length - 1] == li.getAttribute('data-categoriaId')) 
 			{
 				//pegando os values existente e acrescentando a classe que estiliza o elemento
-				let value = li.getAttribute('class') + " categoriaSelecionada";
+				let value = li.getAttribute('class') + " categoria-selecionada";
 				li.setAttribute('class', value);
 			}
 		});

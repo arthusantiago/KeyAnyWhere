@@ -55,7 +55,7 @@ async function consomeApi(url, opcoes, dados)
  */
 function manipulaHtml(conteudo)
 {
-	document.getElementById('corpoConteudo').innerHTML = conteudo;	
+	document.getElementById('corpo-conteudo').innerHTML = conteudo;	
 }
 
 // --------------------------------------------------------------------
@@ -78,7 +78,7 @@ function buscaConteudo(caminho)
 	fetch(urlParaBusca)
 	.then(response => response.text())
 	.then(function(dadosRetornados){
-		document.getElementById('corpoConteudo').innerHTML = dadosRetornados;
+		document.getElementById('corpo-conteudo').innerHTML = dadosRetornados;
 	})
 	.catch(function(error){
 	  console.log("Aconteceu um erro na busca: " + error.message);

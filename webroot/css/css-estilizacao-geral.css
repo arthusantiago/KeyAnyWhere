@@ -31,12 +31,12 @@
 	box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
 }
 
-#logoKAW{
+#logo-kaw{
 	margin:13px 18px 0px 18px;
 }
 
 /* Menu fixo lateral esquerdo */
-#divLateral{
+#div-lateral{
 	float:left;
 	width: 23vw;
 	height: 100vh;
@@ -45,7 +45,7 @@
 	box-shadow: 2px 1px 2px rgba(0,0,0,0.5);
 }
 
-#menuLateral{
+#menu-lateral{
 	margin: 5px 0 0 18px;
 }
 
@@ -58,26 +58,26 @@
 	color: white;	
 }
 
-.categoriaSelecionada {
+.categoria-selecionada {
 	background-color: #03719c;
 	border-radius: 5px;
 	width: 95%;
 }
 
 /* menu superior  */
-#menuSuperior{
+#menu-superior{
 	background-color: #343837; 
 	box-shadow: 2px 1px 2px rgba(0,0,0,0.5);
 	width: 74vw;
 	display: inline-block;
 }
 
-#rowOpcoesMenuSuperior{
+#opcoes-menu-superior{
 	margin: 5px;
 }
 
 /* Conteúdo */
-#corpoConteudo{
+#corpo-conteudo{
 	padding-left: 10px;
 	width: 74vw;
 	height: 90vh;

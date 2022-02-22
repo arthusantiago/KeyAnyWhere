@@ -16,16 +16,16 @@
     ?>
   </head>
   <body onload="categoriaSelecionada()">
-		<div id="divLateral">
-			<div id="logoKAW">
+		<div id="div-lateral">
+			<div id="logo-kaw">
 				<?=$this->Html->image("logo-kaw.png", ['url' => ['controller' => 'Pages', 'action' => 'display']]);?>
 			</div>
-			<nav id="menuLateral">
+			<nav id="menu-lateral">
 				<?=$this->cell('CategoriasMenu')?>
 			</nav>
 		</div>
-		<div id="menuSuperior">
-			<div class="row" id="rowOpcoesMenuSuperior">
+		<div id="menu-superior">
+			<div class="row" id="opcoes-menu-superior">
 				<div class="col-sm-auto ">
 					<a class="btn btn-outline-light" role="button" href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'add']);?>">
 						<i class="bi bi-key icone-opcao"></i>Entrada
@@ -70,11 +70,9 @@
 				</div>
 			</div>
 		</div>
-
-		<div id="corpoConteudo">
+		<div id="corpo-conteudo">
       <?= $this->fetch('content') ?>
 		</div>
-
 		<?=$this->Html->script('bootstrap/popper.min.js')?>
 	  <?=$this->Html->script('bootstrap/bootstrap.js')?>
 	  <?=$this->Html->script('buscaConteudo.js')?>
