@@ -30,11 +30,11 @@ O KAW se divide em Web (este projeto), Mobile e Desktop. Cada um desenvolvido em
 3- Instale as dependências
 `composer install`
 
-4- Crie o Banco de Dados no seu SBGD preferido.
+4- Crie o Banco de Dados no seu SGBD preferido.
 
 5- Crie o arquivo `app.php` na pasta `config/`. Copie e cole no arquivo criado o conteúdo de `config/app.exemplo.php`.
 Nesse novo arquivo contem toda a configuração básica para a execução da aplicação. 
-No começo do arquivo você deve fazer o import do drive do seu SBGD. Já na propriedade `Datasources` você deve colocar a configuração do BD.
+No começo do arquivo você deve fazer o import do drive do seu SGBD. Já na propriedade `Datasources` você deve colocar a configuração do BD.
 Se estiver em ambiente de desenvolvimento, utilize o arquivo `config/app_local.exemplo.php`. Seguindo a mesma lógica de copiar e colar do arquivo `config/app.exemplo.php`. 
 A [documentação](https://book.cakephp.org/4/en/quickstart.html#database-configuration) do CakePHP é uma boa ajuda nessa parte.
 
