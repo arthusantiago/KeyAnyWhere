@@ -47,6 +47,13 @@ class User extends Entity
         'password',
     ];
     
+    /**
+     * Método que gera o hash da senha informada
+     * Esse método é invocado automaticamente ao setar valores na propriedade 'password'
+     *
+     * @param string $password Senha informada no frontend
+     * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
+     */
     protected function _setPassword(string $password) : ?string
     {
         if (strlen($password) > 0) {
