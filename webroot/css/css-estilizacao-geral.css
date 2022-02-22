@@ -47,14 +47,11 @@
 
 .categorias > a {
 	color: white;
+	padding-left: 0.5rem;
 }
 
 .categorias > a:hover {
 	color: white;	
-}
-
-.categorias > img {
-	padding-left: 5px;
 }
 
 .categoriaSelecionada {
