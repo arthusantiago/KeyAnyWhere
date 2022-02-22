@@ -150,10 +150,10 @@ class UsersController extends AppController
      */
     public function minhaConta()
     {
-        $usuario = $this->Usuario->newEmptyEntity();
+        $usuario = $this->Users->newEmptyEntity();
         if ($this->request->is('post')) {
-            $usuario = $this->Usuario->patchEntity($usuario, $this->request->getData());
-            if ($this->Usuario->save($usuario)) {
+            $usuario = $this->Users->patchEntity($usuario, $this->request->getData());
+            if ($this->Users->save($usuario)) {
                 $this->Flash->success(__('Erro ao salvar.'));
 
                 return $this->redirect(['action' => 'index']);
