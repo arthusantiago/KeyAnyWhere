@@ -41,9 +41,13 @@ class CategoriasController extends AppController
      */
     public function index()
     {
-        $categorias = $this->paginate($this->Categorias);
+        $query = $this->Categorias
+        ->find('all')
+        ->order(['nome']);
 
-        $this->set(compact('categorias'));
+        $query = $this->paginate($query);
+
+        $this->set(compact('query'));
     }
 
     /**

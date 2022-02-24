@@ -27,22 +27,17 @@
 		<div id="menu-superior">
 			<div class="row" id="opcoes-menu-superior">
 				<div class="col-sm-auto ">
-					<a class="btn btn-outline-light" role="button" href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'add']);?>">
-						<i class="bi bi-key icone-opcao"></i>Entrada
+					<a class="btn btn-outline-light botoes" role="button" href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'add']);?>">
+						<i class="bi bi-key icone-opcao"></i>Nova Entrada
 					</a>	
 				</div>
 				<div class="col-sm-auto">
-					<a class="btn btn-outline-light" role="button" href="<?=$this->Url->build(['controller' => 'Categorias', 'action' => 'add']);?>">
-						<i class="bi bi-list-ol icone-opcao"></i>Categoria
-					</a>
-				</div>
-				<div class="col-sm-auto">
-					<a class="btn btn-outline-light" role="button" href="<?=$this->Url->build(['controller' => 'Subcategorias', 'action' => 'add']);?>">
-						<i class="bi bi-list-nested icone-opcao"></i>Subcategoria
+					<a class="btn btn-outline-light botoes" role="button" href="<?=$this->Url->build(['controller' => 'Categorias', 'action' => 'index']);?>">
+						<i class="bi bi-list-ol icone-opcao"></i>Categorias
 					</a>
 				</div>
 				<div class="col-sm-auto ms-auto">
-					<input type="search" class="form-control" name="">
+					<input type="search" class="form-control" name="" placeholder="Buscar entrada">
 				</div>
 				<div class="col-sm-auto">
 					<div class="btn-group dropup">

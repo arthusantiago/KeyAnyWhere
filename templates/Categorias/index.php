@@ -3,7 +3,7 @@
         <span class="titulo">Categorias</span>
     </div>
     <div class="col-sm text-end">
-        <?= $this->element('Diversos/btnNovo', ['parametros' => ['controller' => 'Categoria', 'texto' => 'Categoria']])?>
+        <?= $this->element('Diversos/btnNovo', ['parametros' => ['controller' => 'Categorias', 'texto' => 'Categoria']])?>
     </div>
 </div>
 
@@ -11,12 +11,16 @@
     <thead>
         <tr class="text-center titulo-coluna-tabela">
             <th>Nome</th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
         <?php foreach ($query as $categoria): ?>
             <tr class="text-center">
                 <td><?= h($categoria->nome) ?></td>
+                <td>
+                    <?=$this->element('Diversos/btnEditar', ['parametros' => ['controller' => 'Categorias', 'id' => $categoria->id]])?>
+                </td>
             </tr>
         <?php endforeach; ?>
     </tbody>
