@@ -7,7 +7,7 @@
 .titulo{
  	font-size: 1.50rem;
  	text-decoration: underline solid #03719c;
- 	text-decoration-thickness: 5px;
+ 	text-decoration-thickness: 3px;
 }
 
 .botoes{
@@ -42,7 +42,7 @@
 }
 
 .categorias > a {
-	color: white;
+    color: white;
 	padding-left: unset;
 }
 

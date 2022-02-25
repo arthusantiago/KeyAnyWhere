@@ -16,7 +16,7 @@
   * 	'texto' => 'Categoria'	
   * ]])?>
   * 
-  * O indece 'texto' contem o texto que aparece dentro do botão, Se o texto não for informado, e exibido o texto 'Editar'
+  * O indece 'texto' contem o texto que aparece dentro do botão. Se o texto não for informado, e exibido o texto 'Editar'
   *
   * @param array $parametros com chave/valor dos atributos/valores que serão usadas na geração da URL do botão:
   * 	Parâmetros esperados:
