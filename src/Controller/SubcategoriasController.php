@@ -18,18 +18,18 @@ class SubcategoriasController extends AppController
      */
     public function add()
     {
-        $subcategoria = $this->Subcategorias->newEmptyEntity();
-        if ($this->request->is('post')) {
-            $subcategoria = $this->Subcategorias->patchEntity($subcategoria, $this->request->getData());
-            if ($this->Subcategorias->save($subcategoria)) {
-                $this->Flash->success(__('The subcategoria has been saved.'));
+        $this->request->allowMethod(['post']);
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The subcategoria could not be saved. Please, try again.'));
+        $subcategoria = $this->Subcategorias->newEmptyEntity();
+        $subcategoria = $this->Subcategorias->patchEntity($subcategoria, $this->request->getData());
+
+        if ($this->Subcategorias->save($subcategoria)) {
+            $this->Flash->success(__('Salvo com sucesso'));
+        }else{
+            $this->Flash->error(null, ['params' => ['mensagens' => $subcategoria->getErrors()]]);    
         }
-        $categorias = $this->Subcategorias->Categorias->find('list', ['limit' => 200])->all();
-        $this->set(compact('subcategoria', 'categorias'));
+        
+        return $this->redirect(['controller'=>'Categorias', 'action' => 'edit', $subcategoria->categoria_id]);
     }
 
     /**

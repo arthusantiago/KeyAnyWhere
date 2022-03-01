@@ -24,12 +24,14 @@ class CategoriasController extends AppController
         ->where([
             'categoria_id' => $id,
             'subcategoria_id IS NULL'
-        ]);
+        ])
+        ->order(['titulo']);
 
         $subcategoriaComEntradas = $this->Categorias->Subcategorias
         ->find('all')
         ->contain(['Entradas'])
-        ->where(['Subcategorias.categoria_id' => $id]);
+        ->where(['Subcategorias.categoria_id' => $id])
+        ->order(['subcategorias.nome']);
 
         $this->set(compact('entradasDaCategoria', 'subcategoriaComEntradas'));
     }
@@ -98,7 +100,8 @@ class CategoriasController extends AppController
         $categoria = $this->Categorias->get($id);
         $subcategorias = $this->Categorias->Subcategorias
         ->find()
-        ->where(['categoria_id' => $id]);
+        ->where(['categoria_id' => $id])
+        ->order(['nome']);
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $categoria = $this->Categorias->patchEntity($categoria, $this->request->getData());
