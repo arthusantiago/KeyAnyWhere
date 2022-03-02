@@ -61,13 +61,13 @@
   <div class="row">
     <div class="col-sm">
       <label for="anotacoes" class="form-label">Anotações</label>
-      <textarea class="form-control" id="anotacoes" name="anotacoes" rows="3"><?=nl2br($entrada->anotacoes)?></textarea>
+      <textarea class="form-control" id="anotacoes" name="anotacoes" rows="2"><?=nl2br($entrada->anotacoes)?></textarea>
     </div>
   </div>
   <br>
   <div class="row">
-    <div class="col-sm justify-content-md-end">
-      <button class="btn btn-primary botoes" type="submit">Salvar</button>
+    <div class="col-sm text-end">
+      <?= $this->element('Diversos/btnSalvar')?>
     </div>
   </div>
 <?= $this->Form->end(['data-type' => 'hidden']);?>

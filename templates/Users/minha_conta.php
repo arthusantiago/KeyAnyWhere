@@ -32,7 +32,9 @@
     </div>
   </div>
   <br>
-  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-    <button class="btn btn-primary botoes" type="submit">Salvar</button>
+  <div class="row">
+      <div class="col-sm text-end">
+          <?= $this->element('Diversos/btnSalvar')?>
+      </div>
   </div>
 </form>

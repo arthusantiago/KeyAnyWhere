@@ -1,5 +1,11 @@
-<span class="titulo">Nova Entrada</span>
-<br><br>
+<div class="row">
+    <div class="col-sm-auto">
+        <span class="titulo">Nova Entrada</span>
+    </div>
+</div>
+
+<br>
+
 <?= $this->Form->create($entrada)?>
   <?php $this->Form->secure([
     'titulo',
@@ -51,13 +57,13 @@
   <div class="row">
     <div class="col-sm">
       <label for="anotacoes" class="form-label">Anotações</label>
-      <textarea class="form-control" id="anotacoes" name="anotacoes" rows="3"></textarea>
+      <textarea class="form-control" id="anotacoes" name="anotacoes" rows="2"></textarea>
     </div>
   </div>
   <br>
   <div class="row">
-    <div class="col-sm justify-content-md-end">
-      <button class="btn btn-primary botoes" type="submit">Salvar</button>
+    <div class="col-sm text-end">
+      <?= $this->element('Diversos/btnSalvar')?>
     </div>
   </div>
 
