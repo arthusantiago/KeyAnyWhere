@@ -30,7 +30,7 @@
     <div class="col-sm">
       <label for="password" class="form-label">Senha</label>
       <div class="input-group">
-        <input type="password" class="form-control inputs" name="password" id="password" required>
+        <input type="password" class="form-control inputs" name="password" id="password"  autocomplete="new-password" required>
         <button class="btn btn-secondary">
           <?= $this->Html->image('generate-password.svg', ['width' => '24', 'height' => '24'])?>
         </button>

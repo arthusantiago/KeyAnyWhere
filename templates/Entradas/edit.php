@@ -25,7 +25,7 @@
     <div class="col-sm">
       <label for="password" class="form-label">Senha</label>
       <div class="input-group">
-        <input type="password" class="form-control inputs" name="password" id="password" value="<?=$entrada->password?>" required>
+        <input type="password" class="form-control inputs" name="password" id="password" value="<?=$entrada->password?>" autocomplete="new-password" required>
         <button class="btn btn-secondary">
           <?= $this->Html->image('generate-password.svg', ['width' => '24', 'height' => '24'])?>
         </button>
