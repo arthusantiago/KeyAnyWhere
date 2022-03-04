@@ -32,7 +32,7 @@ class User extends Entity
     protected $_accessible = [
         'username' => true,
         'email' => true,
-        'password' => true,
+        'password' => false,
         'created' => true,
         'modified' => true,
         'entradas' => true,
@@ -54,7 +54,7 @@ class User extends Entity
      * @param string $password Senha informada no frontend
      * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
      */
-    protected function _setPassword(string $password) : ?string
+    protected function _setPassword(string $password): string
     {
         if (strlen($password) > 0) {
             return (new DefaultPasswordHasher())->hash($password);

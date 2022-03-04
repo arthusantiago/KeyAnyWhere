@@ -150,16 +150,26 @@ class UsersController extends AppController
      */
     public function minhaConta()
     {
-        $usuario = $this->Users->newEmptyEntity();
-        if ($this->request->is('post')) {
-            $usuario = $this->Users->patchEntity($usuario, $this->request->getData());
-            if ($this->Users->save($usuario)) {
-                $this->Flash->success(__('Erro ao salvar.'));
+        $userAutenticado = $this->Authentication->getResult()->getData();
+        $user = $this->Users->get($userAutenticado->id);
 
-                return $this->redirect(['action' => 'index']);
+        if ($this->request->is(['patch', 'post', 'put']))
+        {    
+            $user = $this->Users->patchEntity($user, $this->request->getData());
+
+            if($this->request->getData('password'))
+            {
+                $user->password = $this->request->getData('password');
             }
-            $this->Flash->error(__('Salvo com sucesso.'));
+           
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('Salvo com sucesso'));
+            }else{
+                $this->Flash->error(null, ['params' => ['mensagens' => $user->getErrors()]]);
+            }
+
+            return $this->redirect(['action' => 'minhaConta']);
         }
-        $this->set(compact('usuario'));
+        $this->set(compact('user'));
     }
 }

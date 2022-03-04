@@ -79,7 +79,7 @@ class UsersTable extends Table
             ->scalar('password')
             ->maxLength('password', 255)
             ->requirePresence('password', 'create')
-            ->notEmptyString('password');
+            ->notEmptyString('password', 'O campo da senha não pode estar vazio', 'create');
 
         return $validator;
     }

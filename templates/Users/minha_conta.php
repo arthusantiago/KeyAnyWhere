@@ -1,34 +1,32 @@
-<?php
-?>
-<nav class="navbar navbar-dark bg-dark">
-  <a class="navbar-brand logo" href="#">
-    <?= $this->Html->image('login-logo-kaw.png', ['id' => 'login-logo-kaw'])?>
-  </a>
-</nav>
+<div class="row">
+    <div class="col-sm-auto">
+        <span class="titulo">Minha Conta</span>
+    </div>
+</div>
+
 <br>
-<br>
-<span class="titulo">Minha Conta</span>
-<br><br>
-<form>
+
+<?= $this->Form->create($user)?>
+  <?php $this->Form->secure([
+    'username',
+    'email',
+    'password'
+  ]);?>
   <div class="row">
     <div class="col-sm-4">
-      Nome do Usuário
-      <input type="text" class="form-control inputs">
+      <label for="username">Nome do Usuário</label>
+      <input type="text" class="form-control inputs" id="username" name="username" value="<?=$user->username?>" autocomplete="nickname">
     </div>
     <div class="col-sm-4">
-      E-mail
-      <input type="email" class="form-control inputs">
+      <label for="email">E-mail</label>
+      <input type="email" class="form-control inputs" id="email" name="email" value="<?=$user->email?>" autocomplete="email">
     </div>
   </div>
   <br>
   <div class="row">
     <div class="col-sm-4">
-      Nova senha
-      <input type="password" class="form-control inputs">
-    </div>
-    <div class="col-sm-4">
-      Confirmação
-      <input type="password" class="form-control inputs">
+      <label for="password">Nova senha</label>
+      <input type="password" id="password" name="password" class="form-control inputs" autocomplete="new-password" minlength="8">
     </div>
   </div>
   <br>
@@ -37,4 +35,4 @@
           <?= $this->element('Diversos/btnSalvar')?>
       </div>
   </div>
-</form>
+<?= $this->Form->end(['data-type' => 'hidden']);?>
