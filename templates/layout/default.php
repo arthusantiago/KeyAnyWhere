@@ -66,6 +66,11 @@
 			</div>
 		</div>
 		<div id="corpo-conteudo">
+			<div class="row">
+        <div class="col-sm"></div>
+        <div class="col-sm"><?= $this->Flash->render()?></div>
+        <div class="col-sm"></div>
+      </div>
       <?= $this->fetch('content') ?>
 		</div>
 		<?=$this->Html->script('bootstrap/popper.min.js')?>
