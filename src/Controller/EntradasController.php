@@ -12,37 +12,6 @@ namespace App\Controller;
 class EntradasController extends AppController
 {
     /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
-    public function index()
-    {
-        $this->paginate = [
-            'contain' => ['Categorias', 'Subcategorias', 'Users'],
-        ];
-        $entradas = $this->paginate($this->Entradas);
-
-        $this->set(compact('entradas'));
-    }
-
-    /**
-     * View method
-     *
-     * @param string|null $id Entrada id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $entrada = $this->Entradas->get($id, [
-            'contain' => ['Categorias', 'Subcategorias', 'Users'],
-        ]);
-
-        $this->set(compact('entrada'));
-    }
-
-    /**
      * Add method
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
@@ -83,8 +52,7 @@ class EntradasController extends AppController
 
             $entrada = $this->Entradas->patchEntity($entrada, $this->request->getData());
 
-            debug($entrada);
-            if ($this->Entradas->savee($entrada)) {
+            if ($this->Entradas->save($entrada)) {
                 $this->Flash->success(__('The entrada has been saved.'));
 
                 return $this->redirect(['action' => 'index']);
