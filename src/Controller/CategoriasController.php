@@ -79,11 +79,10 @@ class CategoriasController extends AppController
         if ($this->request->is('post')) {
             $categoria = $this->Categorias->patchEntity($categoria, $this->request->getData());
             if ($this->Categorias->save($categoria)) {
-                $this->Flash->success(__('The categoria has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
+                $this->Flash->success(__('Salvo com sucesso'));
+                return $this->redirect(['action' => 'edit', $categoria->id]);
             }
-            $this->Flash->error(__('The categoria could not be saved. Please, try again.'));
+            $this->Flash->error(__('Erro ao salvar'));
         }
         $this->set(compact('categoria'));
     }
@@ -113,7 +112,7 @@ class CategoriasController extends AppController
 
             return $this->redirect(['action' => 'edit', $categoria->id]);
         }
-        
+
         $this->set(compact('categoria', 'subcategorias'));
     }
 
