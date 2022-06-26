@@ -20,8 +20,10 @@
                 <td><?= h($categoria->nome) ?></td>
                 <td>
                     <?=$this->element('Diversos/btnEditar', ['parametros' => ['controller' => 'Categorias', 'id' => $categoria->id]])?>
+                    <?= $this->element('Diversos/btnExcluir', ['parametros' => ['controller' => 'Categorias', 'id' => $categoria->id]])?>
                 </td>
             </tr>
         <?php endforeach; ?>
     </tbody>
 </table>
+ss

@@ -42,7 +42,7 @@ class Categoria extends Entity
         {
             return substr($this->nome, 0, $tamanho) . ' ...';
         }else{
-            return $this->nome;    
-        }   
+            return $this->nome;
+        }
     }
 }

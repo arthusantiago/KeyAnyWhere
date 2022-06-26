@@ -118,19 +118,20 @@ class CategoriasController extends AppController
 
     /**
      * Delete method
+     * O delete acontece em cascata: categoria > subcategoria > entrada
      *
      * @param string|null $id Categoria id.
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete($id)
     {
         $this->request->allowMethod(['post', 'delete']);
         $categoria = $this->Categorias->get($id);
         if ($this->Categorias->delete($categoria)) {
-            $this->Flash->success(__('The categoria has been deleted.'));
+            $this->Flash->success(__('Excluído com sucesso'));
         } else {
-            $this->Flash->error(__('The categoria could not be deleted. Please, try again.'));
+            $this->Flash->error(__('Erro ao excluir'));
         }
 
         return $this->redirect(['action' => 'index']);
