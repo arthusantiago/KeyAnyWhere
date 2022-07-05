@@ -1,6 +1,12 @@
-<span class="titulo">Entrada</span>
-<br><br>
-<?= $this->Form->create($entrada)?>
+<div class="row">
+  <div class="col-sm-auto">
+    <span class="titulo">Entrada</span>
+  </div>
+</div>
+
+<br/>
+
+<?= $this->Form->create($entrada, ['url' => ['action' => 'edit', $entrada->id]])?>
   <?php $this->Form->secure([
     'titulo',
     'username',
@@ -34,34 +40,38 @@
     <div class="col-sm">
       <label for="link" class="form-label">Link</label>
       <input type="url" class="form-control inputs" name="link" id="link" value="<?=$entrada->link?>">
-    </div>    
+    </div>
   </div>
   <br>
   <div class="row">
     <div class="col-sm-6">
       <label for="categoria_id" class="form-label">Categorias</label>
-      <select class="form-select inputs" id="categoria_id" name="categoria_id" required>
+      <select class="form-select inputs" id="categoria_id" name="categoria_id" 
+        onchange="buscaSubcategorias(this, 'subcategoria_id')" required>
         <option value="" disabled>Escolha a Categoria</option>
         <?php foreach ($categorias as $categoria):?>
-          <option value="<?=$categoria->id?>" <?=$categoria->id == $entrada->categoria_id ? 'selected' : '';?>> <?=$categoria->nome?></option>
+          <option value="<?=$categoria->id?>" <?=$categoria->id == $entrada->categoria_id ? 'selected' : ''?>><?=$categoria->nome?></option>
         <?php endforeach ?>
-      </select> 
+      </select>
     </div>
     <div class="col-sm-6">
       <label for="subcategoria_id" class="form-label">Subcategorias</label>
       <select class="form-select inputs" id="subcategoria_id" name="subcategoria_id">
-        <option value="">Sem subcategoria</option>
-        <?php foreach ($subcategorias as $subcategoria):?>
-          <option value="<?=$subcategoria->id?>" <?=$subcategoria->id == $entrada->subcategoria_id ? 'selected' : '';?>> <?=$subcategoria->nome?></option>
-        <?php endforeach ?>
-      </select> 
+        <?php if($subcategorias->all()->isEmpty()): ?>
+          <option disabled>Não há subcategorias</option>
+        <?php else: ?>
+          <?php foreach($subcategorias as $subcategoria):?>
+            <option value="<?=$subcategoria->id?>" <?=$entrada->subcategoria_id == $subcategoria->id ? 'selected' : ''?>><?=$subcategoria->nome?></option>
+          <?php endforeach;?>
+        <?php endif; ?>
+      </select>
     </div>
   </div>
   <br>
   <div class="row">
     <div class="col-sm">
       <label for="anotacoes" class="form-label">Anotações</label>
-      <textarea class="form-control" id="anotacoes" name="anotacoes" rows="2"><?=nl2br($entrada->anotacoes)?></textarea>
+      <textarea class="form-control" id="anotacoes" name="anotacoes" rows="2"><?=$entrada->anotacoes?></textarea>
     </div>
   </div>
   <br>
@@ -71,3 +81,5 @@
     </div>
   </div>
 <?= $this->Form->end(['data-type' => 'hidden']);?>
+
+<?=$this->Html->script('buscas.js')?>

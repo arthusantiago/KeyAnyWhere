@@ -97,11 +97,6 @@ class EntradasTable extends Table
             ->maxLength('link', 500)
             ->allowEmptyString('link');
 
-        $validator
-            ->scalar('anotacoes')
-            ->requirePresence('anotacoes', 'create')
-            ->notEmptyString('anotacoes');
-
         return $validator;
     }
 

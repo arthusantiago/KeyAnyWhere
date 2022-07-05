@@ -47,28 +47,27 @@ class EntradasController extends AppController
      */
     public function edit($id)
     {
-        $entrada = $this->Entradas->get($id);
+        $entrada = $this->Entradas->get($id, ['contain' => ['Categorias']]);
         if ($this->request->is(['patch', 'post', 'put'])) {
-
             $entrada = $this->Entradas->patchEntity($entrada, $this->request->getData());
-
             if ($this->Entradas->save($entrada)) {
-                $this->Flash->success(__('The entrada has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
+                $this->Flash->success(__('Salvo com sucesso'));
+            }else{
+                $this->Flash->error(null, ['params' => ['mensagens' => $entrada->getErrors()]]);
             }
-            $this->Flash->error(__('The entrada could not be saved. Please, try again.'));
+            return $this->redirect(['action' => 'edit', $entrada->id]);
         }
 
         $categorias = $this->Entradas->Categorias
         ->find('all')
         ->order(['nome']);
 
-        // $subcategorias = $this->Entradas->Categorias->Subcategorias
-        // ->find('all')
-        // ->order(['nome']);
+        $subcategorias = $this->Entradas->Categorias->Subcategorias
+        ->find('all')
+        ->where(['categoria_id' => $entrada->categoria_id])
+        ->order(['nome']);
 
-        $this->set(compact('entrada', 'categorias'));
+        $this->set(compact('entrada', 'categorias', 'subcategorias'));
     }
 
     /**
