@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -109,9 +108,9 @@ class EntradasTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn('categoria_id', 'Categorias'), ['errorField' => 'categoria_id']);
-        $rules->add($rules->existsIn('subcategoria_id', 'Subcategorias'), ['errorField' => 'subcategoria_id']);
-        $rules->add($rules->existsIn('user_id', 'Users'), ['errorField' => 'user_id']);
+        $rules->add($rules->existsIn('categoria_id', 'Categorias', 'Categoria não encontrada'), ['errorField' => 'categoria_id']);
+        $rules->add($rules->existsIn('subcategoria_id', 'Subcategorias', 'Subcategoria não encontrada'), ['errorField' => 'subcategoria_id']);
+        $rules->add($rules->existsIn('user_id', 'Users', 'Usuário não localizado'), ['errorField' => 'user_id']);
 
         return $rules;
     }
