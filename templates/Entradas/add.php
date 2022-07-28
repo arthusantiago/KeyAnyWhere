@@ -44,11 +44,11 @@
   <br>
   <div class="row">
     <div class="col-sm-6">
-      <label for="categoria_id" class="form-label">Categorias</label>
+      <label for="categoria_id" class="form-label">Categoria</label>
       <select class="form-select inputs" id="categoria_id" name="categoria_id" required>
-        <option value="" disabled>Escolha a Categoria</option>
+        <option value="" disabled selected>Escolha a Categoria</option>
         <?php foreach ($categorias as $categoria):?>
-          <option value="<?=$categoria->id?>"> <?=$categoria->nome?></option>
+          <option value="<?=$categoria->id?>"><?=$categoria->nome?></option>
         <?php endforeach ?>
       </select> 
     </div>

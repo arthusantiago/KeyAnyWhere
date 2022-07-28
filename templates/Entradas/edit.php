@@ -44,18 +44,13 @@
   <br>
   <div class="row">
     <div class="col-sm-6">
-      <label for="categoria_id" class="form-label">Categorias/Subcategorias</label>
+      <label for="categoria_id" class="form-label">Categoria</label>
       <select class="form-select inputs" id="categoria_id" name="categoria_id" required>
-        <option value="" disabled>Escolha a Categoria</option>
+        <option value="" disabled selected>Escolha a Categoria</option>
         <?php foreach ($categorias as $categoria):?>
-          <optgroup label="<?=$categoria->nome?>">
-            <option value="<?=$categoria->id?>" <?=$categoria->id == $entrada->categoria_id?'selected':''?>><?=$categoria->nome?></option>
-            <?php foreach ($categoria->subcategorias as $subcategoria):?>
-              <option value="<?=$subcategoria->id?>" <?=$subcategoria->id == $entrada->subcategoria_id?'selected':''?>><?=$subcategoria->nome?></option>
-            <?php endforeach ?>
-          </optgroup>
+          <option value="<?=$categoria->id?>" <?=$categoria->id == $entrada->categoria_id?'selected':''?>><?=$categoria->nome?></option>
         <?php endforeach ?>
-      </select>
+      </select> 
     </div>
   </div>
   <br>

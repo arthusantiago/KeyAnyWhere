@@ -19,12 +19,12 @@ class CategoriasController extends AppController
      */
     public function listagemEntradas(string $id)
     {
-        $entradasDaCategoria = $this->Categorias->Entradas
+        $entradas = $this->Categorias->Entradas
         ->find('all')
         ->where(['categoria_id' => $id])
         ->order(['titulo']);
 
-        $this->set(compact('entradasDaCategoria'));
+        $this->set(compact('entradas'));
     }
 
     /**
