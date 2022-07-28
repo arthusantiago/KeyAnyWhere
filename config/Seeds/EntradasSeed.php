@@ -30,7 +30,6 @@ class EntradasSeed extends AbstractSeed
                 'link'          => $faker->domainName,
                 'anotacoes'      => '',
                 'categoria_id'      => rand(1, 12),
-                'subcategoria_id' => rand(0, 1) == 1 ? rand(2, 7) : null,
                 'user_id'         => rand(1, 5),
                 'created'       => date('Y-m-d H:i:s'),
                 'modified'       => date('Y-m-d H:i:s')

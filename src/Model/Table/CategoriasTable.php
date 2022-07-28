@@ -12,7 +12,6 @@ use Cake\Validation\Validator;
  * Categorias Model
  *
  * @property \App\Model\Table\EntradasTable&\Cake\ORM\Association\HasMany $Entradas
- * @property \App\Model\Table\SubcategoriasTable&\Cake\ORM\Association\HasMany $Subcategorias
  *
  * @method \App\Model\Entity\Categoria newEmptyEntity()
  * @method \App\Model\Entity\Categoria newEntity(array $data, array $options = [])
@@ -49,9 +48,6 @@ class CategoriasTable extends Table
         $this->addBehavior('Timestamp');
 
         $this->hasMany('Entradas', [
-            'foreignKey' => 'categoria_id',
-        ]);
-        $this->hasMany('Subcategorias', [
             'foreignKey' => 'categoria_id',
         ]);
     }

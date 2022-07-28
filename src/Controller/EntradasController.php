@@ -60,7 +60,7 @@ class EntradasController extends AppController
         }
 
         $categorias = $this->Entradas->Categorias
-            ->find('all', ['contain' => ['Subcategorias']])
+            ->find('all')
             ->order(['nome']);
 
         $this->set(compact('entrada', 'categorias'));

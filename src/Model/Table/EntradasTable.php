@@ -11,7 +11,6 @@ use Cake\Validation\Validator;
  * Entradas Model
  *
  * @property \App\Model\Table\CategoriasTable&\Cake\ORM\Association\BelongsTo $Categorias
- * @property \App\Model\Table\SubcategoriasTable&\Cake\ORM\Association\BelongsTo $Subcategorias
  * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
  *
  * @method \App\Model\Entity\Entrada newEmptyEntity()
@@ -51,9 +50,6 @@ class EntradasTable extends Table
         $this->belongsTo('Categorias', [
             'foreignKey' => 'categoria_id',
             'joinType' => 'INNER',
-        ]);
-        $this->belongsTo('Subcategorias', [
-            'foreignKey' => 'subcategoria_id',
         ]);
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
@@ -109,7 +105,6 @@ class EntradasTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn('categoria_id', 'Categorias', 'Categoria não encontrada'), ['errorField' => 'categoria_id']);
-        $rules->add($rules->existsIn('subcategoria_id', 'Subcategorias', 'Subcategoria não encontrada'), ['errorField' => 'subcategoria_id']);
         $rules->add($rules->existsIn('user_id', 'Users', 'Usuário não localizado'), ['errorField' => 'user_id']);
 
         return $rules;

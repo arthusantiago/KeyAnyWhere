@@ -15,14 +15,12 @@ use Cake\ORM\Entity;
  * @property string|null $link
  * @property string $anotacoes
  * @property int $categoria_id
- * @property int|null $subcategoria_id
  * @property int $user_id
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  *
  * @property \App\Model\Entity\User $user
  * @property \App\Model\Entity\Categoria $categoria
- * @property \App\Model\Entity\Subcategoria $subcategoria
  */
 class Entrada extends Entity
 {
@@ -42,13 +40,11 @@ class Entrada extends Entity
         'link' => true,
         'anotacoes' => true,
         'categoria_id' => true,
-        'subcategoria_id' => true,
         'user_id' => true,
         'created' => true,
         'modified' => true,
         'user' => true,
-        'categoria' => true,
-        'subcategoria' => true,
+        'categoria' => true
     ];
 
     /**

@@ -14,7 +14,6 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\FrozenTime $modified
  *
  * @property \App\Model\Entity\Entrada[] $entradas
- * @property \App\Model\Entity\Subcategoria[] $subcategorias
  */
 class Categoria extends Entity
 {
@@ -31,8 +30,7 @@ class Categoria extends Entity
         'nome' => true,
         'created' => true,
         'modified' => true,
-        'entradas' => true,
-        'subcategorias' => true,
+        'entradas' => true
     ];
 
 

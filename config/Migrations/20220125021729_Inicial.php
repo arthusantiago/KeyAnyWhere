@@ -37,7 +37,7 @@ class Inicial extends AbstractMigration
         ->addColumn('password', 'string', ['limit' => 255, 'null' => false])
         ->addColumn('created', 'datetime')
         ->addColumn('modified', 'datetime')
-        ->create();        
+        ->create();
 
         $this->table('entradas')
         ->addColumn('titulo', 'string', ['limit' => 100, 'null' => false])

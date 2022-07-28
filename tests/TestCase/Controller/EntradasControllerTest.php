@@ -24,7 +24,6 @@ class EntradasControllerTest extends TestCase
     protected $fixtures = [
         'app.Entradas',
         'app.Categorias',
-        'app.Subcategorias',
         'app.Users',
     ];
 

@@ -21,19 +21,10 @@ class CategoriasController extends AppController
     {
         $entradasDaCategoria = $this->Categorias->Entradas
         ->find('all')
-        ->where([
-            'categoria_id' => $id,
-            'subcategoria_id IS NULL'
-        ])
+        ->where(['categoria_id' => $id])
         ->order(['titulo']);
 
-        $subcategoriaComEntradas = $this->Categorias->Subcategorias
-        ->find('all')
-        ->contain(['Entradas'])
-        ->where(['Subcategorias.categoria_id' => $id])
-        ->order(['subcategorias.nome']);
-
-        $this->set(compact('entradasDaCategoria', 'subcategoriaComEntradas'));
+        $this->set(compact('entradasDaCategoria'));
     }
 
     /**
@@ -61,10 +52,7 @@ class CategoriasController extends AppController
      */
     public function view($id = null)
     {
-        $categoria = $this->Categorias->get($id, [
-            'contain' => ['Entradas', 'Subcategorias'],
-        ]);
-
+        $categoria = $this->Categorias->get($id, [ 'contain' => ['Entradas']]);
         $this->set(compact('categoria'));
     }
 
@@ -97,10 +85,6 @@ class CategoriasController extends AppController
     public function edit($id)
     {
         $categoria = $this->Categorias->get($id);
-        $subcategorias = $this->Categorias->Subcategorias
-        ->find()
-        ->where(['categoria_id' => $id])
-        ->order(['nome']);
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $categoria = $this->Categorias->patchEntity($categoria, $this->request->getData());
@@ -113,12 +97,12 @@ class CategoriasController extends AppController
             return $this->redirect(['action' => 'edit', $categoria->id]);
         }
 
-        $this->set(compact('categoria', 'subcategorias'));
+        $this->set(compact('categoria'));
     }
 
     /**
      * Delete method
-     * O delete acontece em cascata: categoria > subcategoria > entrada
+     * O delete acontece em cascata: categoria > entrada
      *
      * @param string|null $id Categoria id.
      * @return \Cake\Http\Response|null|void Redirects to index.
