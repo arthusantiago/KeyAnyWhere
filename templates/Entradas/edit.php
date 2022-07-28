@@ -13,7 +13,6 @@
     'password',
     'link',
     'categoria_id',
-    'subcategoria_id',
     'anotacoes'
   ]);?>
   <div class="row">
@@ -45,25 +44,17 @@
   <br>
   <div class="row">
     <div class="col-sm-6">
-      <label for="categoria_id" class="form-label">Categorias</label>
-      <select class="form-select inputs" id="categoria_id" name="categoria_id" 
-        onchange="buscaSubcategorias(this, 'subcategoria_id')" required>
+      <label for="categoria_id" class="form-label">Categorias/Subcategorias</label>
+      <select class="form-select inputs" id="categoria_id" name="categoria_id" required>
         <option value="" disabled>Escolha a Categoria</option>
         <?php foreach ($categorias as $categoria):?>
-          <option value="<?=$categoria->id?>" <?=$categoria->id == $entrada->categoria_id ? 'selected' : ''?>><?=$categoria->nome?></option>
+          <optgroup label="<?=$categoria->nome?>">
+            <option value="<?=$categoria->id?>" <?=$categoria->id == $entrada->categoria_id?'selected':''?>><?=$categoria->nome?></option>
+            <?php foreach ($categoria->subcategorias as $subcategoria):?>
+              <option value="<?=$subcategoria->id?>" <?=$subcategoria->id == $entrada->subcategoria_id?'selected':''?>><?=$subcategoria->nome?></option>
+            <?php endforeach ?>
+          </optgroup>
         <?php endforeach ?>
-      </select>
-    </div>
-    <div class="col-sm-6">
-      <label for="subcategoria_id" class="form-label">Subcategorias</label>
-      <select class="form-select inputs" id="subcategoria_id" name="subcategoria_id">
-        <?php if($subcategorias->all()->isEmpty()): ?>
-          <option disabled>Não há subcategorias</option>
-        <?php else: ?>
-          <?php foreach($subcategorias as $subcategoria):?>
-            <option value="<?=$subcategoria->id?>" <?=$entrada->subcategoria_id == $subcategoria->id ? 'selected' : ''?>><?=$subcategoria->nome?></option>
-          <?php endforeach;?>
-        <?php endif; ?>
       </select>
     </div>
   </div>
@@ -71,7 +62,7 @@
   <div class="row">
     <div class="col-sm">
       <label for="anotacoes" class="form-label">Anotações</label>
-      <textarea class="form-control" id="anotacoes" name="anotacoes" rows="2"><?=$entrada->anotacoes?></textarea>
+      <textarea class="form-control" id="anotacoes" name="anotacoes" rows="4"><?=$entrada->anotacoes?></textarea>
     </div>
   </div>
   <br>
@@ -81,5 +72,3 @@
     </div>
   </div>
 <?= $this->Form->end(['data-type' => 'hidden']);?>
-
-<?=$this->Html->script('buscas.js')?>

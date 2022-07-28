@@ -77,23 +77,4 @@ class SubcategoriasController extends AppController
 
         return $this->redirect(['controller' => 'Categorias', 'action' => 'edit', $subcategoria->categoria_id]);
     }
-
-    /**
-     * Busca no banco todas as subcategorias pertecentes a categoria informada
-     *
-     * @param string|null $id $categoria_id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function assincSubcategorias($categoria_id)
-    {
-        $this->viewBuilder()->setLayout('layout_vazio');
-        $this->request->allowMethod(['post', 'get']);
-        $subcategorias = $this->Subcategorias
-            ->find()
-            ->where(['categoria_id' => $categoria_id])
-            ->order(['nome']);
-
-        $this->set(compact('subcategorias', 'categoria_id'));
-    }
 }
