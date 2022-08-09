@@ -22,7 +22,7 @@ class UsersSeed extends AbstractSeed
     {
         $faker = Faker\Factory::create('pt_BR');
         $data = [];
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $data[] = [
                 'username'      => $faker->userName,
                 'email'         => $faker->email,

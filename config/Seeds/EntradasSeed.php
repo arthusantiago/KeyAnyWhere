@@ -20,20 +20,29 @@ class EntradasSeed extends AbstractSeed
      */
     public function run()
     {
-        $faker = Faker\Factory::create();
+        //Obtendo as categtorias cadastradas
+        $categorias = $this->fetchAll('SELECT * FROM categorias');
+
+        //criando as entradas
+        $faker = Faker\Factory::create('pt_BR');
         $data = [];
-        for ($i = 0; $i < 50; $i++) {
-            $data[] = [
-                'titulo'      => $faker->userName,
-                'username'      => $faker->email,
-                'password'      => sha1($faker->password),
-                'link'          => $faker->domainName,
-                'anotacoes'      => '',
-                'categoria_id'      => rand(1, 12),
-                'user_id'         => rand(1, 5),
-                'created'       => date('Y-m-d H:i:s'),
-                'modified'       => date('Y-m-d H:i:s')
-            ];
+
+        foreach($categorias as $categoria)
+        {
+            for ($i = 0; $i < 20; $i++)
+            {
+                $data[] = [
+                    'titulo' => $faker->userName,
+                    'username' => $faker->email,
+                    'password' => sha1($faker->password),
+                    'link' =>  'https://' . $faker->domainName,
+                    'anotacoes' => 'Ut ab voluptas sed a nam. Sint autem inventore aut officia aut aut blanditiis. Ducimus eos odit amet et est ut eum.',
+                    'categoria_id' => $categoria['id'],
+                    'user_id' => rand(1, 3),
+                    'created' => date('Y-m-d H:i:s'),
+                    'modified' => date('Y-m-d H:i:s')
+                ];
+            }
         }
 
         $table = $this->table('entradas');
