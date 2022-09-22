@@ -16,7 +16,7 @@
                 	</a>
                 </td>
                 <td>
-            		<button type="button" class="btn btn-sm btn-secondary" data-clipboard-text="<?=$entrada->user?>" title="Copiar usuário">
+            		<button type="button" class="btn btn-sm btn-secondary" data-clipboard-text="<?=$entrada->username?>" title="Copiar usuário">
 	                    <i class="bi bi-person-fill"></i>
 	                </button>
  					<button type="button" class="btn btn-sm btn-secondary" data-clipboard-text="<?=$entrada->password?>" title="Copiar senha">
