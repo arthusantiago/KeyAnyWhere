@@ -3,22 +3,19 @@
  * Função que pinta no menu lateral esquerdo em qual categoria o usuário está.
  *
  **/
-function categoriaSelecionada()
+document.addEventListener('categoria', function()
 {
 	let menuLateral = document.getElementById('menu-lateral');
 
 	if (menuLateral !== null)
 	{
+		document.getElementById('menu-lateral');
 		let nodeListLi = menuLateral.querySelectorAll('li');
-		
-		//exemplo /categorias/listagem-entradas/2
-		let pathName =  window.location.pathname;
-		pathName = pathName.split('/');
-
+		let idCategoria = document.getElementById('id-categoria-selecionada').value;
 
 		nodeListLi.forEach(function(li, index, array)
-		{			
-			if (pathName[pathName.length - 1] == li.getAttribute('data-categoriaId')) 
+		{
+			if (idCategoria == li.getAttribute('data-categoriaId')) 
 			{
 				//pegando os values existente e acrescentando a classe que estiliza o elemento
 				let value = li.getAttribute('class') + " categoria-selecionada";
@@ -26,4 +23,4 @@ function categoriaSelecionada()
 			}
 		});
 	}
-}
+});

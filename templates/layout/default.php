@@ -14,8 +14,9 @@
       ]);
       echo $this->fetch('css');
     ?>
+	<?=$this->Html->script('categorias.js');?>
   </head>
-  <body onload="categoriaSelecionada()">
+  <body>
 		<div id="div-lateral">
 			<div id="logo-kaw">
 				<?=$this->Html->image("logo-kaw.png", ['url' => ['controller' => 'Pages', 'action' => 'display']]);?>
@@ -29,7 +30,7 @@
 				<div class="col-sm-auto ">
 					<a class="btn btn-outline-light botoes" role="button" href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'add']);?>">
 						<i class="bi bi-key icone-opcao"></i>Nova Entrada
-					</a>	
+					</a>
 				</div>
 				<div class="col-sm-auto">
 					<a class="btn btn-outline-light botoes" role="button" href="<?=$this->Url->build(['controller' => 'Categorias', 'action' => 'index']);?>">
@@ -67,20 +68,19 @@
 		</div>
 		<div id="corpo-conteudo">
 			<div class="row">
-        <div class="col-sm"></div>
-        <div class="col-sm"><?= $this->Flash->render()?></div>
-        <div class="col-sm"></div>
-      </div>
-      <?= $this->fetch('content') ?>
+				<div class="col-sm"></div>
+				<div class="col-sm"><?= $this->Flash->render()?></div>
+				<div class="col-sm"></div>
+			</div>
+      		<?= $this->fetch('content') ?>
 		</div>
 		<?=$this->Html->script('bootstrap/popper.min.js')?>
-	  <?=$this->Html->script('bootstrap/bootstrap.js')?>
-	  <?=$this->Html->script('buscaConteudo.js')?>
-	  <?=$this->Html->script('clipboard.min.js');?>
-	  <?=$this->Html->script('categorias.js');?>
-	  <!-- Iniciando o Objeto responsável por gerenciar o clipboard -->
-	  <script type="text/javascript">
-	    var clipboardBtnSimples = new ClipboardJS('.btn-sm');
-	  </script>
-  </body>
+		<?=$this->Html->script('bootstrap/bootstrap.js')?>
+		<?=$this->Html->script('buscaConteudo.js')?>
+		<?=$this->Html->script('clipboard.min.js');?>
+		<!-- Iniciando o Objeto responsável por gerenciar o clipboard -->
+		<script type="text/javascript">
+			var clipboardBtnSimples = new ClipboardJS('.btn-sm');
+		</script>
+  	</body>
 </html>

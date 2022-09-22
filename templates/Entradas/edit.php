@@ -1,3 +1,4 @@
+
 <div class="row">
   <div class="col-sm-auto">
     <span class="titulo">Entrada</span>
@@ -67,3 +68,9 @@
     </div>
   </div>
 <?= $this->Form->end(['data-type' => 'hidden']);?>
+
+<!-- usado para marcar em qual categoria o usuário está -->
+<input type="hidden" id="id-categoria-selecionada" value="<?=$entrada->categoria_id?>">
+<script type="text/javascript">
+  document.dispatchEvent(new Event("categoria"));
+</script>

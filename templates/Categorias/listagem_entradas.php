@@ -30,3 +30,9 @@
         <?php endforeach; ?>
     </tbody>
 </table>
+
+<!-- usado para marcar em qual categoria o usuário está -->
+<input type="hidden" id="id-categoria-selecionada" value="<?=$categoria_id?>">
+<script type="text/javascript">
+  document.dispatchEvent(new Event("categoria"));
+</script>

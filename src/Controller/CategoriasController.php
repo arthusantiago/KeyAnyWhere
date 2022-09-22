@@ -14,17 +14,17 @@ class CategoriasController extends AppController
     /**
      * A listagem das entradas da categoria informada
      *
-     * @param string $id Categoria id
+     * @param string $categoria_id Categoria id
      * @return \Cake\Http\Response|null|void Renders view
      */
-    public function listagemEntradas(string $id)
+    public function listagemEntradas(string $categoria_id)
     {
         $entradas = $this->Categorias->Entradas
         ->find('all')
-        ->where(['categoria_id' => $id])
+        ->where(['categoria_id' => $categoria_id])
         ->order(['titulo']);
 
-        $this->set(compact('entradas'));
+        $this->set(compact('entradas','categoria_id'));
     }
 
     /**
