@@ -77,10 +77,5 @@
 		<?=$this->Html->script('bootstrap/popper.min.js')?>
 		<?=$this->Html->script('bootstrap/bootstrap.js')?>
 		<?=$this->Html->script('buscaConteudo.js')?>
-		<?=$this->Html->script('clipboard.min.js');?>
-		<!-- Iniciando o Objeto responsável por gerenciar o clipboard -->
-		<script type="text/javascript">
-			var clipboardBtnSimples = new ClipboardJS('.btn-sm');
-		</script>
   	</body>
 </html>

@@ -1,91 +1,26 @@
 /**
+ * Função responsável por buscar as informações de user e senha e escrever na área de transferencia.
  *
- * @param
- * @param 
- * @author Arthu Vinicius <contato@avds.eti.br>
+ * @param elementHTML button O botão que foi clicado
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API
+ * @see https://web.dev/async-clipboard/
  */
-function gerenciadorBusca(recurso, metodo, dados)
+async function buscaUserPass(button)
 {
-	//padronizar o caminho no formato: /controller/action/parametro
-
-	// Montando a URL completa
-	var urlCompleta = window.location.origin + recurso;
-
-	opcoes = {
-		metodo: metodo,
-		headers: {
-	      'Content-Type': 'application/json'
-	    },
-	};
-
-	const request = consomeApi(urlCompleta, opcoes, dados);
-
-	request.then(dados => dados.json())
-	.then(dadosRetornados => {
-		manipulaHtml(dadosRetornados.htmlProc);
-	});
-
-}
-
-/**
- *
- * @param
- * @param 
- * @author Arthu Vinicius <contato@avds.eti.br>
- */
-async function consomeApi(url, opcoes, dados)
-{
-	optionFetch = {
-		method: opcoes.metodo,
-	    headers: opcoes.headers,
-	};
-
-	if (dados){
-		optionFetch.body = JSON.stringify(dados);
+	if(button.getAttribute('data-clipboard-tipo') == 'pass'){
+		endpoint = '/entradas/clipboard-pass/';
+	}else{
+		endpoint = '/entradas/clipboard-user/';
 	}
 
-  	return await fetch(url, optionFetch);
-}
-
-/**
- *
- * @param
- * @param 
- * @author Arthu Vinicius <contato@avds.eti.br>
- */
-function manipulaHtml(conteudo)
-{
-	document.getElementById('corpo-conteudo').innerHTML = conteudo;	
-}
-
-// --------------------------------------------------------------------
-
-/**
- *
- * @param
- * @param 
- * @author Arthu Vinicius <contato@avds.eti.br>
- */
-function buscaConteudo(caminho)
-{
-	//padronizar o caminho no formato: /controller/action/parametro
-
-	// Montando a URL completa
-	var urlParaBusca = window.location.origin + caminho;
-
-	atualizandoURL(urlParaBusca);
+	let urlParaBusca = window.location.origin + endpoint + button.getAttribute('data-clipboard-entrada-id');
 
 	fetch(urlParaBusca)
 	.then(response => response.text())
-	.then(function(dadosRetornados){
-		document.getElementById('corpo-conteudo').innerHTML = dadosRetornados;
+	.then(function(dadoRetornado){
+		navigator.clipboard.writeText(dadoRetornado);
 	})
 	.catch(function(error){
-	  console.log("Aconteceu um erro na busca: " + error.message);
+		console.log("Aconteceu um erro na busca do usuário/senha: " + error.message);
 	});
-}
-
-function atualizandoURL(url)
-{
-	history.pushState({page: 1}, null, url);
 }

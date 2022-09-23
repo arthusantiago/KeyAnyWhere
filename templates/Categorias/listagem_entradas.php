@@ -16,10 +16,12 @@
                 	</a>
                 </td>
                 <td>
-            		<button type="button" class="btn btn-sm btn-secondary" data-clipboard-text="<?=$entrada->username?>" title="Copiar usuário">
+            		<button type="button" class="btn btn-sm btn-secondary" title="Copiar usuário"
+                        data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user" onclick="buscaUserPass(this)">
 	                    <i class="bi bi-person-fill"></i>
 	                </button>
- 					<button type="button" class="btn btn-sm btn-secondary" data-clipboard-text="<?=$entrada->password?>" title="Copiar senha">
+ 					<button type="button" class="btn btn-sm btn-secondary" title="Copiar senha"
+                        data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="pass" onclick="buscaUserPass(this)">
 	                    <i class="bi bi-key-fill"></i>
 	                </button>
 	                <a class="btn btn-sm btn-secondary" role="button"  href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'edit', $entrada->id])?>" title="Editar entrada">
@@ -34,5 +36,5 @@
 <!-- usado para marcar em qual categoria o usuário está -->
 <input type="hidden" id="id-categoria-selecionada" value="<?=$categoria_id?>">
 <script type="text/javascript">
-  document.dispatchEvent(new Event("categoria"));
+    document.dispatchEvent(new Event("categoria"));
 </script>

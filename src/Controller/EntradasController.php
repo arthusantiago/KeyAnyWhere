@@ -85,4 +85,32 @@ class EntradasController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
+    /**
+     * Busca a entrada para retornar a senha dela
+     *
+     * @param string|null $entrada_id Entrada id.
+     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function clipboardPass($entrada_id)
+    {
+        $entrada = $this->Entradas->get($entrada_id);
+        $this->viewBuilder()->setLayout('layout_vazio');
+        $this->set(compact('entrada'));
+    }
+
+    /**
+     * Busca a entrada para retornar o usuário dela
+     *
+     * @param string|null $entrada_id Entrada id.
+     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function clipboardUser($entrada_id)
+    {
+        $entrada = $this->Entradas->get($entrada_id);
+        $this->viewBuilder()->setLayout('layout_vazio');
+        $this->set(compact('entrada'));
+    }
 }
