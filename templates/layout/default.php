@@ -19,7 +19,7 @@
   <body>
 		<div id="div-lateral">
 			<div id="logo-kaw">
-				<?=$this->Html->image("logo-kaw.png", ['url' => ['controller' => 'Pages', 'action' => 'display']]);?>
+				<?=$this->Html->image("logo-kaw.png", ['url' => ['controller' => 'Pages', 'action' => 'home']]);?>
 			</div>
 			<nav id="menu-lateral">
 				<?=$this->cell('CategoriasMenu')?>
