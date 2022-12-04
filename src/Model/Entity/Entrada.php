@@ -24,6 +24,10 @@ use Cake\ORM\Entity;
  */
 class Entrada extends Entity
 {
+    /* CODIGO TEMPORÁRIO */
+    private const CHAVE = '5ecb7491a5749d918249466f88b034c7d218356579f3d96f1c06dc2c09dcd3c4';
+    private const VI = '8c6f0231e98c4fecf05db27c7c6a2f903051af348204c12d';
+
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
      *
@@ -71,5 +75,19 @@ class Entrada extends Entity
         }   
     }
 
-    
+    protected function _setPassword($textoPuro)
+    {
+        return sodium_bin2hex(sodium_crypto_secretbox($textoPuro, sodium_hex2bin($this::VI), sodium_hex2bin($this::CHAVE)));
+    }
+
+    /**
+     * Retorna a senha descriptografada
+     *
+     * @access	public
+     * @return	string
+     */
+    public function senhaDescrip(): string
+    {
+        return sodium_crypto_secretbox_open(sodium_hex2bin($this->password), sodium_hex2bin($this::VI), sodium_hex2bin($this::CHAVE));
+    }
 }
