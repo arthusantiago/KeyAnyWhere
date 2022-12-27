@@ -24,10 +24,6 @@ use Cake\ORM\Entity;
  */
 class Entrada extends Entity
 {
-    /* CODIGO TEMPORÁRIO */
-    private const CHAVE = '5ecb7491a5749d918249466f88b034c7d218356579f3d96f1c06dc2c09dcd3c4';
-    private const VI = '8c6f0231e98c4fecf05db27c7c6a2f903051af348204c12d';
-
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
      *
@@ -71,13 +67,27 @@ class Entrada extends Entity
         {
             return substr($this->link, 0, $tamanho) . '...';
         }else{
-            return $this->link;    
-        }   
+            return $this->link;
+        }
     }
 
+
+    /**
+     * O mutator usado para setar a senha criptografada
+     *
+     * @access protected
+     * @param string $textoPuro
+     * @return string
+     */
     protected function _setPassword($textoPuro)
     {
-        return sodium_bin2hex(sodium_crypto_secretbox($textoPuro, sodium_hex2bin($this::VI), sodium_hex2bin($this::CHAVE)));
+        return sodium_bin2hex(
+            sodium_crypto_secretbox(
+                $textoPuro,
+                sodium_hex2bin(env('IV')),
+                sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
+            )
+        );
     }
 
     /**
@@ -88,6 +98,10 @@ class Entrada extends Entity
      */
     public function senhaDescrip(): string
     {
-        return sodium_crypto_secretbox_open(sodium_hex2bin($this->password), sodium_hex2bin($this::VI), sodium_hex2bin($this::CHAVE));
+        return sodium_crypto_secretbox_open(
+            sodium_hex2bin($this->password),
+            sodium_hex2bin(env('IV')),
+            sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
+        );
     }
 }
