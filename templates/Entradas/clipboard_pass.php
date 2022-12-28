@@ -1,1 +1,1 @@
-<?= $entrada->senhaDescrip()?>
+<?=$entrada->passwordDescrip()?>

@@ -1,1 +1,1 @@
-<?= $entrada->username?>
+<?=$entrada->usernameDescrip()?>

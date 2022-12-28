@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
+use Throwable;
 
 /**
  * Entrada Entity
@@ -71,15 +72,32 @@ class Entrada extends Entity
         }
     }
 
-
     /**
-     * O mutator usado para setar a senha criptografada
+     * Mutator usado para criptografar a senha
      *
      * @access protected
      * @param string $textoPuro
      * @return string
      */
-    protected function _setPassword($textoPuro)
+    protected function _setPassword(string $textoPuro): string
+    {
+        return sodium_bin2hex(
+            sodium_crypto_secretbox(
+                $textoPuro,
+                sodium_hex2bin(env('IV')),
+                sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
+            )
+        );
+    }
+
+    /**
+     * Mutator usado para criptografar o usuario
+     *
+     * @access protected
+     * @param string $textoPuro
+     * @return string
+     */
+    protected function _setUsername(string $textoPuro): string
     {
         return sodium_bin2hex(
             sodium_crypto_secretbox(
@@ -96,12 +114,46 @@ class Entrada extends Entity
      * @access	public
      * @return	string
      */
-    public function senhaDescrip(): string
+    public function passwordDescrip(): string
     {
-        return sodium_crypto_secretbox_open(
-            sodium_hex2bin($this->password),
-            sodium_hex2bin(env('IV')),
-            sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
-        );
+        try{
+            $return = sodium_crypto_secretbox_open(
+                sodium_hex2bin($this->password),
+                sodium_hex2bin(env('IV')),
+                sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
+            );
+
+            if($return === false){
+                $return = 'Não foi possivel descriptografar a senha.';
+            }
+        }catch(Throwable $ex){
+            $return = 'Erro ao descriptografar a senha';
+        }
+
+        return $return;
+    }
+
+    /**
+     * Retorna o usuario descriptografado
+     *
+     * @access	public
+     * @return	string
+     */
+    public function usernameDescrip(): string
+    {
+        try{
+            $return = sodium_crypto_secretbox_open(
+                sodium_hex2bin($this->username),
+                sodium_hex2bin(env('IV')),
+                sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
+            );
+
+            if($return === false){
+                $return = 'Não foi possivel descriptografar a senha.';
+            }
+        }catch(Throwable $ex){
+            $return = 'Erro ao descriptografar o usuário';
+        }
+        return $return;
     }
 }
