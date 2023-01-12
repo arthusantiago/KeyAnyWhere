@@ -5,6 +5,7 @@
 	<?= $this->Html->meta('icon', 'favicon.ico') ?>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+	
     <title>KeyAnyWhere</title>
     <?php 
       echo $this->Html->css([
@@ -15,6 +16,8 @@
       echo $this->fetch('css');
     ?>
 	<?=$this->Html->script('categorias.js');?>
+	<?=$this->Html->script('ferramentas.js');?>
+	<script src="https://kit.fontawesome.com/6be704c138.js" crossorigin="anonymous"></script>
   </head>
   <body>
 		<div id="div-lateral">

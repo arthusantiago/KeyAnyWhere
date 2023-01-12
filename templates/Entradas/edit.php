@@ -23,7 +23,7 @@
     </div>
     <div class="col-sm">
       <label for="username" class="form-label">Usuário</label>
-      <input type="text" class="form-control inputs" name="username" id="username" value="<?=$entrada->username?>" required>
+      <input type="text" class="form-control inputs" name="username" id="username" value="<?=$entrada->usernameDescrip()?>" required>
     </div>
   </div>
   <br>
@@ -31,10 +31,17 @@
     <div class="col-sm">
       <label for="password" class="form-label">Senha</label>
       <div class="input-group">
-        <input type="password" class="form-control inputs" name="password" id="password" value="<?=$entrada->password?>" autocomplete="new-password" required>
-        <button class="btn btn-secondary">
-          <?= $this->Html->image('generate-password.svg', ['width' => '24', 'height' => '24'])?>
-        </button>
+        <input type="password" class="form-control inputs pwd" name="password" id="senhaEntrada" autocomplete="new-password" 
+          value="<?=$entrada->passwordDescrip()?>" required>
+        <div class="btn-group">
+          <button type="button" class="btn btn-secondary" onclick="mostrarSenha()"><i class="fa fa-eye" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="visually-hidden">Opções</span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Gerador de senha</a></li>
+          </ul>
+        </div>
       </div>
     </div>
     <div class="col-sm">
