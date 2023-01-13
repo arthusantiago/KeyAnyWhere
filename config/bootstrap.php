@@ -61,8 +61,8 @@ use Cake\Utility\Security;
  * for more information for recommended practices.
 */
 
-/* O arquivo .env e a variável de ambiente STAGE_DEVELOPMENT precisam existir*/
-if (!env('STAGE_DEVELOPMENT') && file_exists(CONFIG . '.env')) {
+/* O arquivo .env e a variável de ambiente APP_NAME não pode existir, isso significa que estamos em STAGE DEV*/
+if (!env('APP_NAME') && file_exists(CONFIG . '.env')) {
     $dotenv = new \josegonzalez\Dotenv\Loader([CONFIG . '.env']);
     $dotenv->parse()
         ->putenv()
