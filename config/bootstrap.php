@@ -61,7 +61,13 @@ use Cake\Utility\Security;
  * for more information for recommended practices.
 */
 
-/* O arquivo .env e a variável de ambiente APP_NAME não pode existir, isso significa que estamos em STAGE DEV*/
+/*
+ * As informações contidas no arquivo .env serão carregadas se:
+ * - A variável de ambiente APP_NAME não existir
+ * - O arquivo .env existir
+ *
+ * Se as duas condições forem atendidas significa que estamos em ambiente de desenvolvimento.
+*/
 if (!env('APP_NAME') && file_exists(CONFIG . '.env')) {
     $dotenv = new \josegonzalez\Dotenv\Loader([CONFIG . '.env']);
     $dotenv->parse()
