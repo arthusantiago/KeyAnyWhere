@@ -5,6 +5,8 @@ namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
 use Throwable;
+use Aws\S3\S3Client;
+use Aws\Exception\AwsException;
 
 /**
  * Entrada Entity

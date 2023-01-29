@@ -63,12 +63,12 @@ use Cake\Utility\Security;
 
 /*
  * As informações contidas no arquivo .env serão carregadas se:
- * - A variável de ambiente APP_NAME não existir
- * - O arquivo .env existir
+ * - A variável de ambiente APP_NAME não deve existir
+ * - O arquivo .env deve existir
  *
  * Se as duas condições forem atendidas significa que estamos em ambiente de desenvolvimento.
 */
-if (!env('APP_NAME') && file_exists(CONFIG . '.env')) {
+if (!env('APP_NAME') && file_exists(CONFIG . '.env') && false) {
     $dotenv = new \josegonzalez\Dotenv\Loader([CONFIG . '.env']);
     $dotenv->parse()
         ->putenv()
