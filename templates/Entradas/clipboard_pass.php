@@ -1,1 +1,1 @@
-<?= $entrada->password?>
+<?=$entrada->passwordDescrip()?>

@@ -60,13 +60,21 @@ use Cake\Utility\Security;
  * security risks. See https://github.com/josegonzalez/php-dotenv#general-security-information
  * for more information for recommended practices.
 */
-// if (!env('APP_NAME') && file_exists(CONFIG . '.env')) {
-//     $dotenv = new \josegonzalez\Dotenv\Loader([CONFIG . '.env']);
-//     $dotenv->parse()
-//         ->putenv()
-//         ->toEnv()
-//         ->toServer();
-// }
+
+/*
+ * As informações contidas no arquivo .env serão carregadas se:
+ * - A variável de ambiente APP_NAME não deve existir
+ * - O arquivo .env deve existir
+ *
+ * Se as duas condições forem atendidas significa que estamos em ambiente de desenvolvimento.
+*/
+if (!env('APP_NAME') && file_exists(CONFIG . '.env') && false) {
+    $dotenv = new \josegonzalez\Dotenv\Loader([CONFIG . '.env']);
+    $dotenv->parse()
+        ->putenv()
+        ->toEnv()
+        ->toServer();
+}
 
 /*
  * Read configuration file and inject configuration into various

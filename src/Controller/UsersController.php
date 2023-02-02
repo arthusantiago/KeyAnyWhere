@@ -30,7 +30,7 @@ class UsersController extends AppController
         {
             $redirect = $this->request->getQuery('redirect', [
                 'controller' => 'Pages',
-                'action' => 'display',
+                'action' => 'home',
             ]);
 
             return $this->redirect($redirect);
