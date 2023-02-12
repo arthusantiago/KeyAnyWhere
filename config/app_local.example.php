@@ -25,7 +25,7 @@ return [
      *   You should treat it as extremely sensitive data.
      */
     'Security' => [
-        'salt' => env('SECURITY_SALT', '__SALT__'),
+        'salt' => env('SECURITY_SALT'),
     ],
 
     /*
@@ -44,15 +44,14 @@ return [
              */
             //'port' => 'non_standard_port_number',
 
-            'username' => 'my_app',
-            'password' => 'secret',
-
-            'database' => 'my_app',
+            'username' => env('DB_USER'),
+            'password' => env('DB_PASSWORD'),
+            'database' => env('DB_NAME'),
             /*
              * If not using the default 'public' schema with the PostgreSQL driver
              * set it here.
              */
-            //'schema' => 'myapp',
+            //'schema' => 'public',
 
             /*
              * You can use a DSN string to set the entire configuration

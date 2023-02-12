@@ -68,7 +68,7 @@ use Cake\Utility\Security;
  *
  * Se as duas condições forem atendidas significa que estamos em ambiente de desenvolvimento.
 */
-if (!env('APP_NAME') && file_exists(CONFIG . '.env') && false) {
+if (!env('APP_NAME') && file_exists(CONFIG . '.env')) {
     $dotenv = new \josegonzalez\Dotenv\Loader([CONFIG . '.env']);
     $dotenv->parse()
         ->putenv()
