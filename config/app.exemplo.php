@@ -17,7 +17,7 @@ return [
      * Development Mode:
      * true: Errors and warnings shown.
      */
-    'debug' => filter_var(env('DEBUG', false), FILTER_VALIDATE_BOOLEAN),
+    'debug' => false,
 
     /*
      * Configure basic information about the application.
@@ -296,7 +296,7 @@ return [
             'driver' => Postgres::class,
             'persistent' => false,
             'timezone' => 'UTC',
-            'host' => 'localhost',
+            'host' => env('DB_DEFAULT_HOST'),
             'username' => env('DB_DEFAULT_USER'),
             'password' => env('DB_DEFAULT_PASSWORD'),
             'database' => env('DB_DEFAULT_NAME'),
