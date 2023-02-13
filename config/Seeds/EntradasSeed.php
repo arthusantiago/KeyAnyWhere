@@ -18,7 +18,7 @@ class EntradasSeed extends AbstractSeed
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         //Obtendo as categtorias cadastradas
         $categorias = $this->fetchAll('SELECT * FROM categorias');
