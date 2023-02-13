@@ -54,3 +54,8 @@ Dentro do arquivo `config/Seeds/UserDefaultSeed.php` contem os dados de acesso d
 
 3- gerando a chave de criptografia pela linha de comando:
 `php -r "echo PHP_EOL . sodium_bin2hex(random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES)) . PHP_EOL;"`
+
+## Usuário default
+
+Usuário: `teste@teste.com`
+Senha: `qwe123@!`
