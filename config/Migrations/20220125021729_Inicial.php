@@ -41,7 +41,7 @@ class Inicial extends AbstractMigration
 
         $this->table('entradas')
         ->addColumn('titulo', 'string', ['limit' => 100, 'null' => false])
-        ->addColumn('username', 'string', ['limit' => 100, 'null' => false])
+        ->addColumn('username', 'string', ['limit' => 256, 'null' => false])
         ->addColumn('password', 'string', ['limit' => 256, 'null' => false])
         ->addColumn('link', 'string', ['limit' => 500, 'default' => null, 'null' => true])
         ->addColumn('anotacoes', 'text')

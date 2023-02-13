@@ -83,13 +83,7 @@ class Entrada extends Entity
      */
     protected function _setPassword(string $textoPuro): string
     {
-        return sodium_bin2hex(
-            sodium_crypto_secretbox(
-                $textoPuro,
-                sodium_hex2bin(env('IV')),
-                sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
-            )
-        );
+        return $this->criptografar($textoPuro);
     }
 
     /**
@@ -101,13 +95,7 @@ class Entrada extends Entity
      */
     protected function _setUsername(string $textoPuro): string
     {
-        return sodium_bin2hex(
-            sodium_crypto_secretbox(
-                $textoPuro,
-                sodium_hex2bin(env('IV')),
-                sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
-            )
-        );
+        return $this->criptografar($textoPuro);
     }
 
     /**
@@ -118,21 +106,7 @@ class Entrada extends Entity
      */
     public function passwordDescrip(): string
     {
-        try{
-            $return = sodium_crypto_secretbox_open(
-                sodium_hex2bin($this->password),
-                sodium_hex2bin(env('IV')),
-                sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
-            );
-
-            if($return === false){
-                $return = 'Não foi possivel descriptografar a senha.';
-            }
-        }catch(Throwable $ex){
-            $return = 'Erro ao descriptografar a senha';
-        }
-
-        return $return;
+        return $this->descriptografar($this->password);
     }
 
     /**
@@ -143,19 +117,54 @@ class Entrada extends Entity
      */
     public function usernameDescrip(): string
     {
-        try{
+        return $this->descriptografar($this->username);
+    }
+
+    protected function criptografar(string $textoPuro): string
+    {
+        $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+        $encrypted = sodium_crypto_secretbox(
+            $textoPuro,
+            $nonce,
+            sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
+        );
+
+        sodium_memzero($textoPuro);
+        sodium_memzero($nonce);
+
+        return sodium_bin2hex($nonce . $encrypted);
+    }
+
+    protected function descriptografar(string $dado): string
+    {
+        try {
+            $decoded = sodium_hex2bin($dado);
+            sodium_memzero($dado);
+
+            $nonce = mb_substr($decoded, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, '8bit');
+            $ciphertext = mb_substr($decoded, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, null, '8bit');
+            sodium_memzero($decoded);
+        } catch (\Throwable $ex) {
+            return 'Erro ao obter as informações para descriptografar: ' . $ex->getMessage();
+        }
+
+        try {
             $return = sodium_crypto_secretbox_open(
-                sodium_hex2bin($this->username),
-                sodium_hex2bin(env('IV')),
+                $ciphertext,
+                $nonce,
                 sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
             );
 
-            if($return === false){
-                $return = 'Não foi possivel descriptografar a senha.';
+            sodium_memzero($ciphertext);
+            sodium_memzero($nonce);
+
+            if ($return === false) {
+                $return = 'Não foi possivel descriptografar.';
             }
-        }catch(Throwable $ex){
-            $return = 'Erro ao descriptografar o usuário';
+        } catch (Throwable $ex) {
+            $return = 'Erro ao descriptografar: ' . $ex->getMessage();
         }
+
         return $return;
     }
 }

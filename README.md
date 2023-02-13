@@ -44,3 +44,13 @@ A [documentação](https://book.cakephp.org/4/en/quickstart.html#database-config
 6- Execute o Seed do usuário padrão
 `php bin/cake.php migrations seed --seed=UserDefaultSeed`
 Dentro do arquivo `config/Seeds/UserDefaultSeed.php` contem os dados de acesso do usuário.
+
+
+## Configuração inicial da aplicação
+
+1- Configurando o servidor WEB
+
+2- configurando as variáveis de ambiente
+
+3- gerando a chave de criptografia pela linha de comando:
+`php -r "echo PHP_EOL . sodium_bin2hex(random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES)) . PHP_EOL;"`
