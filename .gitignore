@@ -6,6 +6,7 @@
 /logs/*
 /tmp/*
 /vendor/*
+/config/Migrations/schema-dump-default.lock
 
 # OS generated files #
 ######################

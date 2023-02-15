@@ -18,7 +18,7 @@ class UsersSeed extends AbstractSeed
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $faker = Faker\Factory::create('pt_BR');
         $data = [];
@@ -26,7 +26,7 @@ class UsersSeed extends AbstractSeed
             $data[] = [
                 'username'      => $faker->userName,
                 'email'         => $faker->email,
-                'password'      => sha1($faker->password),
+                'password'      => sha1('senhaBemForte'),
                 'created'       => date('Y-m-d H:i:s'),
                 'modified'       => date('Y-m-d H:i:s'),
             ];

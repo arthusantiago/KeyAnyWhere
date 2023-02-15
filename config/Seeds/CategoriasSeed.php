@@ -18,7 +18,7 @@ class CategoriasSeed extends AbstractSeed
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $dateTimeCorrente = date('Y-m-d H:i:s');
 
