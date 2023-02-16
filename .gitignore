@@ -3,10 +3,8 @@
 /config/app_local.php
 /config/app.php
 /config/.env
-/logs/*
-/tmp/*
-/vendor/*
 /config/Migrations/schema-dump-default.lock
+/vendor/*
 
 # OS generated files #
 ######################
