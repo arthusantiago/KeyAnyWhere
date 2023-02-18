@@ -130,7 +130,6 @@ class Entrada extends Entity
         );
 
         sodium_memzero($textoPuro);
-        sodium_memzero($nonce);
 
         return sodium_bin2hex($nonce . $encrypted);
     }
@@ -141,8 +140,8 @@ class Entrada extends Entity
             $decoded = sodium_hex2bin($dado);
             sodium_memzero($dado);
 
-            $nonce = mb_substr($decoded, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, '8bit');
-            $ciphertext = mb_substr($decoded, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, null, '8bit');
+            $nonce = substr($decoded, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+            $ciphertext = substr($decoded, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, null);
             sodium_memzero($decoded);
         } catch (\Throwable $ex) {
             return 'Erro ao obter as informações para descriptografar: ' . $ex->getMessage();

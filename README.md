@@ -53,9 +53,12 @@ Dentro do arquivo `config/Seeds/UserDefaultSeed.php` contem os dados de acesso d
 2- configurando as variáveis de ambiente
 
 3- gerando a chave de criptografia pela linha de comando:
-`php -r "echo PHP_EOL . sodium_bin2hex(random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES)) . PHP_EOL;"`
+`php -r "echo PHP_EOL . sodium_bin2hex(sodium_crypto_secretbox_keygen()) . PHP_EOL;"`
 
 ## Usuário default
 
 Usuário: `teste@teste.com`
 Senha: `qwe123@!`
+
+## Gerar um salt novo pela CLI
+`php -r "echo PHP_EOL . bin2hex(random_bytes(32)) . PHP_EOL;"`
