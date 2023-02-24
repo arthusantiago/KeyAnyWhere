@@ -36,18 +36,20 @@ A [documentação](https://book.cakephp.org/4/en/quickstart.html#database-config
 
 ## Ambiente de produção
 
-Este é um **exemplo** de como você pode colocar a aplicação em produção.
+Este é um **exemplo** de lista de passos como você seguir para colocar a aplicação em produção.
 
 1. Instalar o PHP
 2. Instalar o PostgresSQL e pgAdmin ([post](https://avds.eti.br/redes-de-computadores/linux/como-instalar-o-postgre-e-agadmin-no-linux/217/))
 3. Instalar o Apache2 ([post](https://avds.eti.br/programacao/instalando-o-apache2-e-configurando-ssl-tls/399/))
     3.1 A pasta `webroot/` deve ser o DocumentRoot do site. No arquivo de configuração do site (ex.:`/etc/apache2/sites-enabled/000-default.conf`), insira a configuração `DocumentRoot /var/www/html/webroot`.
-4. Permissões de acesso
-    4.1 Se estiver usando o Apache, sete o `www-data` como dono e grupo da pasta: `sudo chown -R www-data:www-data /var/www/html/`
-    4.2 Permissões gerais da aplicação: `sudo chmod -R 750 /path/to/app`
-    4.3 Permissões das pastas `/path/to/app/tmp/` e `/path/to/app/logs/`
-    Instale o utilitário setfacl `sudo apt install acl` e siga o capítulo [Permissions](https://book.cakephp.org/4/en/installation.html#permissions).
-
+4. É **extremamente importante** que você configure o SSL/TLS no seu dominio. Nesse [post](https://avds.eti.br/programacao/instalando-o-apache2-e-configurando-ssl-tls/399/) eu ensino como fazer isso.
+5. Permissões de acesso
+    5.1 Se estiver usando o Apache, sete o `www-data` como dono e grupo da pasta: `sudo chown -R www-data:www-data /var/www/html/`
+    5.2 Permissões gerais da aplicação: `sudo chmod -R 750 /var/www/html/`
+    5.3 Permissões das pastas `/var/www/html/tmp/` e `/var/www/html/logs/`
+    Instale o utilitário setfacl `sudo apt install acl` e siga o capítulo [Permissions](https://book.cakephp.org/4/en/installation.html#permissions) da documentação do CakePHP.
+6. Configure variáveis de ambiente.
+   Há diferentes maneiras de criá-las, uma delas é criar as variaveis dentro do Apache. [post](https://avds.eti.br/programacao/configurando-variaveis-de-ambiente-no-apache/411/)
 ## Configuração inicial da aplicação
 
 1- Configurar o servidor WEB
