@@ -46,15 +46,14 @@ Este é um **exemplo** de passos que você seguir para colocar a aplicação em 
 
 1. Seguir os passos listados na seção 'Configuração inicial da aplicação'.
 2. Instalar o Apache2 ([post](https://avds.eti.br/programacao/instalando-o-apache2-e-configurando-ssl-tls/399/)).
-    2.1 A pasta `webroot/` deve ser o DocumentRoot do site. No arquivo de configuração do site (ex.:`/etc/apache2/sites-enabled/000-default.conf`), insira a configuração `DocumentRoot /var/www/html/webroot`.
+   - A pasta `webroot/` deve ser o DocumentRoot do site. No arquivo de configuração do site (ex.:`/etc/apache2/sites-enabled/000-default.conf`), insira a configuração `DocumentRoot /var/www/html/webroot`.
 3. É **extremamente importante** que você configure o SSL/TLS no seu domínio. Nesse [post](https://avds.eti.br/programacao/instalando-o-apache2-e-configurando-ssl-tls/399/) eu ensino como fazer isso.
 4. Permissões de acesso
-    4.1 Usando o Apache, sete o `www-data` como dono e grupo da pasta: `sudo chown -R www-data:www-data /var/www/html/`
-    4.2 Permissões gerais da aplicação: `sudo chmod -R 750 /var/www/html/`
-    4.3 Permissões das pastas `/var/www/html/tmp/` e `/var/www/html/logs/`
-        Instale o utilitário setfacl `sudo apt install acl` e siga o capítulo [Permissions](https://book.cakephp.org/4/en/installation.html#permissions) da documentação do CakePHP.
+   - Usando o Apache, sete o `www-data` como dono e grupo da pasta: `sudo chown -R www-data:www-data /var/www/html/`
+   - Permissões gerais da aplicação: `sudo chmod -R 750 /var/www/html/`
+   - Permissões das pastas `/var/www/html/tmp/` e `/var/www/html/logs/`. Instale o utilitário setfacl `sudo apt install acl` e siga o capítulo [Permissions](https://book.cakephp.org/4/en/installation.html#permissions) da documentação do CakePHP.
 5. Configure variáveis de ambiente.
-    Há diferentes maneiras de criá-las, uma delas é criar as variaveis dentro do Apache. [post](https://avds.eti.br/programacao/configurando-variaveis-de-ambiente-no-apache/411/)
+   Há diferentes maneiras de criá-las, uma delas é criar as variaveis dentro do Apache. [post](https://avds.eti.br/programacao/configurando-variaveis-de-ambiente-no-apache/411/)
 6. Leia o arquivo de configuração `config/app.php` e veja quais variáveis são utilizadas na função `env()`.
 
 ## Gerando chaves de segurança
@@ -62,5 +61,5 @@ Este é um **exemplo** de passos que você seguir para colocar a aplicação em 
 * Gerar o SALT pela CLI: `php -r "echo PHP_EOL . bin2hex(random_bytes(32)) . PHP_EOL;"`
 
 ## Usuário do primeiro acesso
-Usuário: `teste@teste.com`
-Senha: `qwe123@!`
+- Usuário: `teste@teste.com`
+- Senha: `qwe123@!`
