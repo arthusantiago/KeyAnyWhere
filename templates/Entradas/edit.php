@@ -58,7 +58,14 @@
     </div>
     <div class="col-sm">
       <label for="link" class="form-label">Link</label>
-      <input type="url" class="form-control inputs" name="link" id="link" value="<?=$entrada->link?>">
+      <div class="input-group">
+        <input type="url" class="form-control inputs" name="link" id="link" value="<?=$entrada->link?>" placeholder="http://seuLink.com.br" onchange="veriProtoHttp()">
+        <div class="btn-group">
+          <a <?=$entrada->link ? "href='{$entrada->link}' target='_blank'" : "href='#'";?>>
+            <button type="button" class="btn btn-secondary" title="Abrir link"><i class="fa fa-arrow-up-right-from-square"></i></button>
+          </a>
+        </div>
+      </div>
     </div>
   </div>
   <br>
