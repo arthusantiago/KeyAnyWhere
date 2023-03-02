@@ -38,8 +38,8 @@
     </div>
     <div class="col-sm">
       <label for="link" class="form-label">Link</label>
-      <input type="url" class="form-control inputs" name="link" id="link">
-    </div>    
+      <input type="url" class="form-control inputs" name="link" id="link" value="http://" placeholder="http://seuLink.com.br" onchange="veriProtoHttp()">
+    </div>
   </div>
   <br>
   <div class="row">

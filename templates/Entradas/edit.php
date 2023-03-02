@@ -23,7 +23,16 @@
     </div>
     <div class="col-sm">
       <label for="username" class="form-label">Usuário</label>
-      <input type="text" class="form-control inputs" name="username" id="username" value="<?=$entrada->usernameDescrip()?>" required>
+      <div class="input-group">
+        <input type="password" class="form-control inputs" name="username" id="username" value="<?=$entrada->usernameDescrip()?>" required>
+        <div class="btn-group">
+          <button type="button" class="btn btn-secondary" title="Copiar usuário" onclick="buscaUserPass(this)" 
+            data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user">
+            <i class="fa-regular fa-clipboard"></i>
+	        </button>
+          <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput('username')"><i class="fa fa-eye" aria-hidden="true"></i></button>
+        </div>
+      </div>
     </div>
   </div>
   <br>
@@ -31,10 +40,13 @@
     <div class="col-sm">
       <label for="password" class="form-label">Senha</label>
       <div class="input-group">
-        <input type="password" class="form-control inputs pwd" name="password" id="senhaEntrada" autocomplete="new-password" 
-          value="<?=$entrada->passwordDescrip()?>" required>
+        <input type="password" class="form-control inputs pwd" name="password" id="password" autocomplete="new-password" value="<?=$entrada->passwordDescrip()?>" required>
         <div class="btn-group">
-          <button type="button" class="btn btn-secondary" onclick="mostrarSenha()"><i class="fa fa-eye" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-secondary" title="Copiar senha"
+            data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="pass" onclick="buscaUserPass(this)">
+            <i class="fa-regular fa-clipboard"></i>
+	        </button>
+          <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput()"><i class="fa fa-eye" aria-hidden="true"></i></button>
           <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="visually-hidden">Opções</span>
           </button>
@@ -46,7 +58,14 @@
     </div>
     <div class="col-sm">
       <label for="link" class="form-label">Link</label>
-      <input type="url" class="form-control inputs" name="link" id="link" value="<?=$entrada->link?>">
+      <div class="input-group">
+        <input type="url" class="form-control inputs" name="link" id="link" value="<?=$entrada->link?>" placeholder="http://seuLink.com.br" onchange="veriProtoHttp()">
+        <div class="btn-group">
+          <a <?=$entrada->link ? "href='{$entrada->link}' target='_blank'" : "href='#'";?>>
+            <button type="button" class="btn btn-secondary" title="Abrir link"><i class="fa fa-arrow-up-right-from-square"></i></button>
+          </a>
+        </div>
+      </div>
     </div>
   </div>
   <br>
