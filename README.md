@@ -7,6 +7,7 @@ KeyAnyWhere ou KAW, é um chaveiro que procura focar nas funcionalidades essenci
 # Principais tecnologia utilizadas
 
 * [Bootstrap](https://getbootstrap.com/)
+* [Fontawesome] (https://fontawesome.com/)
 * [PHP](https://www.php.net/releases/8.1/en.php)
 * [CakePHP](https://cakephp.org/)
 * [PostgresSQL](https://www.postgresql.org/) (recomendado)

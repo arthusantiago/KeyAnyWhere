@@ -1,10 +1,10 @@
-function mostrarSenha()
+function exibirConteudoInput(campo = 'password')
 {
-    if(document.getElementById('senhaEntrada').getAttribute('type') == 'password'){
+    if(document.getElementById(campo).getAttribute('type') == 'password'){
         valor = 'text';
     }else{
         valor = 'password';
     }
 
-    document.getElementById('senhaEntrada').setAttribute('type', valor);
+    document.getElementById(campo).setAttribute('type', valor);
 }
