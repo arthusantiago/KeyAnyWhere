@@ -17,6 +17,7 @@
     ?>
 	<?=$this->Html->script('categorias.js');?>
 	<?=$this->Html->script('ferramentas.js');?>
+	<?=$this->Html->script('geradorSenha.js');?>
 	<script src="https://kit.fontawesome.com/6be704c138.js" crossorigin="anonymous"></script>
   </head>
   <body>
