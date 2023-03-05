@@ -51,7 +51,7 @@
             <span class="visually-hidden">Opções</span>
           </button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Gerador de senha</a></li>
+            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalGeradorSenha" onclick="generatePassword('tamanho', 'senhaGerada')">Gerador de senha</a></li>
           </ul>
         </div>
       </div>
@@ -97,6 +97,7 @@
 
 <!-- usado para marcar em qual categoria o usuário está -->
 <input type="hidden" id="id-categoria-selecionada" value="<?=$entrada->categoria_id?>">
+<?= $this->element('geradorSenha')?>
 <script type="text/javascript">
   document.dispatchEvent(new Event("categoria"));
 </script>

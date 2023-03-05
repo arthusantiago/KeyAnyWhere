@@ -30,10 +30,16 @@
     <div class="col-sm">
       <label for="password" class="form-label">Senha</label>
       <div class="input-group">
-        <input type="password" class="form-control inputs" name="password" id="password"  autocomplete="new-password" required>
-        <button class="btn btn-secondary">
-          <?= $this->Html->image('generate-password.svg', ['width' => '24', 'height' => '24'])?>
-        </button>
+        <input type="password" class="form-control inputs pwd" name="password" id="password" autocomplete="new-password" required>
+        <div class="btn-group">
+          <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput()"><i class="fa fa-eye" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="visually-hidden">Opções</span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalGeradorSenha" onclick="generatePassword('tamanho', 'senhaGerada')">Gerador de senha</a></li>
+          </ul>
+        </div>
       </div>
     </div>
     <div class="col-sm">
@@ -68,3 +74,4 @@
   </div>
 
 <?= $this->Form->end(['data-type' => 'hidden']);?>
+<?= $this->element('geradorSenha')?>
