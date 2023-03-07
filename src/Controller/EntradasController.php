@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Event\EventInterface;
 /**
  * Entradas Controller
  *
@@ -11,6 +12,12 @@ namespace App\Controller;
  */
 class EntradasController extends AppController
 {
+    public function beforeFilter(EventInterface $event)
+    {
+        parent::beforeFilter($event);
+        $this->FormProtection->setConfig('unlockedActions', ['busca']);
+    }
+
     /**
      * Add method
      *
@@ -112,5 +119,21 @@ class EntradasController extends AppController
         $entrada = $this->Entradas->get($entrada_id);
         $this->viewBuilder()->setLayout('layout_vazio');
         $this->set(compact('entrada'));
+    }
+
+    /**
+     * Busca por entrada.
+     *
+     */
+    public function busca()
+    {
+        $this->request->allowMethod(['post']);
+        $pesquisa = $this->request->getParsedBody();
+        $resultado = $this->Entradas
+            ->find()
+            ->where(['lower(titulo) LIKE' => strtolower('%' . $pesquisa['stringBusca'] . '%')])
+            ->limit(10);
+        $this->viewBuilder()->setLayout('layout_vazio');
+        $this->set(compact('resultado'));
     }
 }

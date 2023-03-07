@@ -4,6 +4,7 @@
 	<?= $this->Html->charset() ?>
 	<?= $this->Html->meta('icon', 'favicon.ico') ?>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<?=$this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken'));?>
 	<link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
 	
     <title>KeyAnyWhere</title>
@@ -42,7 +43,18 @@
 					</a>
 				</div>
 				<div class="col-sm-auto ms-auto">
-					<input type="search" class="form-control" name="" placeholder="Buscar entrada">
+					<input type="search" class="form-control input-busca" id="buscaEntrada"	placeholder="Mínimo 3 caracteres"
+						onblur="removeResultadoBuscaGenerico('buscaEntrada', 'ul-busca')"
+						oninput="buscaGenerica(
+							'buscaEntrada',
+							'ul-busca',
+							'<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'busca'], ['fullBase' => true])?>',
+							{qtdCaracMin:'3'}
+						)"
+					>
+					<div class="div-resultado-busca">
+						<ul class="ul-busca" id="ul-busca"></ul>
+					</div>
 				</div>
 				<div class="col-sm-auto">
 					<div class="btn-group dropup">

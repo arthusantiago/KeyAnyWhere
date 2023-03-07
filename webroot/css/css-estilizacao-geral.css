@@ -88,3 +88,40 @@
 	position: absolute;
 	z-index: 1;
 }
+
+/* Busca */
+.input-busca {
+	text-align: center;
+}
+
+.ul-busca {
+	box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.7);
+	/* Remove default list styling */
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	position: absolute;
+	z-index: 1;
+}
+
+.ul-busca li a {
+	border: 1px solid #343837;
+	/* Add a border to all links */
+	margin-top: -1px;
+	/* Prevent double borders */
+	background-color: #ffffff;
+	/* Grey background color */
+	padding: 12px;
+	/* Add some padding */
+	text-decoration: none;
+	/* Increase the font-size */
+	color: black;
+	/* Add a black text color */
+	display: block;
+	/* Make it into a block element to fill the whole list */
+}
+
+.ul-busca li a:hover:not(.header) {
+	background-color: #eee;
+	/* Add a hover effect to all links, except for headers */
+}
