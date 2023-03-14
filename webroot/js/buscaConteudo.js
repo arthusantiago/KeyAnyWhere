@@ -113,3 +113,33 @@ function removeResultadoBuscaGenerico(idInputOrigemBusca, idUlBusca) {
 
 	document.getElementById(idInputOrigemBusca).value = '';
 }
+
+/**
+ * Busca o QrCode do 2FA. 
+ *
+ * @param string destinoHtmlRetorno ID do elemento HTML onde será inserido o retorno da request.
+ * @param string urlParaBusca URL alvo da busca.
+ */
+function obterQrCode2FA(destinoHtmlRetorno, urlParaBusca) {
+	let csrfToken = document.getElementsByName('csrfToken').item([]).getAttribute('content');
+
+	fetch(
+		urlParaBusca,
+		{
+			'method': 'GET',
+			'headers': {
+				'Content-Type': 'text/json; charset=utf-8',
+				'Accept': 'text/html, application/json',
+				'X-CSRF-Token': csrfToken
+			}
+		}
+	)
+	.then(response => response.text())
+	.then(function (dadoRetornado) {
+		document.getElementById(destinoHtmlRetorno).innerHTML = dadoRetornado;
+	})
+	.catch(function (error) {
+		alert('Ocorreu um erro na requisição');
+		console.log("Erro ao executar a requisição: " + error.message);
+	});
+}

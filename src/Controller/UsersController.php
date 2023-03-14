@@ -2,6 +2,12 @@
 declare(strict_types=1);
 
 namespace App\Controller;
+use PragmaRX\Google2FA\Google2FA;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
+use App\Model\Entity\User;
 
 /**
  * Users Controller
@@ -89,6 +95,7 @@ class UsersController extends AppController
         $user = $this->Users->newEmptyEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
+            $user->google2fa_secret = (new Google2FA())->generateSecretKey(User::LENGTH_SECRET_2FA);
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('The user has been saved.'));
 
@@ -171,5 +178,46 @@ class UsersController extends AppController
             return $this->redirect(['action' => 'minhaConta']);
         }
         $this->set(compact('user'));
+    }
+
+    public function geraQrCode2fa()
+    {
+        $userAutenticado = $this->Authentication->getResult()->getData();
+        $params = $this->request->getParam('?');
+        if (!empty($params['novoQrCode']) && $params['novoQrCode'] == '1') {
+            $userAutenticado = $this->geraNovoSecret2FA($userAutenticado->id);
+        }
+
+        $g2faUrl = (new Google2FA())->getQRCodeUrl(
+            'KeyAnyWhere',
+            $userAutenticado->email,
+            $userAutenticado->google2fa_secret
+        );
+
+        $render = new ImageRenderer(
+            new RendererStyle(400),
+            new SvgImageBackEnd()
+        );
+
+        $strSvgQrCode = (new Writer($render))->writeString($g2faUrl);
+
+        $this->viewBuilder()->setLayout('layout_vazio');
+        $this->viewBuilder()->setTemplate('qr_code_2fa');
+        $this->set(compact('strSvgQrCode'));
+    }
+
+    /**
+     * geraNovoSecret2FA.
+     *
+     * @access	private
+     * @param	int	$idUser	
+     * @return	App\Model\Entity\User
+     */
+    private function geraNovoSecret2FA(int $idUser): User
+    {
+        $user = $this->Users->get($idUser);
+        $user->google2fa_secret = (new Google2FA())->generateSecretKey(User::LENGTH_SECRET_2FA);
+        $this->Users->save($user);
+        return $user;
     }
 }
