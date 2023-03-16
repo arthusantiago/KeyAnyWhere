@@ -10,7 +10,8 @@
 <?php $this->Form->secure([
   'username',
   'email',
-  'password'
+  'password',
+  'google2fa_ativo'
 ]); ?>
 <div class="row">
   <div class="col-sm-4">
@@ -31,12 +32,34 @@
 </div>
 <br>
 <div class="row">
-  <div class="col-sm-4">
-    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#TFAModal" 
-      onclick="obterQrCode2FA('imagemQrCode', '<?=$this->Url->build(['controller' => 'Users', 'action' => 'geraQrCode2fa'], ['fullBase' => true])?>')">
-      Ativar Autenticação de Dois Fatores (2FA)
-    </button>
+  <div class="col-sm-auto">
+    <span class="titulo">Segurança</span>
   </div>
+</div>
+<br>
+<div class="row">
+  <div class="col-sm-4">
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="google2fa_ativo" id="ativar2FA" value="1" <?=$user->google2fa_ativo?'checked':'';?>>
+      <label class="form-check-label" for="ativar2FA">
+        Ativar 2FA
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="radio" name="google2fa_ativo" id="desativar2FA" value="0" <?=$user->google2fa_ativo==0?'checked':'';?>>
+      <label class="form-check-label" for="desativar2FA">
+        Desativar 2FA
+      </label>
+    </div>
+  </div>
+  <?php if($user->google2fa_ativo): ?>
+    <div class="col-sm-4">
+      <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#TFAModal" 
+        onclick="obterQrCode2FA('imagemQrCode', '<?=$this->Url->build(['controller' => 'Users', 'action' => 'geraQrCode2fa'], ['fullBase' => true])?>')">
+        Configurar a Autenticação de Dois Fatores (2FA)
+      </button>
+    </div>
+  <?php endif; ?>
 </div>
 <br>
 <div class="row">

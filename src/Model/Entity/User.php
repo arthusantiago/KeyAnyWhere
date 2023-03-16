@@ -14,6 +14,8 @@ use Cake\ORM\Entity;
  * @property string $email
  * @property string $password
  * @property string $google2fa_secret
+ * @property bool $google2fa_ativo
+ * @property int $LENGTH_SECRET_2FA
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
  *
@@ -22,6 +24,7 @@ use Cake\ORM\Entity;
 class User extends Entity
 {
     const LENGTH_SECRET_2FA = 32;
+
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
      *
@@ -38,6 +41,7 @@ class User extends Entity
         'created' => true,
         'modified' => true,
         'entradas' => true,
+        'google2fa_ativo' => true
     ];
 
     /**
@@ -47,7 +51,8 @@ class User extends Entity
      */
     protected $_hidden = [
         'password',
-        'google2fa_secret'
+        'google2fa_secret',
+        'google2fa_ativo'
     ];
 
     /**
@@ -57,10 +62,12 @@ class User extends Entity
      * @param string $password Senha informada no frontend
      * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
      */
-    protected function _setPassword(string $password): string
+    protected function _setPassword(string $password = ''): string
     {
         if (strlen($password) > 0) {
-            return (new DefaultPasswordHasher())->hash($password);
+            $password = (new DefaultPasswordHasher())->hash($password);
         }
+
+        return $password;
     }
 }
