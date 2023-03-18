@@ -24,18 +24,23 @@
                     </div>
                     <div class="mb-3 elementoInterno">
                         <label for="email" class="form-label text-light">Usuário</label>
-                        <input type="text" class="form-control " id="email" name="email" placeholder="seu@e-mail.com">
+                        <input type="text" class="form-control " id="email" name="email" placeholder="seu@e-mail.com" required>
                         <?php $this->Form->field('email')?>
                     </div>
                     <div class="mb-3 elementoInterno">
                         <label for="password" class="form-label text-light">Senha</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="******">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="******" required>
                         <?php $this->Form->field('password')?>
+                    </div>
+                    <div class="mb-3 elementoInterno">
+                        <label for="2fa" class="form-label text-light">2FA (Autenticação de dois fatores)</label>
+                        <input type="text" class="form-control" id="2fa" name="2fa" required>
+                        <?php $this->Form->field('2fa')?>
                     </div>
                     <div class="mb-3 elementoInterno">
                         <a href="#">Esqueci minha senha</a>
                     </div>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end elementoInterno">
+                    <div class="mb-3 text-end elementoInterno">
                       <button class="btn btn-primary" type="submit">Entrar</button>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ namespace App\Model\Entity;
 
 use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Cake\ORM\Entity;
+use PragmaRX\Google2FA\Google2FA;
 
 /**
  * User Entity
@@ -66,8 +67,16 @@ class User extends Entity
     {
         if (strlen($password) > 0) {
             $password = (new DefaultPasswordHasher())->hash($password);
+        } else {
+            $password = $this->password;
         }
 
         return $password;
+    }
+
+    public function valida2fa(string $secret): bool
+    {
+        $google2fa = new Google2FA();
+       return $google2fa->verifyKey($this->google2fa_secret, $secret);
     }
 }

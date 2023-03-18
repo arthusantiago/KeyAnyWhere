@@ -2,17 +2,15 @@
 	display: block;
 	margin: 50px auto;
 	width: 341px;
-	height: 450px;
+	height: 480px;
 	padding: 10px 10px 0 10px;
-	background-color:#343837; 
+	background-color:#343837;
 	box-shadow: 2px 1px 2px rgba(0,0,0,0.5);
 }
 
 #div-login-interna{
-	width: 320px;
-	height: 420px;
 	border-color: white;
-	border-style: solid;	
+	border-style: solid;
 }
 
 #login-logo-kaw{

@@ -20,30 +20,27 @@ class UsersController extends AppController
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
-        // Configure the login action to not require authentication, preventing
-        // the infinite redirect loop issue
         $this->Authentication->addUnauthenticatedActions(['login']);
     }
 
     public function login()
     {
-        $this->viewBuilder()->setLayout('layout_vazio');
-        
         $this->request->allowMethod(['get', 'post']);
-        $result = $this->Authentication->getResult();
-        // regardless of POST or GET, redirect if user is logged in
-        if ($result->isValid())
-        {
-            $redirect = $this->request->getQuery('redirect', [
-                'controller' => 'Pages',
-                'action' => 'home',
-            ]);
+        $resultLogin = $this->Authentication->getResult();
+        $userLogged = $resultLogin->getData();
 
-            return $this->redirect($redirect);
+        if (
+            $resultLogin->isValid()
+            && $userLogged->valida2fa($this->request->getData('2fa'))
+        ) {
+            return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
         }
-        // display error if user submitted and authentication failed
-        if ($this->request->is('post') && !$result->isValid()) {
-            $this->Flash->error(__('Usuário ou senha inválido'));
+
+        $this->Authentication->logout();
+
+        $this->viewBuilder()->setLayout('layout_vazio');
+        if ($this->request->getData()) {
+            $this->Flash->error(__('Usuário, senha ou 2FA inválido'));
         }
     }
 
