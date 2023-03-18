@@ -5,8 +5,6 @@ namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
 use Throwable;
-use Aws\S3\S3Client;
-use Aws\Exception\AwsException;
 
 /**
  * Entrada Entity
@@ -120,7 +118,7 @@ class Entrada extends Entity
         return $this->descriptografar($this->username);
     }
 
-    protected function criptografar(string $textoPuro): string
+    public function criptografar(string $textoPuro): string
     {
         $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
         $encrypted = sodium_crypto_secretbox(
@@ -134,7 +132,7 @@ class Entrada extends Entity
         return sodium_bin2hex($nonce . $encrypted);
     }
 
-    protected function descriptografar(string $dado): string
+    public function descriptografar(string $dado): string
     {
         try {
             $decoded = sodium_hex2bin($dado);

@@ -158,14 +158,14 @@ class UsersController extends AppController
         $user = $this->Users->get($userAutenticado->id);
 
         if ($this->request->is(['patch', 'post', 'put']))
-        {    
+        {
             $user = $this->Users->patchEntity($user, $this->request->getData());
 
             if($this->request->getData('password'))
             {
                 $user->password = $this->request->getData('password');
             }
-           
+
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Salvo com sucesso'));
             }else{
@@ -182,13 +182,13 @@ class UsersController extends AppController
         $userAutenticado = $this->Authentication->getResult()->getData();
         $params = $this->request->getParam('?');
         if (!empty($params['novoQrCode']) && $params['novoQrCode'] == '1') {
-            $userAutenticado = $this->geraNovoSecret2FA($userAutenticado->id);
+            $userAutenticado = $this->geraNovoSecret2FA();
         }
 
         $g2faUrl = (new Google2FA())->getQRCodeUrl(
             'KeyAnyWhere',
             $userAutenticado->email,
-            $userAutenticado->google2fa_secret
+            $userAutenticado->descripSecret2FA()
         );
 
         $render = new ImageRenderer(
@@ -207,13 +207,13 @@ class UsersController extends AppController
      * geraNovoSecret2FA.
      *
      * @access	private
-     * @param	int	$idUser	
      * @return	App\Model\Entity\User
      */
-    private function geraNovoSecret2FA(int $idUser): User
+    private function geraNovoSecret2FA(): User
     {
-        $user = $this->Users->get($idUser);
-        $user->google2fa_secret = (new Google2FA())->generateSecretKey(User::LENGTH_SECRET_2FA);
+        $userAutenticado = $this->Authentication->getResult()->getData();
+        $user = $this->Users->get($userAutenticado->id);
+        $user->google2fa_secret = $user->geraSecret2FA();
         $this->Users->save($user);
         return $user;
     }

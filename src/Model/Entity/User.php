@@ -1,10 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Entity;
 
 use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Cake\ORM\Entity;
+use App\Model\Entity\Entrada;
 use PragmaRX\Google2FA\Google2FA;
 
 /**
@@ -74,9 +76,23 @@ class User extends Entity
         return $password;
     }
 
+    protected function _setGoogle2faSecret(string $secret): string
+    {
+        return (new Entrada)->criptografar($secret);
+    }
+
+    public function descripSecret2FA(): string
+    {
+        return (new Entrada)->descriptografar($this->google2fa_secret);
+    }
+
+    public function geraSecret2FA()
+    {
+        return (new Google2FA)->generateSecretKey(User::LENGTH_SECRET_2FA);
+    }
+
     public function valida2fa(string $secret): bool
     {
-        $google2fa = new Google2FA();
-       return $google2fa->verifyKey($this->google2fa_secret, $secret);
+        return (new Google2FA())->verifyKey($this->descripSecret2FA(), $secret);
     }
 }
