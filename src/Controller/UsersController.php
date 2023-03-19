@@ -31,7 +31,7 @@ class UsersController extends AppController
 
         if (
             $resultLogin->isValid()
-            //&& $userLogged->valida2fa($this->request->getData('2fa'))
+            && $userLogged->valida2fa($this->request->getData('2fa'))
         ) {
             return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
         }
