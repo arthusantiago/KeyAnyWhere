@@ -16,8 +16,8 @@ use PragmaRX\Google2FA\Google2FA;
  * @property string $username
  * @property string $email
  * @property string $password
- * @property string $google2fa_secret
- * @property bool $google2fa_ativo
+ * @property string $tfa_secret
+ * @property bool $tfa_ativo
  * @property int $LENGTH_SECRET_2FA
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
@@ -44,7 +44,7 @@ class User extends Entity
         'created' => true,
         'modified' => true,
         'entradas' => true,
-        'google2fa_ativo' => true
+        'tfa_ativo' => true
     ];
 
     /**
@@ -54,8 +54,8 @@ class User extends Entity
      */
     protected $_hidden = [
         'password',
-        'google2fa_secret',
-        'google2fa_ativo'
+        'tfa_secret',
+        'tfa_ativo'
     ];
 
     /**
@@ -76,14 +76,14 @@ class User extends Entity
         return $password;
     }
 
-    protected function _setGoogle2faSecret(string $secret): string
+    protected function _setTfaSecret(string $secret): string
     {
         return (new Entrada)->criptografar($secret);
     }
 
     public function descripSecret2FA(): string
     {
-        return (new Entrada)->descriptografar($this->google2fa_secret);
+        return (new Entrada)->descriptografar($this->tfa_secret);
     }
 
     public function geraSecret2FA()

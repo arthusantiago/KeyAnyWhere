@@ -95,23 +95,13 @@ class UsersTable extends Table
         $rules->add($rules->isUnique(['username']), ['errorField' => 'username']);
         $rules->add($rules->isUnique(['email']), ['errorField' => 'email']);
         $rules->add(
-            function ($entity, $options) {
-                return !empty($entity->google2fa_secret);
-            },
-            'ruleSecret2FApreenchida',
-            [
-                'errorField' => 'google2fa_secret',
-                'message' => 'A secret do 2FA não foi adicionada ao objeto'
-            ]
-        );
-        $rules->add(
             $rules->isUnique(
-                ['google2fa_secret'],
+                ['tfa_secret'],
                 'A secret do 2FA coincidiu com outra salva no DB.'
             ),
             'ruleSecret2FAnaoUnica',
             [
-                'errorField' => 'google2fa_secret',
+                'errorField' => 'tfa_secret',
                 'message' => 'A secret do 2FA coincidiu com outra. Tente novamente.'
             ]
         );

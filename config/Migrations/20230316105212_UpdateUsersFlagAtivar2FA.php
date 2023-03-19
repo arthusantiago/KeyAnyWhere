@@ -15,7 +15,7 @@ class UpdateUsersFlagAtivar2FA extends AbstractMigration
     public function change(): void
     {
         $this->table('users')
-        ->addColumn('google2fa_ativo', 'boolean', ['null' => true, 'default' => false])
+        ->addColumn('tfa_ativo', 'boolean', ['null' => true, 'default' => false])
         ->update();
     }
 }

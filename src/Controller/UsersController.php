@@ -31,7 +31,7 @@ class UsersController extends AppController
 
         if (
             $resultLogin->isValid()
-            && $userLogged->valida2fa($this->request->getData('2fa'))
+            //&& $userLogged->valida2fa($this->request->getData('2fa'))
         ) {
             return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
         }
@@ -92,7 +92,7 @@ class UsersController extends AppController
         $user = $this->Users->newEmptyEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
-            $user->google2fa_secret = (new Google2FA())->generateSecretKey(User::LENGTH_SECRET_2FA);
+            $user->tfa_secret = $user->geraSecret2FA();
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('The user has been saved.'));
 
@@ -213,7 +213,7 @@ class UsersController extends AppController
     {
         $userAutenticado = $this->Authentication->getResult()->getData();
         $user = $this->Users->get($userAutenticado->id);
-        $user->google2fa_secret = $user->geraSecret2FA();
+        $user->tfa_secret = $user->geraSecret2FA();
         $this->Users->save($user);
         return $user;
     }

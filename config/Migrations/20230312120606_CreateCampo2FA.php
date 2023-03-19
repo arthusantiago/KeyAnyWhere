@@ -15,7 +15,7 @@ class CreateCampo2FA extends AbstractMigration
     public function change(): void
     {
         $this->table('users')
-        ->addColumn('google2fa_secret', 'string', ['limit' => 32, 'null' => true, 'default' => null])
+        ->addColumn('tfa_secret', 'string', ['limit' => 144, 'null' => true, 'default' => null])
         ->update();
     }
 }
