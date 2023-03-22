@@ -2,7 +2,12 @@
 
 **Atenção:** *Esse projeto ainda está em fase de desenvolvimento. Não sendo recomendado utilizar em produção até ser lançada uma versão estável.*
 
-KeyAnyWhere ou KAW, é um chaveiro que procura focar nas funcionalidades essenciais de um gerenciador de senhas. O KAW se divide em Web (este projeto), Mobile e Desktop. Cada um sendo desenvolvido em um projeto a parte.
+KeyAnyWhere ou KAW, é um chaveiro que procura focar nas funcionalidades essenciais de um gerenciador de senhas. 
+O KAW se divide em Web (este projeto), Mobile e Desktop. Cada um sendo desenvolvido em um projeto a parte.
+
+# Princípios
+* A ferramenta tem por princípio a segurança em detrimento da escolha do usuário. Ou seja, muitas coisas são obrigatórias para o seu bem ;).
+* Implementamos somente as funcionalidades **essenciais** de um gerenciador de senha. Menos é mais!
 
 # Principais tecnologia utilizadas
 
@@ -45,9 +50,10 @@ Essas são as configurações necessárias para executar o projeto no ambiente d
 
 Execute as Seeds na ordem:
 
-1. `php bin/cake.php migrations seed --seed=UsersSeed`
+1. Tenha um usuário cadastrado
 2. `php bin/cake.php migrations seed --seed=CategoriasSeed`
-3. `php bin/cake.php migrations seed --seed=EntradasSeed`
+3. `php bin/cake.php migrations seed --seed=EntradasSeed` 
+   Todas as entradas seram vinculadas a usuário ID 1
 
 ## Ambiente de produção
 
@@ -77,9 +83,6 @@ Este é um **exemplo** de passos que você seguir para colocar a aplicação em 
 * Gerando a chave de criptografia pela CLI: `php -r "echo PHP_EOL . sodium_bin2hex(sodium_crypto_secretbox_keygen()) . PHP_EOL;"`
 * Gerar o SALT pela CLI: `php -r "echo PHP_EOL . bin2hex(random_bytes(32)) . PHP_EOL;"`
 
-## Usuário do primeiro acesso
+## Primeiro acesso
 
-Logo após o primeiro acesso, altere o email e senha.
-
-* Usuário: `teste@teste.com`
-* Senha: `qwe123@!`
+No primeiro acesso da ferramenta você será redirecionado para o passo a passo da configuração inicial.
