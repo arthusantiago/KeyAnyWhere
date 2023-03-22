@@ -20,19 +20,51 @@ class UsersController extends AppController
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
-        $this->Authentication->addUnauthenticatedActions(['login']);
+        $this->Authentication->addUnauthenticatedActions(['login', 'configInicial']);
+    }
+
+    /**
+     * Método que verifica se é preciso executar a configuração inicial do sistema.
+     *
+     * @access	private
+     * @return	mixed
+     */
+    private function executarConfigIncial(): bool
+    {
+        $user = $this->Users
+            ->find()
+            ->orderAsc('id')
+            ->limit(1)
+            ->first();
+
+        $result = false;
+
+        if (empty($user)) {
+            $result = true;
+        }
+
+        if (empty($user) == false && empty($user->tfa_secret)) {
+            $result = true;
+        }
+
+        return $result;
     }
 
     public function login()
     {
+        if ($this->executarConfigIncial()) {
+            $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
+        }
+
         $this->request->allowMethod(['get', 'post']);
         $resultLogin = $this->Authentication->getResult();
         $userLogged = $resultLogin->getData();
 
         if (
             $resultLogin->isValid()
-            && $userLogged->valida2fa($this->request->getData('2fa'))
+            //&& $userLogged->valida2fa($this->request->getData('2fa'))
         ) {
+
             return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
         }
 
@@ -52,6 +84,72 @@ class UsersController extends AppController
             $this->Authentication->logout();
             return $this->redirect(['controller' => 'Users', 'action' => 'login']);
         }
+    }
+
+    /**
+     * Metodo que inicia o processo de configuração do KAW, no primeiro start da ferramenta.
+     *
+     * @access	public
+     * @return	void
+     */
+    public function configInicial()
+    {
+        if ($this->executarConfigIncial() == false) {
+            $this->redirect(['controller' => 'Users', 'action' => 'login']);
+        }
+
+        $user = $this->Users
+            ->find()
+            ->orderAsc('id')
+            ->limit(1)
+            ->first();
+
+        // Manipulando o usuário
+        if ($this->request->is('post')) {
+            if (
+                $this->request->getData('username')
+                && $this->request->getData('email')
+                && $this->request->getData('password')
+            ) { // criando um novo usuário
+                $user = $this->Users->newEmptyEntity();
+            } else { //editando o usuário
+                $user = $this->Users->get($this->request->getData('id'));
+            }
+
+            $user = $this->Users->patchEntity($user, $this->request->getData());
+
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('Salvo com sucesso!'));
+            }else{
+                $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $user->getErrors()]]);
+            }
+        }
+
+        //criando o QrCode
+        if (empty($user) == false && $user->isNew() == false) {
+
+            $user->tfa_secret = $user->geraSecret2FA();
+            if ($this->Users->save($user) == false) {
+                $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $user->getErrors()]]);
+            }
+
+            $g2faUrl = (new Google2FA())->getQRCodeUrl(
+                'KeyAnyWhere',
+                $user->email,
+                $user->descripSecret2FA()
+            );
+
+            $render = new ImageRenderer(
+                new RendererStyle(400),
+                new SvgImageBackEnd()
+            );
+
+            $strSvgQrCode = (new Writer($render))->writeString($g2faUrl);
+            $this->set(compact('strSvgQrCode'));
+        }
+
+        $this->viewBuilder()->setLayout('layout_vazio');
+        $this->set(compact('user'));
     }
 
     /**
