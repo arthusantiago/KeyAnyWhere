@@ -38,7 +38,7 @@ class EntradasSeed extends AbstractSeed
                     'link' =>  'https://' . $faker->domainName,
                     'anotacoes' => 'Ut ab voluptas sed a nam. Sint autem inventore aut officia aut aut blanditiis. Ducimus eos odit amet et est ut eum.',
                     'categoria_id' => $categoria['id'],
-                    'user_id' => rand(1, 3),
+                    'user_id' => 1,
                     'created' => date('Y-m-d H:i:s'),
                     'modified' => date('Y-m-d H:i:s')
                 ];
