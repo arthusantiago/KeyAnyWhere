@@ -18,6 +18,7 @@ class Inicial extends AbstractMigration
         ->addColumn('username', 'string', ['limit' => 50, 'null' => false])
         ->addColumn('email', 'string', ['limit' => 100, 'null' => false])
         ->addColumn('password', 'string', ['limit' => 255, 'null' => false])
+        ->addColumn('tfa_secret', 'string', ['limit' => 144, 'null' => true, 'default' => null])
         ->addColumn('created', 'datetime')
         ->addColumn('modified', 'datetime')
         ->create();
