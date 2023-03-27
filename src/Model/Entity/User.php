@@ -17,6 +17,7 @@ use PragmaRX\Google2FA\Google2FA;
  * @property string $email
  * @property string $password
  * @property string $tfa_secret
+ * @property string $tfa_ativo
  * @property int $LENGTH_SECRET_2FA
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
@@ -44,6 +45,7 @@ class User extends Entity
         'modified' => true,
         'entradas' => true,
         'tfa_secret' => false,
+        'tfa_ativo' => false
     ];
 
     /**
@@ -54,6 +56,7 @@ class User extends Entity
     protected $_hidden = [
         'password',
         'tfa_secret',
+        'tfa_ativo',
     ];
 
     /**
