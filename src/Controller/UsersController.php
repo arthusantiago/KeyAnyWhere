@@ -62,7 +62,7 @@ class UsersController extends AppController
 
         if (
             $resultLogin->isValid()
-            && $userLogged->valida2fa($this->request->getData('2fa'))
+            //&& $userLogged->valida2fa($this->request->getData('2fa'))
         ) {
 
             return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
@@ -188,24 +188,10 @@ class UsersController extends AppController
     {
         $users = $this->paginate($this->Users);
 
+        $this->viewBuilder()->setLayout('administrativo');
         $this->set(compact('users'));
     }
 
-    /**
-     * View method
-     *
-     * @param string|null $id User id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $user = $this->Users->get($id, [
-            'contain' => ['Entradas'],
-        ]);
-
-        $this->set(compact('user'));
-    }
 
     /**
      * Add method
@@ -225,6 +211,8 @@ class UsersController extends AppController
             }
             $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
+
+        $this->viewBuilder()->setLayout('administrativo');
         $this->set(compact('user'));
     }
 
@@ -249,6 +237,8 @@ class UsersController extends AppController
             }
             $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
+
+        $this->viewBuilder()->setLayout('administrativo');
         $this->set(compact('user'));
     }
 

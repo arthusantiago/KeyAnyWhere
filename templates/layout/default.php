@@ -1,14 +1,13 @@
 <!doctype html>
 <html lang="pt-br">
   <head>
+  	<title>KeyAnyWhere</title>
 	<?= $this->Html->charset() ?>
 	<?= $this->Html->meta('icon', 'favicon.ico') ?>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<?=$this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken'));?>
 	<link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
-	
-    <title>KeyAnyWhere</title>
-    <?php 
+    <?php
       echo $this->Html->css([
       	'bootstrap/bootstrap.css',
       	'bootstrap/bootstrap-icons.css',
@@ -32,14 +31,14 @@
 		</div>
 		<div id="menu-superior">
 			<div class="row" id="opcoes-menu-superior">
-				<div class="col-sm-auto ">
-					<a class="btn btn-outline-light botoes" role="button" href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'add']);?>">
-						<i class="bi bi-key icone-opcao"></i>Nova Entrada
-					</a>
-				</div>
 				<div class="col-sm-auto">
 					<a class="btn btn-outline-light botoes" role="button" href="<?=$this->Url->build(['controller' => 'Categorias', 'action' => 'index']);?>">
 						<i class="bi bi-list-ol icone-opcao"></i>Categorias
+					</a>
+				</div>
+				<div class="col-sm-auto ">
+					<a class="btn btn-outline-light botoes" role="button" href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'add']);?>">
+						<i class="bi bi-key icone-opcao"></i>Nova Entrada
 					</a>
 				</div>
 				<div class="col-sm-auto ms-auto">
@@ -57,28 +56,7 @@
 					</div>
 				</div>
 				<div class="col-sm-auto">
-					<div class="btn-group dropup">
-						<button type="button" class="btn btn-outline-light" data-bs-toggle="dropdown">
-							<i class="bi bi-three-dots"></i>
-						</button>
-						<ul class="dropdown-menu">
-							<li>
-								<a class="dropdown-item" href="#">
-									<i class="bi bi-gear icone-opcao"></i>Configurações
-								</a>
-							</li>
-							<li>
-								<a class="dropdown-item" href="<?=$this->Url->build(['controller' => 'Users', 'action' => 'minhaConta'])?>">
-									<i class="bi bi-person icone-opcao"></i>Minha Conta
-								</a>
-							</li>
-							<li>
-								<a class="dropdown-item" href="<?=$this->Url->build(['controller' => 'Users', 'action' => 'logout'])?>">
-									<i class="bi bi-box-arrow-right icone-opcao"></i>Sair
-								</a>
-							</li>
-						</ul>
-					</div>
+					<?=$this->element('Diversos/btnConfiguracoes')?>
 				</div>
 			</div>
 		</div>
