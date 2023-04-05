@@ -61,6 +61,6 @@ if (empty($message))
             let alert = bootstrap.Alert.getOrCreateInstance(document.getElementById('alert-do-sistema'));
             alert.close();
         }, 
-        5000
+        6000
     );
 </script>

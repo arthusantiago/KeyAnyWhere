@@ -65,20 +65,21 @@ class UsersTable extends Table
 
         $validator
             ->scalar('username')
-            ->maxLength('username', 50)
-            ->requirePresence('username', 'create')
-            ->notEmptyString('username');
+            ->maxLength('username', 50, 'O nome do usuário pode ter no máximo 50 caracteres')
+            ->requirePresence('username')
+            ->notEmptyString('username', 'O nome do usuário precisa ser preenchido');
 
         $validator
-            ->email('email')
-            ->requirePresence('email', 'create')
-            ->notEmptyString('email');
+            ->email('email', false, 'O e-mail não está em um formato válido.')
+            ->requirePresence('email')
+            ->notEmptyString('email', 'O e-mail precisa ser preenchido');
 
         $validator
             ->scalar('password')
-            ->maxLength('password', 255)
-            ->requirePresence('password', 'create')
-            ->notEmptyString('password', 'O campo da senha não pode estar vazio', 'create');
+            ->minLength('password', 12, 'A senha precisa ter no mínimo 12 caracteres')
+            ->maxLength('password', 255, 'A senha pode ter no máximo 255 caracteres')
+            ->requirePresence('password')
+            ->notEmptyString('password', 'A senha precisa ser preenchida', 'create');
 
         return $validator;
     }
@@ -92,8 +93,20 @@ class UsersTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->isUnique(['username']), ['errorField' => 'username']);
-        $rules->add($rules->isUnique(['email']), ['errorField' => 'email']);
+        $rules->add(
+            $rules->isUnique(
+                ['username'],
+                'Já existe um usuário cadastrado com o mesmo nome de usuário'
+            ),
+            ['errorField' => 'username']
+        );
+        $rules->add(
+            $rules->isUnique(
+                ['email'],
+                'Já existe um usuário cadastrado com o mesmo e-mail'
+            ),
+            ['errorField' => 'email']
+        );
         $rules->add(
             $rules->isUnique(
                 ['tfa_secret'],

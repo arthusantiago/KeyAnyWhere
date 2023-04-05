@@ -62,7 +62,7 @@ class UsersController extends AppController
 
         if (
             $resultLogin->isValid()
-            //&& $userLogged->valida2fa($this->request->getData('2fa'))
+            && $userLogged->valida2fa($this->request->getData('2fa'))
         ) {
 
             return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
@@ -205,11 +205,14 @@ class UsersController extends AppController
             $user = $this->Users->patchEntity($user, $this->request->getData());
             $user->tfa_secret = $user->geraSecret2FA();
             if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
+                $this->Flash->success(__('Salvo com sucesso'));
 
-                return $this->redirect(['action' => 'index']);
+                return $this->redirect(['action' => 'edit', $user->id]);
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $this->Flash->error(
+                __('Erro ao salvar o usuário.'),
+                ['params' => ['mensagens' => $user->getErrors()]]
+            );
         }
 
         $this->viewBuilder()->setLayout('administrativo');

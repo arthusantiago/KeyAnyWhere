@@ -1,29 +1,35 @@
-<?php
-/**
- * @var \App\View\AppView $this
- * @var \App\Model\Entity\User $user
- */
-?>
 <div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('List Users'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-        </div>
-    </aside>
-    <div class="column-responsive column-80">
-        <div class="users form content">
-            <?= $this->Form->create($user) ?>
-            <fieldset>
-                <legend><?= __('Add User') ?></legend>
-                <?php
-                    echo $this->Form->control('username');
-                    echo $this->Form->control('email');
-                    echo $this->Form->control('password');
-                ?>
-            </fieldset>
-            <?= $this->Form->button(__('Submit')) ?>
-            <?= $this->Form->end() ?>
-        </div>
+    <div class="col-sm-auto">
+        <span class="titulo">Novo usuário</span>
     </div>
 </div>
+<br>
+<?= $this->Form->create($user) ?>
+    <?php $this->Form->secure([
+        'username',
+        'email',
+        'password',
+    ]); ?>
+    <div class="row">
+        <div class="col-sm-4">
+            <label for="username">Nome do Usuário</label>
+            <input type="text" class="form-control inputs" id="username" name="username" autocomplete="nickname" maxlength="50" required>
+        </div>
+        <div class="col-sm-4">
+            <label for="email">E-mail</label>
+            <input type="email" class="form-control inputs" id="email" name="email" autocomplete="email" required>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-sm-4">
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" class="form-control inputs" autocomplete="new-password" minlength="12" required>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm text-end">
+            <?= $this->element('Diversos/btnSalvar') ?>
+        </div>
+    </div>
+<?=$this->Form->end(['data-type' => 'hidden']); ?>
