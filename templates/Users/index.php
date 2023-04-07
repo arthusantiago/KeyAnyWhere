@@ -1,9 +1,18 @@
-<?php
-/**
- * @var \App\View\AppView $this
- * @var \App\Model\Entity\Usuario[]|\Cake\Collection\CollectionInterface $usuario
- */
-?>
+<div class="row">
+  <div class="col-sm-auto">
+    <?= $this->element(
+        'breadcrumb',
+        [
+            'caminho' => [
+                ['Pages', 'index', 'Home'],
+                'Configurações',
+                'Usuários',
+                'Listagem'
+            ]
+        ]
+    );?>
+  </div>
+</div>
 
 <div class="row">
     <div class="col-sm">

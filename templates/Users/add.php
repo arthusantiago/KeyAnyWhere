@@ -1,4 +1,19 @@
 <div class="row">
+  <div class="col-sm-auto">
+    <?= $this->element(
+        'breadcrumb',
+        [
+            'caminho' => [
+                ['Pages', 'index', 'Home'],
+                'Configurações',
+                ['Users', 'index', 'Usuários'],
+                'Novo'
+            ]
+        ]
+    );?>
+  </div>
+</div>
+<div class="row">
     <div class="col-sm-auto">
         <span class="titulo">Novo usuário</span>
     </div>
