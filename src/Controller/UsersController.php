@@ -186,7 +186,15 @@ class UsersController extends AppController
      */
     public function index()
     {
-        $users = $this->paginate($this->Users);
+        $users = $this->paginate(
+            $this->Users,
+            [
+                'limit' => 20,
+                'order' => [
+                    'Users.username' => 'asc'
+                ]
+            ]
+        );
 
         $this->viewBuilder()->setLayout('administrativo');
         $this->set(compact('users'));
@@ -228,17 +236,14 @@ class UsersController extends AppController
      */
     public function edit($id = null)
     {
-        $user = $this->Users->get($id, [
-            'contain' => [],
-        ]);
+        $user = $this->Users->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
+                $this->Flash->success(__('Salvo com sucesso'));
+            } else {
+                $this->Flash->error(__('Erro ao salvar.'));
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
 
         $this->viewBuilder()->setLayout('administrativo');
