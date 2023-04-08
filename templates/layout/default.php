@@ -9,7 +9,7 @@
 	<link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
     <?php
       echo $this->Html->css([
-      	'bootstrap/bootstrap.css',
+      	'bootstrap/bootstrap.min.css',
       	'bootstrap/bootstrap-icons.css',
       	'css-estilizacao-geral',
       ]);
