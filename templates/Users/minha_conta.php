@@ -10,8 +10,7 @@
 <?php $this->Form->secure([
   'username',
   'email',
-  'password',
-  'tfa_ativo'
+  'password'
 ]); ?>
 <div class="row">
   <div class="col-sm-4">
@@ -19,7 +18,7 @@
     <input type="text" class="form-control inputs" id="username" name="username" value="<?= $user->username ?>" autocomplete="nickname">
   </div>
   <div class="col-sm-4">
-    <label for="email">E-mail</label>
+    <label for="email">E-mail (login e rec. de senha)</label>
     <input type="email" class="form-control inputs" id="email" name="email" value="<?= $user->email ?>" autocomplete="email">
   </div>
 </div>
@@ -38,28 +37,12 @@
 </div>
 <br>
 <div class="row">
-  <div class="col-sm-4">
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name="tfa_ativo" id="ativar2FA" value="1" <?=$user->tfa_ativo?'checked':'';?>>
-      <label class="form-check-label" for="ativar2FA">
-        Ativar 2FA
-      </label>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="radio" name="tfa_ativo" id="desativar2FA" value="0" <?=$user->tfa_ativo==0?'checked':'';?>>
-      <label class="form-check-label" for="desativar2FA">
-        Desativar 2FA
-      </label>
-    </div>
-  </div>
-  <?php if($user->tfa_ativo): ?>
     <div class="col-sm-4">
       <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#TFAModal" 
-        onclick="obterQrCode2FA('imagemQrCode', '<?=$this->Url->build(['controller' => 'Users', 'action' => 'geraQrCode2fa'], ['fullBase' => true])?>')">
+        onclick="obterQrCode2FA('imagemQrCode', '<?=$this->Url->build(['controller' => 'Users', 'action' => 'geraQrCode2fa', '?' => ['idUser' => $user->id]], ['fullBase' => true])?>')">
         Configurar a Autenticação de Dois Fatores (2FA)
       </button>
     </div>
-  <?php endif; ?>
 </div>
 <br>
 <div class="row">
@@ -87,7 +70,7 @@
             <button type="button" class="btn btn-outline-secondary"
               onclick="obterQrCode2FA(
                 'imagemQrCode',
-                '<?=$this->Url->build(['controller' => 'Users', 'action' => 'geraQrCode2fa', '?' => ['novoQrCode' => '1']], ['fullBase' => true])?>',
+                '<?=$this->Url->build(['controller' => 'Users', 'action' => 'geraQrCode2fa', '?' => ['novoQrCode' => '1', 'idUser' => $user->id]], ['fullBase' => true])?>',
               )">
               Gerar novo QrCode
             </button>

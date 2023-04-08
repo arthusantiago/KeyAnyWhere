@@ -28,6 +28,7 @@
         <tr class="text-center titulo-coluna-tabela">
             <th><?= $this->Paginator->sort('username') ?></th>
             <th><?= $this->Paginator->sort('email', 'E-mail') ?></th>
+            <th></th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -36,14 +37,18 @@
             <tr class="text-center">
                 <td><?= h($user->username)?></td>
                 <td><?= h($user->email)?></td>
+                <td><?= $user->root ? '<span class="badge bg-secondary">Root</span>' : '';?></td>
                 <td>
                     <?=$this->element('Diversos/btnEditar', ['parametros' => ['controller' => 'Users', 'id' => $user->id]])?>
+                    <a href="#" class="btn btn-sm btn-outline-secondary botoes" role="button" data-bs-toggle="tooltip" data-bs-placement="top"
+                        title="Iniciar o processo de recuperação de senha">
+                        <i class="bi bi-envelope-exclamation"></i> Rec. e-mail
+                    </a>
                     <?= $this->element('Diversos/btnExcluir', ['parametros' => ['controller' => 'Users', 'id' => $user->id]])?>
                 </td>
             </tr>
         <?php endforeach; ?>
     </tbody>
 </table>
-
 <br>
 <?= $this->element('paginacao');?>

@@ -44,15 +44,17 @@ class AppController extends Controller
 
         $this->loadComponent('RequestHandler');
         $this->loadComponent('Flash');
-
         /*
          * Enable the following component for recommended CakePHP form protection settings.
          * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
          */
         $this->loadComponent('FormProtection');
-
         // Add this line to check authentication result and lock your site
-        $this->loadComponent('Authentication.Authentication');        
+        $this->loadComponent('Authentication.Authentication');
+
+        // Permitindo acesso ao usuário logado em todo os templates
+        $userLogado = $this->Authentication->getResult()->getData();
+        $this->set(compact('userLogado'));
     }
 
 

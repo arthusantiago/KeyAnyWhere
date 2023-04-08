@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Botão que concentra as opções não centrais do sistema, como configuração, logout, minha conta e etc.
  *
@@ -15,12 +14,14 @@
                 <i class="bi bi-person icone-opcao"></i>Minha Conta
             </a>
         </li>
+    <?php if ($userLogado->root): ?>
         <li><h6 class="dropdown-header">Configurações</h6></li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'index']) ?>">
                 <i class="bi bi-people icone-opcao"></i>Usuários
             </a>
         </li>
+    <?php endif; ?>
         <li><hr class="dropdown-divider"></li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'logout']) ?>">

@@ -17,10 +17,39 @@ use App\Model\Entity\User;
  */
 class UsersController extends AppController
 {
+    private const SOMENTE_ROOT_ACESSA = [
+        'index',
+        'add',
+        'edit',
+        'delete',
+        'geraQrCode2fa',
+        'geraNovoSecret2FA',
+    ];
+
+    private const ACTIONS_SEM_AUTENTICACAO = [
+        'login',
+        'configInicial',
+        'configInicialTfa'
+    ];
+
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
-        $this->Authentication->addUnauthenticatedActions(['login', 'configInicial', 'configInicialTfa']);
+        $this->Authentication->addUnauthenticatedActions(self::ACTIONS_SEM_AUTENTICACAO);
+
+        $caminho = array_values(array_filter(explode('/', $this->request->getPath())));
+        if (count($caminho) == 1) {
+            // O CakePHP mapeia '/users/' para '/users/index' mas não adiciona no request->getPath() a action 'index'
+            array_push($caminho, 'index');
+        }
+
+        if (array_search($caminho[1], self::SOMENTE_ROOT_ACESSA) !== false) {
+            $user = $this->Authentication->getResult()->getData();
+            if ($user->root == false) {
+                $this->Flash->error('Você não tem permissão');
+                return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
+            }
+        }
     }
 
     /**
@@ -112,6 +141,7 @@ class UsersController extends AppController
         if ($this->request->is('post')) {
             $user = $this->Users->newEmptyEntity();
             $user = $this->Users->patchEntity($user, $this->request->getData());
+            $user->root = true;
 
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Usuário criado com sucesso!'));
@@ -302,16 +332,24 @@ class UsersController extends AppController
 
     public function geraQrCode2fa()
     {
-        $userAutenticado = $this->Authentication->getResult()->getData();
+        $user = $this->Authentication->getResult()->getData();
         $params = $this->request->getParam('?');
+
+        if (
+            $params['idUser'] == $user->id // Quem está solicitando a troca é quem está logado
+            || $user->root
+        ) {
+            $user = $this->Users->get($params['idUser']);
+        }
+
         if (!empty($params['novoQrCode']) && $params['novoQrCode'] == '1') {
-            $userAutenticado = $this->geraNovoSecret2FA();
+            $user = $this->geraNovoSecret2FA($user->id);
         }
 
         $g2faUrl = (new Google2FA())->getQRCodeUrl(
             'KeyAnyWhere',
-            $userAutenticado->email,
-            $userAutenticado->descripSecret2FA()
+            $user->email,
+            $user->descripSecret2FA()
         );
 
         $render = new ImageRenderer(
@@ -330,12 +368,12 @@ class UsersController extends AppController
      * geraNovoSecret2FA.
      *
      * @access	private
+     * @param int $idUser ID de um usuário especifico.
      * @return	App\Model\Entity\User
      */
-    private function geraNovoSecret2FA(): User
+    private function geraNovoSecret2FA(int $idUser): User
     {
-        $userAutenticado = $this->Authentication->getResult()->getData();
-        $user = $this->Users->get($userAutenticado->id);
+        $user = $this->Users->get($idUser);
         $user->tfa_secret = $user->geraSecret2FA();
         $this->Users->save($user);
         return $user;
