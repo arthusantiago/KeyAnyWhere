@@ -18,6 +18,7 @@ use PragmaRX\Google2FA\Google2FA;
  * @property string $password
  * @property string $tfa_secret
  * @property string $tfa_ativo
+ * @property bool $root Se o usuário e administrador
  * @property int $LENGTH_SECRET_2FA
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
@@ -45,7 +46,8 @@ class User extends Entity
         'modified' => true,
         'entradas' => true,
         'tfa_secret' => false,
-        'tfa_ativo' => false
+        'tfa_ativo' => false,
+        'root' => false,
     ];
 
     /**
@@ -57,6 +59,7 @@ class User extends Entity
         'password',
         'tfa_secret',
         'tfa_ativo',
+        'root'
     ];
 
     /**
