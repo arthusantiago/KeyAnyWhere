@@ -134,7 +134,12 @@ function obterQrCode2FA(destinoHtmlRetorno, urlParaBusca) {
 			}
 		}
 	)
-	.then(response => response.text())
+	.then((response) => {
+		if (response.ok) {
+			return response.text();
+		}
+		alert('Erro ' + response.status + '\n' + response.statusText);
+	})
 	.then(function (dadoRetornado) {
 		document.getElementById(destinoHtmlRetorno).innerHTML = dadoRetornado;
 	})
