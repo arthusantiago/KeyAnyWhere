@@ -12,6 +12,7 @@ O KAW se divide em Web (este projeto), Mobile e Desktop. Cada um sendo desenvolv
 # Principais tecnologia utilizadas
 
 * [Bootstrap 5.0](https://getbootstrap.com/docs/5.0/getting-started/introduction/)
+* [Bootstrap Icons](https://icons.getbootstrap.com/)
 * [Fontawesome](https://fontawesome.com/)
 * [PHP 8.1](https://www.php.net/releases/8.1/en.php)
 * [CakePHP 4](https://book.cakephp.org/4/en/index.html)
