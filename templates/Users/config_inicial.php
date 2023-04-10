@@ -44,24 +44,13 @@
         <br>
         <div class="row justify-content-center">
             <div class="col-sm-4">
-                <label for="password">Senha</label>
-                <input type="text" id="password" name="password" class="form-control inputs" autocomplete="new-password" minlength="12" placeholder="************">
-                <p>
-                    <strong>Atenção:</strong> Se essa senha for hackeada todas as outras senhas estarão desprotegidas.
-                    Escolha uma senha que atenda a todos os requisitos abaixo:
-                </p>
-                <ul>
-                    <li>No mínimo 12 caracteres</li>
-                    <li>Contendo letras, números e caracteres especiais como: !@#$%&*()_-+</li>
-                    <li>Não deve ser utilizada em outro lugar</li>
-                    <li>Não anote, memorize a senha</li>
-                </ul>
+                <?=$this->element('inputSenhaUser')?>
             </div>
         </div>
         <br>
         <div class="row justify-content-center">
             <div class="col-sm-1">
-                <?= $this->element('Diversos/btnSalvar') ?>
+                <?= $this->element('Diversos/btnSalvar')?>
             </div>
         </div>
         <?= $this->Form->end(['data-type' => 'hidden']); ?>

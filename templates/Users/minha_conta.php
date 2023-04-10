@@ -25,8 +25,7 @@
 <br>
 <div class="row">
   <div class="col-sm-4">
-    <label for="password">Nova senha</label>
-    <input type="password" id="password" name="password" class="form-control inputs" autocomplete="new-password" minlength="12">
+    <?= $this->element('inputSenhaUser')?>
   </div>
 </div>
 <br>

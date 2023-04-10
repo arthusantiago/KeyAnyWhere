@@ -93,7 +93,6 @@ class UsersController extends AppController
             $resultLogin->isValid()
             && $userLogged->valida2fa($this->request->getData('2fa'))
         ) {
-
             return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
         }
 
@@ -272,7 +271,7 @@ class UsersController extends AppController
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Salvo com sucesso'));
             } else {
-                $this->Flash->error(__('Erro ao salvar.'));
+                $this->Flash->error(__('Erro ao salvar.'),  ['params' => ['mensagens' => $user->getErrors()]]);
             }
         }
 
