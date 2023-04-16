@@ -1,14 +1,26 @@
+<?php
+  $urlQrCode = $this->Url->build(
+    [
+      'controller' => 'Users',
+      'action' => 'geraQrCode2fa',
+      '?' => ['idUser' => $user->id]
+    ],
+    ['fullBase' => true]
+  );
+  $urlNovoQrCode = $urlQrCode . '&novoQrCode=1';
+?>
+
 <div class="row">
   <div class="col-sm-auto">
     <?= $this->element(
         'breadcrumb',
         [
-            'caminho' => [
-                ['Pages', 'index', 'Home'],
-                'Configurações',
-                ['Users', 'index', 'Usuários'],
-                'Editando'
-            ]
+          'caminho' => [
+            ['Pages', 'index', 'Home'],
+            'Configurações',
+            ['Users', 'index', 'Usuários'],
+            'Editando'
+          ]
         ]
     );?>
   </div>
@@ -50,8 +62,7 @@
     <br>
     <div class="row">
         <div class="col-sm-4">
-        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#TFAModal" 
-            onclick="obterQrCode2FA('imagemQrCode', '<?=$this->Url->build(['controller' => 'Users', 'action' => 'geraQrCode2fa', '?' => ['idUser' => $user->id]], ['fullBase' => true])?>')">
+        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#TFAModal" onclick="obterQrCode2FA('<?=$urlQrCode?>')">
             Configurar a Autenticação de Dois Fatores (2FA)
         </button>
         </div>
@@ -79,11 +90,7 @@
         </div>
         <div class="row">
           <div class="col-sm text-center">
-            <button type="button" class="btn btn-outline-secondary"
-              onclick="obterQrCode2FA(
-                'imagemQrCode',
-                '<?=$this->Url->build(['controller' => 'Users', 'action' => 'geraQrCode2fa', '?' => ['novoQrCode' => '1', 'idUser' => $user->id]], ['fullBase' => true])?>',
-              )">
+            <button type="button" class="btn btn-outline-secondary" onclick="obterQrCode2FA('<?=$urlNovoQrCode?>')">
               Gerar novo QrCode
             </button>
           </div>

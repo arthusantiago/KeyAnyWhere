@@ -17,13 +17,12 @@ use App\Model\Entity\User;
  */
 class UsersController extends AppController
 {
+    /* Actions que somente o usuário root pode acessar */
     private const SOMENTE_ROOT_ACESSA = [
         'index',
         'add',
         'edit',
         'delete',
-        'geraQrCode2fa',
-        'geraNovoSecret2FA',
     ];
 
     private const ACTIONS_SEM_AUTENTICACAO = [
@@ -36,7 +35,6 @@ class UsersController extends AppController
     {
         parent::beforeFilter($event);
         $this->Authentication->addUnauthenticatedActions(self::ACTIONS_SEM_AUTENTICACAO);
-
         $caminho = array_values(array_filter(explode('/', $this->request->getPath())));
         if (count($caminho) == 1) {
             // O CakePHP mapeia '/users/' para '/users/index' mas não adiciona no request->getPath() a action 'index'
@@ -77,41 +75,6 @@ class UsersController extends AppController
         }
 
         return $result;
-    }
-
-    public function login()
-    {
-        if ($this->executarConfigIncial()) {
-            $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
-        }
-
-        $this->request->allowMethod(['get', 'post']);
-        $resultLogin = $this->Authentication->getResult();
-        $userLogged = $resultLogin->getData();
-
-        if (
-            $resultLogin->isValid()
-            && $userLogged->valida2fa($this->request->getData('2fa'))
-        ) {
-            return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
-        }
-
-        $this->Authentication->logout();
-
-        $this->viewBuilder()->setLayout('layout_vazio');
-        if ($this->request->getData()) {
-            $this->Flash->error(__('Usuário, senha ou 2FA inválido', ));
-        }
-    }
-
-    public function logout()
-    {
-        $result = $this->Authentication->getResult();
-        // regardless of POST or GET, redirect if user is logged in
-        if ($result->isValid()) {
-            $this->Authentication->logout();
-            return $this->redirect(['controller' => 'Users', 'action' => 'login']);
-        }
     }
 
     /**
@@ -206,6 +169,41 @@ class UsersController extends AppController
 
         $this->viewBuilder()->setLayout('layout_vazio');
         $this->set(compact('user', 'strSvgQrCode'));
+    }
+
+    public function login()
+    {
+        if ($this->executarConfigIncial()) {
+            $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
+        }
+
+        $this->request->allowMethod(['get', 'post']);
+        $resultLogin = $this->Authentication->getResult();
+        $userLogged = $resultLogin->getData();
+
+        if (
+            $resultLogin->isValid()
+            && $userLogged->valida2fa($this->request->getData('2fa'))
+        ) {
+            return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
+        }
+
+        $this->Authentication->logout();
+
+        $this->viewBuilder()->setLayout('layout_vazio');
+        if ($this->request->getData()) {
+            $this->Flash->error(__('Usuário, senha ou 2FA inválido', ));
+        }
+    }
+
+    public function logout()
+    {
+        $result = $this->Authentication->getResult();
+        // regardless of POST or GET, redirect if user is logged in
+        if ($result->isValid()) {
+            $this->Authentication->logout();
+            return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+        }
     }
 
     /**
@@ -331,17 +329,16 @@ class UsersController extends AppController
 
     public function geraQrCode2fa()
     {
+        // por padrão manipulando o usuário logado
         $user = $this->Authentication->getResult()->getData();
         $params = $this->request->getParam('?');
 
-        if (
-            $params['idUser'] == $user->id // Quem está solicitando a troca é quem está logado
-            || $user->root
-        ) {
+        // manipulando outro usuário
+        if (isset($params['idUser']) && $user->root) {
             $user = $this->Users->get($params['idUser']);
         }
 
-        if (!empty($params['novoQrCode']) && $params['novoQrCode'] == '1') {
+        if (isset($params['novoQrCode']) && $params['novoQrCode'] == '1') {
             $user = $this->geraNovoSecret2FA($user->id);
         }
 

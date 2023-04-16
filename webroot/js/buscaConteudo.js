@@ -115,12 +115,11 @@ function removeResultadoBuscaGenerico(idInputOrigemBusca, idUlBusca) {
 }
 
 /**
- * Busca o QrCode do 2FA. 
+ * Busca o QrCode do 2FA.
  *
- * @param string destinoHtmlRetorno ID do elemento HTML onde será inserido o retorno da request.
  * @param string urlParaBusca URL alvo da busca.
  */
-function obterQrCode2FA(destinoHtmlRetorno, urlParaBusca) {
+function obterQrCode2FA(urlParaBusca) {
 	let csrfToken = document.getElementsByName('csrfToken').item([]).getAttribute('content');
 
 	fetch(
@@ -141,7 +140,7 @@ function obterQrCode2FA(destinoHtmlRetorno, urlParaBusca) {
 		alert('Erro ' + response.status + '\n' + response.statusText);
 	})
 	.then(function (dadoRetornado) {
-		document.getElementById(destinoHtmlRetorno).innerHTML = dadoRetornado;
+		document.getElementById('imagemQrCode').innerHTML = dadoRetornado;
 	})
 	.catch(function (error) {
 		alert('Ocorreu um erro na requisição');
