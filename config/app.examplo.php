@@ -429,7 +429,15 @@ return [
      * To use database sessions, load the SQL file located at config/schema/sessions.sql
      */
     'Session' => [
-        'defaults' => 'php',
-        'timeout' => 20
+        'defaults' => 'cake',
+        'timeout' => 30,
+        'cookie' => 'KAW',
+        'ini' => [
+            'session.cookie_secure' => true,
+            'session.cookie_samesite' => 'Strict',
+            'session.cookie_httponly' => true,
+            'session.use_strict_mode' => true,
+            'session.use_only_cookies' => true,
+        ]
     ],
 ];
