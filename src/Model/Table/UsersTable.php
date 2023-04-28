@@ -71,6 +71,7 @@ class UsersTable extends Table
 
         $validator
             ->email('email', false, 'O e-mail não está em um formato válido.')
+            ->maxLength('email', 100, 'O e-mail do usuário pode ter no máximo 100 caracteres')
             ->requirePresence('email')
             ->notEmptyString('email', 'O e-mail precisa ser preenchido');
 

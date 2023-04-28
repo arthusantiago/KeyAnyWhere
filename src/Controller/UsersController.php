@@ -8,7 +8,8 @@ use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use App\Model\Entity\User;
-
+use App\Log\GerenciamentoLogs;
+use Authentication\Authenticator\ResultInterface;
 /**
  * Users Controller
  *
@@ -31,10 +32,16 @@ class UsersController extends AppController
         'configInicialTfa'
     ];
 
+    private const CREDENCIAL_LOGIN_INCORRETO = [
+        ResultInterface::FAILURE_IDENTITY_NOT_FOUND,
+        ResultInterface::FAILURE_CREDENTIALS_INVALID,
+    ];
+
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
         $this->Authentication->addUnauthenticatedActions(self::ACTIONS_SEM_AUTENTICACAO);
+
         $caminho = array_values(array_filter(explode('/', $this->request->getPath())));
         if (count($caminho) == 1) {
             // O CakePHP mapeia '/users/' para '/users/index' mas não adiciona no request->getPath() a action 'index'
@@ -45,6 +52,7 @@ class UsersController extends AppController
             $user = $this->Authentication->getResult()->getData();
             if ($user->root == false) {
                 $this->Flash->error('Você não tem permissão');
+                GerenciamentoLogs::novoEvento('C2-1', ['request' => $this->request, 'usuario' => $user]);
                 return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
             }
         }
@@ -173,22 +181,36 @@ class UsersController extends AppController
 
     public function login()
     {
+        $this->request->allowMethod(['get', 'post']);
+
         if ($this->executarConfigIncial()) {
             $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
         }
 
-        $this->request->allowMethod(['get', 'post']);
-        $resultLogin = $this->Authentication->getResult();
-        $userLogged = $resultLogin->getData();
+        if ($this->request->is('post')) {
+            $resultLogin = $this->Authentication->getResult();
+            $tfaValido = false;
+            if ($resultLogin->getData() !== null) {
+                $tfaValido = $resultLogin->getData()->valida2fa($this->request->getData('2fa'));
+            }
 
-        if (
-            $resultLogin->isValid()
-            && $userLogged->valida2fa($this->request->getData('2fa'))
-        ) {
-            return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
+            if (
+                $resultLogin->isValid()
+                //&& $tfaValido
+            ) {
+                return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
+            } else {
+                if (array_search($resultLogin->getStatus(), $this::CREDENCIAL_LOGIN_INCORRETO) !== false) {
+                    GerenciamentoLogs::novoEvento('C1-1', ['request' => $this->request]);
+                }
+
+                if ($tfaValido == false) {
+                    GerenciamentoLogs::novoEvento('C1-2', ['request' => $this->request]);
+                }
+            }
+
+            $this->Authentication->logout();
         }
-
-        $this->Authentication->logout();
 
         $this->viewBuilder()->setLayout('layout_vazio');
         if ($this->request->getData()) {
