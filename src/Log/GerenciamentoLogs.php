@@ -10,7 +10,7 @@ use Cake\Core\Exception\CakeException;
 class GerenciamentoLogs
 {
     /**
-     * Contem as propriedades que são comuns entre todos os tipos de eventos.
+     * Contem as propriedades que são comuns entre todos os eventos.
      *
      * @var	array $propComunEventos
      */
@@ -54,13 +54,13 @@ class GerenciamentoLogs
     public static function novoEvento(string $idEvento, array $dados)
     {
         $informacoesEvento = self::preparaInformacoesLog($idEvento, $dados);
-        self::registrarLog($informacoesEvento);
+        self::salvarLog($informacoesEvento);
     }
 
     /**
      * Metodo que monta toda a estrutura do evento que será convertido em um log.
      *
-     * É esperado na variável $dados as seguintes chaves/valor
+     * É esperado na variável $dados as seguintes chaves/valor:
      * [
      *      'request' => $obj, -> Um objeto do tipo Cake\Http\ServerRequest
      *      'usuario' => $obj, -> Um objeto do tipo App\Model\Entity\User
@@ -81,8 +81,13 @@ class GerenciamentoLogs
             throw new CakeException('O objeto informado em $dados["request"] precisa ser do tipo Cake\Http\ServerRequest');
         }
 
+        $idEvento = strtoupper($idEvento);
+        if (array_key_exists($idEvento, self::$eventos) == false) {
+            throw new CakeException('O evento ' . $idEvento . ' não existe no catálogo de eventos mapeados');
+        }
+
         self::setandoPropriedadesComunsEventos($idEvento);
-        $descricaoEvento = self::$eventos[strtoupper($idEvento)];
+        $descricaoEvento = self::$eventos[$idEvento];
         $descricaoEvento['nivel_severidade'] = LogLevelInt::strLevelToNumeric($descricaoEvento['nivel_severidade_string']);
         $descricaoEvento['recurso'] = $dados['request']->getPath();
         $descricaoEvento['ip_origem'] = $dados['request']->clientIp();
@@ -93,6 +98,13 @@ class GerenciamentoLogs
         return $descricaoEvento;
     }
 
+    /**
+     * Atribui na estrutura do evento as propriedades que são comuns entre todos os evento.
+     *
+     * @access	private static
+     * @param	string	$idEvento
+     * @return	void
+     */
     private static function setandoPropriedadesComunsEventos(string $idEvento): void
     {
         foreach (self::$propComunEventos as $propriedade => $valor) {
@@ -100,19 +112,33 @@ class GerenciamentoLogs
         }
     }
 
-    private static function informacoesUsuario(User $user)
+    /**
+     * Monta a string com as informações importantes do usuário.
+     *
+     * @access	private static
+     * @param	user	$user
+     * @return	mixed
+     */
+    private static function informacoesUsuario(User $user): string
     {
         return 'ID: ' . $user->id . ' | usuario: ' . $user->username . ' | e-mail:' . $user->email;
     }
 
-    private static function registrarLog(array $informacoes)
+    /**
+     * Recebe as informações do evento e salva como log.
+     *
+     * @access	private static
+     * @param	array	$informacoesEvento
+     * @return	bool Sucesso ou falha no processo de salvar o log.
+     */
+    private static function salvarLog(array $informacoesEvento): bool
     {
-        Log::write(
-            $informacoes['nivel_severidade_string'],
-            $informacoes['mensagem'],
+        return Log::write(
+            $informacoesEvento['nivel_severidade_string'],
+            $informacoesEvento['mensagem'],
             [
                 'scope' => ['atividades'],
-                'dados' => $informacoes
+                'dados' => $informacoesEvento
             ]
         );
     }

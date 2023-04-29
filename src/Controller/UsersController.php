@@ -196,7 +196,7 @@ class UsersController extends AppController
 
             if (
                 $resultLogin->isValid()
-                //&& $tfaValido
+                && $tfaValido
             ) {
                 return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
             } else {
@@ -356,8 +356,12 @@ class UsersController extends AppController
         $params = $this->request->getParam('?');
 
         // manipulando outro usuário
-        if (isset($params['idUser']) && $user->root) {
-            $user = $this->Users->get($params['idUser']);
+        if (isset($params['idUser'])) {
+            if ($user->root) { // o usuário logado tem permisão?
+                $user = $this->Users->get($params['idUser']);
+            } else {
+                GerenciamentoLogs::novoEvento('C2-1', ['request' => $this->request, 'usuario' => $user]);
+            }
         }
 
         if (isset($params['novoQrCode']) && $params['novoQrCode'] == '1') {
