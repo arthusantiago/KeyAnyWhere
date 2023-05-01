@@ -9,10 +9,11 @@ use Cake\ORM\Entity;
  * Log Entity
  *
  * @property int $id
+ * @property string|null $evento
  * @property int $nivel_severidade
- * @property string $recurso
- * @property string $ip_origem
- * @property string $usuario
+ * @property string|null $recurso
+ * @property string|null $ip_origem
+ * @property string|null $usuario
  * @property string $mensagem
  * @property \Cake\I18n\FrozenTime $created
  * @property \Cake\I18n\FrozenTime $modified
@@ -29,6 +30,7 @@ class Log extends Entity
      * @var array<string, bool>
      */
     protected $_accessible = [
+        'evento' => true,
         'nivel_severidade' => true,
         'recurso' => true,
         'ip_origem' => true,

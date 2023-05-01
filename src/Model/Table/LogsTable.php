@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Query;
-use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
@@ -55,6 +53,11 @@ class LogsTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
+            ->scalar('evento')
+            ->maxLength('evento', 7)
+            ->allowEmptyString('evento');
+
+        $validator
             ->integer('nivel_severidade')
             ->requirePresence('nivel_severidade', 'create')
             ->notEmptyString('nivel_severidade', 'O Nivel de Severidade precisa ser preencido');
@@ -62,14 +65,17 @@ class LogsTable extends Table
         $validator
             ->scalar('recurso')
             ->maxLength('recurso', 100)
-            ->requirePresence('recurso', 'create')
-            ->notEmptyString('recurso', 'O Recurso precisa ser preencido');
+            ->allowEmptyString('recurso');
 
         $validator
             ->scalar('ip_origem')
             ->maxLength('ip_origem', 39)
-            ->requirePresence('ip_origem', 'create')
-            ->notEmptyString('ip_origem', 'O IP de Origem precisa ser preencido');
+            ->allowEmptyString('ip_origem');
+
+        $validator
+            ->scalar('usuario')
+            ->maxLength('usuario', 200)
+            ->allowEmptyString('usuario');
 
         $validator
             ->scalar('mensagem')

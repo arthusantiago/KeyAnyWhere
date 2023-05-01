@@ -15,11 +15,12 @@ class CreateTabelaLogs extends AbstractMigration
     public function change(): void
     {
         $this->table('logs')
-        ->addColumn('nivel_severidade', 'integer', ['null' => false])
-        ->addColumn('recurso', 'string', ['limit' => 100, 'null' => false,])
-        ->addColumn('ip_origem', 'string', ['limit' => 39, 'null' => false])
+        ->addColumn('evento', 'string', ['limit' => 7, 'null' => true, 'default' => null])
+        ->addColumn('nivel_severidade', 'integer', ['null' => false, 'default' => null])
+        ->addColumn('recurso', 'string', ['limit' => 100, 'null' => true, 'default' => null])
+        ->addColumn('ip_origem', 'string', ['limit' => 39, 'null' => true, 'default' => null])
         ->addColumn('usuario', 'string', ['limit' => 200, 'null' => true, 'default' => null])
-        ->addColumn('mensagem', 'string', ['limit' => 256])
+        ->addColumn('mensagem', 'string', ['limit' => 256, 'null' => false])
         ->addColumn('created', 'datetime')
         ->addColumn('modified', 'datetime')
         ->create();
