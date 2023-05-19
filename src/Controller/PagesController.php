@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace App\Controller;
 
+use App\Model\Table\LogsTable;
+
 /**
  * Static content controller
  *
@@ -27,6 +29,10 @@ class PagesController extends AppController
 {
     public function home()
     {
-        
+        $logs = (new LogsTable())
+            ->find('countAtividadesSuspeitas')
+            ->toArray();
+
+        $this->set(compact('logs'));
     }
 }

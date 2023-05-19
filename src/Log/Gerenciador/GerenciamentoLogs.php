@@ -33,8 +33,6 @@ class GerenciamentoLogs
      */
     public static function novoEvento(array $dados)
     {
-        //$informacoesEvento = self::preparaInformacoesLog($dados);
-
         if (empty($dados['evento'])) {
             throw new CakeException('O ID do evento não foi informado');
         }

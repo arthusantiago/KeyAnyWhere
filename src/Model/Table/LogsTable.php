@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use Cake\ORM\Table;
+use Cake\ORM\Query;
 use Cake\Validation\Validator;
 
 /**
@@ -84,5 +85,21 @@ class LogsTable extends Table
             ->notEmptyString('mensagem', 'A Mensagem precisa ser preencida');
 
         return $validator;
+    }
+
+    public function findCountAtividadesSuspeitas(Query $query, array $options)
+    {
+        $query
+            ->select([
+                'nivel_severidade',
+                'quantidade' => $query->func()->count('nivel_severidade')
+            ])
+            ->where([
+                'analisado' => false,
+                'nivel_severidade NOT IN (6, 7)'
+            ])
+            ->group(['nivel_severidade']);
+
+        return $query;
     }
 }
