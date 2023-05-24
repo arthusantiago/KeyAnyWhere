@@ -18,7 +18,10 @@ class LogsController extends AppController
      */
     public function index()
     {
-        $logs = $this->paginate($this->Logs);
+        $logs = $this->paginate(
+            $this->Logs,
+            ['order' => ['created' => 'desc']]
+        );
 
         $this->set(compact('logs'));
     }
@@ -37,5 +40,21 @@ class LogsController extends AppController
         ]);
 
         $this->set(compact('log'));
+    }
+
+    public function analisado($id)
+    {
+        if ($this->request->is(['post']))
+        {
+            $log = $this->Logs->get($id);
+            $log = $this->Logs->patchEntity($log, $this->request->getData());
+            if ($this->Logs->save($log)) {
+                $this->Flash->success(__('Salvo com sucesso'));
+            }else{
+                $this->Flash->error(null, ['params' => ['mensagens' => $log->getErrors()]]);
+            }
+        }
+
+        return $this->redirect($this->referer());
     }
 }
