@@ -38,7 +38,7 @@ class GerenciamentoLogs
         }
 
         $evento = Eventos::getEvento($dados['evento']);
-        $evento['nivel_severidade'] = LogLevelInt::strLevelToNumeric($evento['nivel_severidade_string']);
+        $evento['nivel_severidade'] = LogLevelInt::toNumeric($evento['nivel_severidade_string']);
 
         if (isset($dados['usuario'])) {
             $evento['usuario'] = self::informacoesUsuario($dados['usuario']);

@@ -38,7 +38,7 @@ class LogLevelInt
      * @param	string	$level
      * @return	int
      */
-    public static function strLevelToNumeric(string $level): int
+    public static function toNumeric(string $level): int
     {
         $codigoNumerico = array_search(strtolower($level), self::ARRAY_LOG_LEVEL) ?: null;
 
@@ -47,5 +47,23 @@ class LogLevelInt
         }
 
         return $codigoNumerico;
+    }
+
+    /**
+     * Retorna a string do Nivel de severidade informado.
+     *
+     * @access	public static
+     * @param	int	$level
+     * @return	string
+     */
+    public static function toString(int $level): string
+    {
+        $string = self::ARRAY_LOG_LEVEL[$level] ?: null;
+
+        if ($string === null) {
+            throw new CakeException('O Severity Level informado não está dentro das definições da RFC 5424');
+        }
+
+        return $string;
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
+use App\Log\Gerenciador\LogLevelInt;
 
 /**
  * Log Entity
@@ -36,7 +37,13 @@ class Log extends Entity
         'ip_origem' => true,
         'usuario' => true,
         'mensagem' => true,
+        'analisado' => true,
         'created' => true,
         'modified' => true,
     ];
+
+    public function stringNivelSeveridade(): string
+    {
+        return ucfirst(LogLevelInt::toString($this->nivel_severidade));
+    }
 }
