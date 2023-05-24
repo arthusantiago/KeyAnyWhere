@@ -10,6 +10,11 @@
     </button>
     <ul class="dropdown-menu">
         <li>
+            <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Pages', 'action' => 'home']) ?>">
+                <i class="bi bi-house icone-opcao"></i>Home
+            </a>
+        </li>
+        <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'minhaConta']) ?>">
                 <i class="bi bi-person icone-opcao"></i>Minha Conta
             </a>
