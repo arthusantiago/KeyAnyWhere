@@ -9,7 +9,7 @@ use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use App\Model\Entity\User;
-use App\Log\Gerenciador\GerenciamentoLogs;
+use App\Log\GerenciadorEventos;
 use Authentication\Authenticator\ResultInterface;
 /**
  * Users Controller
@@ -53,7 +53,7 @@ class UsersController extends AppController
             $user = $this->Authentication->getResult()->getData();
             if ($user->root == false) {
                 $this->Flash->error('Você não tem permissão');
-                GerenciamentoLogs::novoEvento(['evento' => 'C2-1', 'request' => $this->request, 'usuario' => $user]);
+                GerenciadorEventos::notificarEvento(['evento' => 'C2-1', 'request' => $this->request, 'usuario' => $user]);
                 return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
             }
         }
@@ -202,18 +202,18 @@ class UsersController extends AppController
                 return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
             } else {
                 if (array_search($resultLogin->getStatus(), $this::CREDENCIAL_LOGIN_INCORRETO) !== false) {
-                    GerenciamentoLogs::novoEvento([
+                    GerenciadorEventos::notificarEvento([
                         'evento' => 'C1-1',
                         'request' => $this->request,
                         'usuario' => [
-                            'dados' => [ 'email:' . $this->request->getData('email')],
+                            'dados' => [ 'e-mail' => $this->request->getData('email')],
                             'texto' => 'Credenciais utilizadas para logar: '
                         ]
                     ]);
                 }
 
                 if ($tfaValido == false) {
-                    GerenciamentoLogs::novoEvento(['evento' => 'C1-2', 'request' => $this->request]);
+                    GerenciadorEventos::notificarEvento(['evento' => 'C1-2', 'request' => $this->request]);
                 }
             }
 
@@ -368,7 +368,7 @@ class UsersController extends AppController
             if ($user->root) { // o usuário logado tem permisão?
                 $user = $this->Users->get($params['idUser']);
             } else {
-                GerenciamentoLogs::novoEvento(['evento' => 'C2-1', 'request' => $this->request, 'usuario' => $user]);
+                GerenciadorEventos::notificarEvento(['evento' => 'C2-1', 'request' => $this->request, 'usuario' => $user]);
             }
         }
 

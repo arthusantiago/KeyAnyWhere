@@ -16,7 +16,7 @@ class DatabaseLog extends BaseLog
     {
         $log = new LogsTable();
         $novoLog = $log->newEmptyEntity();
-        $novoLog = $log->patchEntity($novoLog, $context['dados']);
+        $novoLog = $log->patchEntity($novoLog, $context['dados']->toArray());
 
         if ($log->save($novoLog) == false) {
             $mensagensErro = [];

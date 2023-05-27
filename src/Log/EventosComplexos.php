@@ -2,8 +2,6 @@
 
 namespace App\Log;
 
-use App\Log\Eventos;
-use App\Log\Gerenciador\GerenciamentoLogs;
 use Cake\Core\Exception\CakeException;
 use App\Model\Table\LogsTable;
 use Cake\I18n\FrozenTime;
@@ -27,13 +25,13 @@ class EventosComplexos
      * Recebe a notificação de que um novo log foi salvo.
      *
      * @access	public
-     * @param	array $eventoOrigemLog Evento que foi salvo como log.
+     * @param	Evento $eventoOrigemLog Evento que foi salvo como log.
      * @return	void
      */
-    public function novoLogSalvo(array $eventoOrigemLog): void
+    public function novoLogSalvo(Evento $eventoOrigemLog): void
     {
         //eventos que dependem deste para serem disparados
-        $eventos = $this->ehUmEventoGatilho($eventoOrigemLog['evento']);
+        $eventos = $this->ehUmEventoGatilho($eventoOrigemLog->getId());
 
         if ($eventos) {
             $this->executaMetodoEspecifico($eventos, $eventoOrigemLog);
@@ -50,12 +48,9 @@ class EventosComplexos
     private function ehUmEventoGatilho(string $idEvento): ?array
     {
         $eventosQueAguardam = null;
-        $catalogoEventos = Eventos::getEventos();
-        foreach ($catalogoEventos as $identificador => $propriedades) {
-            if (
-                isset($propriedades['evento_gatilho'])
-                && in_array($idEvento, $propriedades['evento_gatilho'])
-            ) {
+        $catalogoEventos = GerenciadorEventos::getEventos();
+        foreach ($catalogoEventos as $identificador => $evento) {
+            if ($evento->aguardaPeloEvento($idEvento)) {
                 $eventosQueAguardam[] = $identificador;
             }
         }
@@ -68,10 +63,10 @@ class EventosComplexos
      *
      * @access	private
      * @param	array	$eventos
-     * @param	array	$eventoOrigemLog
+     * @param	Evento	$eventoOrigemLog
      * @return	void
      */
-    private function executaMetodoEspecifico(array $eventos, array $eventoOrigemLog): void
+    private function executaMetodoEspecifico(array $eventos, Evento $eventoOrigemLog): void
     {
         foreach ($eventos as $idEvento) {
             $nomeMetodo = str_replace('-', '_', $idEvento);
@@ -87,10 +82,10 @@ class EventosComplexos
      * Evento descrito no catálogo src\Log\Eventos::$catalogoEventos
      *
      * @access	private
-     * @param	array	$eventoOrigemLog
+     * @param	Evento	$eventoOrigemLog
      * @return	void
      */
-    private function C1_3(array $eventoOrigemLog): void
+    private function C1_3(Evento $eventoOrigemLog): void
     {
         $C1_1 = $this->tableLogs
             ->find()
@@ -111,7 +106,17 @@ class EventosComplexos
             ->toArray();
 
         if (count($C1_1) >= 3 || count($C1_2) >= 3) {
-            GerenciamentoLogs::novoEvento(['evento' => 'C1-3', 'usuario' => $eventoOrigemLog['usuario']]);
+            GerenciadorEventos::notificarEvento([
+                'evento' => 'C1-3',
+                'request' => $eventoOrigemLog->getRequest(),
+                'usuario' => [
+                    'dados' => [
+                        'email'  => $eventoOrigemLog->getRequest()->getData('email'),
+                        'password' => $eventoOrigemLog->getRequest()->getData('password')
+                    ],
+                    'texto' => 'Credenciais utilizadas para logar: '
+                ]
+            ]);
         }
     }
 
@@ -119,10 +124,10 @@ class EventosComplexos
      * Evento descrito no catálogo src\Log\Eventos::$catalogoEventos
      *
      * @access	private
-     * @param	array	$eventoOrigemLog
+     * @param	Evento	$eventoOrigemLog
      * @return	void
      */
-    private function C1_4(array $eventoOrigemLog)
+    private function C1_4(Evento $eventoOrigemLog)
     {
         $C1_3 = $this->tableLogs
             ->find()
@@ -134,7 +139,7 @@ class EventosComplexos
             ->toArray();
 
         if (count($C1_3) >= 2) {
-            GerenciamentoLogs::novoEvento(['evento' => 'C1-4', 'usuario' => $eventoOrigemLog['usuario']]);
+            GerenciadorEventos::notificarEvento(['evento' => 'C1-4', 'usuario' => $eventoOrigemLog->getUsuario()]);
         }
     }
 }

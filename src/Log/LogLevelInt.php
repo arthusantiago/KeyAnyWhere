@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Log\Gerenciador;
+namespace App\Log;
 
 use Psr\Log\LogLevel;
 use Cake\Core\Exception\CakeException;
