@@ -56,7 +56,7 @@
 					</div>
 				</div>
 				<div class="col-sm-auto">
-					<?=$this->element('Diversos/btnConfiguracoes')?>
+					<?=$this->element('Diversos/btnOpcoes')?>
 				</div>
 			</div>
 		</div>

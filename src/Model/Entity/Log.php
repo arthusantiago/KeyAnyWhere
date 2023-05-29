@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
-use App\Log\Gerenciador\LogLevelInt;
+use App\Log\LogLevelInt;
 
 /**
  * Log Entity

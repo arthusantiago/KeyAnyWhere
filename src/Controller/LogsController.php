@@ -23,6 +23,7 @@ class LogsController extends AppController
             ['order' => ['created' => 'desc']]
         );
 
+        $this->viewBuilder()->setLayout('administrativo');
         $this->set(compact('logs'));
     }
 
@@ -35,10 +36,9 @@ class LogsController extends AppController
      */
     public function view($id = null)
     {
-        $log = $this->Logs->get($id, [
-            'contain' => [],
-        ]);
+        $log = $this->Logs->get($id);
 
+        $this->viewBuilder()->setLayout('administrativo');
         $this->set(compact('log'));
     }
 

@@ -26,6 +26,16 @@
                 <i class="bi bi-people icone-opcao"></i>Usuários
             </a>
         </li>
+        <li>
+            <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Logs', 'action' => 'index']) ?>">
+                <i class="bi bi-journal-text icone-opcao"></i>Logs
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'IpsBloqueados', 'action' => 'index']) ?>">
+                <i class="bi bi-shield-x icone-opcao"></i>IPs Bloqueados
+            </a>
+        </li>
     <?php endif; ?>
         <li><hr class="dropdown-divider"></li>
         <li>

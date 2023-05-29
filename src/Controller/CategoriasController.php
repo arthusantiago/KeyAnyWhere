@@ -115,7 +115,7 @@ class CategoriasController extends AppController
         if ($this->Categorias->delete($categoria)) {
             $this->Flash->success(__('Excluído com sucesso'));
         } else {
-            $this->Flash->error(__('Erro ao excluir'));
+            $this->Flash->error(null, ['params' => ['mensagens' => $categoria->getErrors()]]);
         }
 
         return $this->redirect(['action' => 'index']);

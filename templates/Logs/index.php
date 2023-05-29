@@ -1,9 +1,23 @@
 <div class="row">
-    <div class="col-sm-auto">
+  <div class="col-sm-auto">
+    <?=$this->element(
+        'breadcrumb',
+        ['caminho' => [
+            ['Pages', 'index', 'Home'],
+            'Configurações',
+            'Logs',
+            'Listagem'
+        ]]
+    );?>
+  </div>
+</div>
+
+<div class="row">
+    <div class="col-sm">
         <span class="titulo">Logs</span>
     </div>
 </div>
-<br>
+
 <table class="table table-borderless table-striped table-hover">
     <thead>
         <tr class="text-center titulo-coluna-tabela">
@@ -11,6 +25,7 @@
             <th><?=$this->Paginator->sort('nivel_severidade', 'Nível Severidade')?></th>
             <th><?=$this->Paginator->sort('analisado', 'Status')?></th>
             <th>Mensagem</th>
+            <th>Ações</th>
         </tr>
     </thead>
     <tbody>
