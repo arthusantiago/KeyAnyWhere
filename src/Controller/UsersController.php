@@ -9,6 +9,7 @@ use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use App\Model\Entity\User;
+use App\Model\Table\IpsBloqueadosTable;
 use App\Log\GerenciadorEventos;
 use Authentication\Authenticator\ResultInterface;
 /**
@@ -30,7 +31,8 @@ class UsersController extends AppController
     private const ACTIONS_SEM_AUTENTICACAO = [
         'login',
         'configInicial',
-        'configInicialTfa'
+        'configInicialTfa',
+        'ipBloqueado'
     ];
 
     private const CREDENCIAL_LOGIN_INCORRETO = [
@@ -57,6 +59,25 @@ class UsersController extends AppController
                 return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
             }
         }
+    }
+
+    private function ipEstaBloqueado(): bool
+    {
+        $ipBloqueado = (new IpsBloqueadosTable)
+        ->find()
+        ->where(['ip' => $this->request->clientIp()])
+        ->toArray();
+
+        return empty($ipBloqueado) ? false : true ;
+    }
+
+    public function ipBloqueado()
+    {
+        if ($this->ipEstaBloqueado() == false) {
+            $this->redirect(['action' => 'login']);
+        }
+
+        $this->viewBuilder()->setLayout('layout_vazio');
     }
 
     /**
@@ -183,6 +204,10 @@ class UsersController extends AppController
     public function login()
     {
         $this->request->allowMethod(['get', 'post']);
+
+        if ($this->ipEstaBloqueado()) {
+            $this->redirect(['action' => 'ipBloqueado']);
+        }
 
         if ($this->executarConfigIncial()) {
             $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
