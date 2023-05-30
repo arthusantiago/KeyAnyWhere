@@ -200,7 +200,7 @@ class UsersController extends AppController
                 && $tfaValido
             ) {
                 return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
-            } else {
+            } else if ($resultLogin->isValid() == false) {
                 if (array_search($resultLogin->getStatus(), $this::CREDENCIAL_LOGIN_INCORRETO) !== false) {
                     GerenciadorEventos::notificarEvento([
                         'evento' => 'C1-1',
@@ -211,10 +211,8 @@ class UsersController extends AppController
                         ]
                     ]);
                 }
-
-                if ($tfaValido == false) {
-                    GerenciadorEventos::notificarEvento(['evento' => 'C1-2', 'request' => $this->request]);
-                }
+            } else if ($resultLogin->isValid() && $tfaValido == false) {
+                GerenciadorEventos::notificarEvento(['evento' => 'C1-2', 'request' => $this->request]);
             }
 
             $this->Authentication->logout();

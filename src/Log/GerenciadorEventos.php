@@ -39,12 +39,12 @@ class GerenciadorEventos
         ],
         'C1-3' => [
             'nivel_severidade' => 'warning',
-            'mensagem' => 'Durante o login, o usuário erro mais de 3 vezes o user, password ou 2FA.',
+            'mensagem' => 'Durante o login o usuário erro mais de 3 vezes as credenciais de acesso.',
             'evento_gatilho' => ['C1-1', 'C1-2']
         ],
         'C1-4' => [
             'nivel_severidade' => 'alert',
-            'mensagem' => 'Durante o login, o usuário excedeu duas vezes a quantidade máxima de tentativas erradas.',
+            'mensagem' => 'Durante o login o usuário excedeu a quantidade máxima de tentativas erradas. O seu IP foi bloqueado.',
             'evento_gatilho' => ['C1-3']
         ],
         /* Categoria: 2. ACESSO NÃO AUTORIZADO

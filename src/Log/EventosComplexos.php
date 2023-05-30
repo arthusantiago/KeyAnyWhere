@@ -4,7 +4,9 @@ namespace App\Log;
 
 use Cake\Core\Exception\CakeException;
 use App\Model\Table\LogsTable;
+use App\Model\Table\IpsBloqueadosTable;
 use Cake\I18n\FrozenTime;
+use Cake\Log\Log;
 
 /**
  * Classe que gerencia os eventos que requerem uma lógica mais elaborada em seu disparo.
@@ -140,6 +142,24 @@ class EventosComplexos
 
         if (count($C1_3) >= 2) {
             GerenciadorEventos::notificarEvento(['evento' => 'C1-4', 'usuario' => $eventoOrigemLog->getUsuario()]);
+
+            $ipTable = new IpsBloqueadosTable();
+            $novoIp = $ipTable->newEmptyEntity();
+            $novoIp->ip = $eventoOrigemLog->getIpOrigem();
+
+            if ($ipTable->save($novoIp) == false) {
+                $mensagensErro = [];
+                $erros = $novoIp->getErrors();
+                array_walk_recursive(
+                    $erros,
+                    function ($msg, $tipoErro) use (&$mensagensErro)
+                    {
+                        $mensagensErro[] = $msg;
+                    }
+                );
+
+                Log::warning('Erro ao salvar no DB o bloqueio do IP ' . $novoIp->ip . ' | Erros: ' . implode(',', $mensagensErro));
+            }
         }
     }
 }
