@@ -27,6 +27,7 @@ use Cake\Http\MiddlewareQueue;
 use Cake\ORM\Locator\TableLocator;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use Cake\Http\Middleware\HttpsEnforcerMiddleware;
 
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
@@ -111,7 +112,18 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 'httponly' => true,
             ]))
             // add Authentication after RoutingMiddleware
-            ->add(new AuthenticationMiddleware($this));
+            ->add(new AuthenticationMiddleware($this))
+            // Forçando HTTPS em todas as conexões;
+            ->add(new HttpsEnforcerMiddleware([
+                'headers' => ['X-Https-Upgrade' => 1],
+                'disableOnDebug' => true,
+                'hsts' => [
+                    // 31536000 = 60 * 60 * 24 * 365
+                    'maxAge' => 31536000,
+                    'includeSubDomains' => true,
+                    'preload' => true,
+                ]
+            ]));
 
         return $middlewareQueue;
     }
