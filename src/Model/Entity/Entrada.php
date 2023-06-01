@@ -57,19 +57,9 @@ class Entrada extends Entity
         'password',
     ];
 
-    public function linkEncurtado(int $tamanho): ?string
+    public function linkEncurtado(int $tamanho = 70): string
     {
-        if (empty($this->link))
-        {
-            return null;
-        }
-
-        if (strlen($this->link) > $tamanho)
-        {
-            return substr($this->link, 0, $tamanho) . '...';
-        }else{
-            return $this->link;
-        }
+        return substr($this->descriptografar($this->link), 0, $tamanho);
     }
 
     /**
@@ -80,18 +70,6 @@ class Entrada extends Entity
      * @return string
      */
     protected function _setPassword(string $textoPuro): string
-    {
-        return $this->criptografar($textoPuro);
-    }
-
-    /**
-     * Mutator usado para criptografar o usuario
-     *
-     * @access protected
-     * @param string $textoPuro
-     * @return string
-     */
-    protected function _setUsername(string $textoPuro): string
     {
         return $this->criptografar($textoPuro);
     }
@@ -108,6 +86,18 @@ class Entrada extends Entity
     }
 
     /**
+     * Mutator usado para criptografar o usuario
+     *
+     * @access protected
+     * @param string $textoPuro
+     * @return string
+     */
+    protected function _setUsername(string $textoPuro): string
+    {
+        return $this->criptografar($textoPuro);
+    }
+
+    /**
      * Retorna o usuario descriptografado
      *
      * @access	public
@@ -116,6 +106,75 @@ class Entrada extends Entity
     public function usernameDescrip(): string
     {
         return $this->descriptografar($this->username);
+    }
+
+    /**
+     * Mutator usado para criptografar o titulo
+     *
+     * @access protected
+     * @param string $textoPuro
+     * @return string
+     */
+    protected function _setTitulo(string $textoPuro): string
+    {
+        return $this->criptografar($textoPuro);
+    }
+
+    /**
+     * Retorna o titulo descriptografado
+     *
+     * @access	public
+     * @return	string
+     */
+    public function tituloDescrip(): string
+    {
+        return $this->descriptografar($this->titulo);
+    }
+
+    /**
+     * Mutator usado para criptografar o link
+     *
+     * @access protected
+     * @param string $textoPuro
+     * @return string
+     */
+    protected function _setLink(string $textoPuro): string
+    {
+        return $this->criptografar($textoPuro);
+    }
+
+    /**
+     * Retorna o link descriptografado
+     *
+     * @access	public
+     * @return	string
+     */
+    public function linkDescrip(): string
+    {
+        return $this->descriptografar($this->link);
+    }
+
+    /**
+     * Mutator usado para criptografar as anotações
+     *
+     * @access protected
+     * @param string $textoPuro
+     * @return string
+     */
+    protected function _setAnotacoes(string $textoPuro): string
+    {
+        return $this->criptografar($textoPuro);
+    }
+
+    /**
+     * Retorna as anotações descriptografadas
+     *
+     * @access	public
+     * @return	string
+     */
+    public function anotacoesDescrip(): string
+    {
+        return $this->descriptografar($this->anotacoes);
     }
 
     public function criptografar(string $textoPuro): string

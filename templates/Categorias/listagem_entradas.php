@@ -9,10 +9,10 @@
     <tbody>
         <?php foreach ($entradas as $entrada): ?>
             <tr class="text-center">
-                <td><?= h($entrada->titulo) ?></td>
+                <td><?= h($entrada->tituloDescrip()) ?></td>
                 <td>
-                	<a href="<?=$entrada->link?>" target="_blank" class="text-decoration-none" title="<?=$entrada->link?>">
-                		<?=$entrada->linkEncurtado(30)?>
+                	<a href="<?=$entrada->linkDescrip()?>" target="_blank" class="text-decoration-none" title="<?=$entrada->linkDescrip()?>">
+                		<?=$entrada->linkEncurtado()?>
                 	</a>
                 </td>
                 <td>

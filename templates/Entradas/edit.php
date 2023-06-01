@@ -19,7 +19,7 @@
   <div class="row">
     <div class="col-sm">
       <label for="titulo" class="form-label">Título</label>
-      <input type="text" class="form-control inputs" name="titulo" id="titulo" value="<?=$entrada->titulo?>" required>
+      <input type="text" class="form-control inputs" name="titulo" id="titulo" value="<?=$entrada->tituloDescrip()?>" required>
     </div>
     <div class="col-sm">
       <label for="username" class="form-label">Usuário</label>
@@ -59,9 +59,9 @@
     <div class="col-sm">
       <label for="link" class="form-label">Link</label>
       <div class="input-group">
-        <input type="url" class="form-control inputs" name="link" id="link" value="<?=$entrada->link?>" placeholder="http://seuLink.com.br" onchange="veriProtoHttp()">
+        <input type="url" class="form-control inputs" name="link" id="link" value="<?=$entrada->linkDescrip()?>" placeholder="http://seuLink.com.br" onchange="veriProtoHttp()">
         <div class="btn-group">
-          <a <?=$entrada->link ? "href='{$entrada->link}' target='_blank'" : "href='#'";?>>
+          <a <?=$entrada->linkDescrip() ? "href='{$entrada->linkDescrip()}' target='_blank'" : "href='#'";?>>
             <button type="button" class="btn btn-secondary" title="Abrir link"><i class="fa fa-arrow-up-right-from-square"></i></button>
           </a>
         </div>
@@ -84,7 +84,7 @@
   <div class="row">
     <div class="col-sm">
       <label for="anotacoes" class="form-label">Anotações</label>
-      <textarea class="form-control" id="anotacoes" name="anotacoes" rows="4"><?=$entrada->anotacoes?></textarea>
+      <textarea class="form-control" id="anotacoes" name="anotacoes" rows="4"><?=$entrada->anotacoesDescrip()?></textarea>
     </div>
   </div>
   <br>
