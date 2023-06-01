@@ -15,6 +15,8 @@ class EntradasController extends AppController
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
+        // desabilitando o cache por segurança.
+        $this->response = $this->response->withDisabledCache();
         $this->FormProtection->setConfig('unlockedActions', ['busca']);
     }
 

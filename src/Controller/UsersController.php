@@ -43,6 +43,8 @@ class UsersController extends AppController
     public function beforeFilter(\Cake\Event\EventInterface $event)
     {
         parent::beforeFilter($event);
+        // desabilitando o cache por segurança.
+        $this->response = $this->response->withDisabledCache();
         $this->Authentication->addUnauthenticatedActions(self::ACTIONS_SEM_AUTENTICACAO);
 
         $caminho = array_values(array_filter(explode('/', $this->request->getPath())));
