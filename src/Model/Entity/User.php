@@ -6,7 +6,7 @@ namespace App\Model\Entity;
 
 use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Cake\ORM\Entity;
-use App\Model\Entity\Entrada;
+use App\Criptografia\Criptografia;
 use PragmaRX\Google2FA\Google2FA;
 
 /**
@@ -82,12 +82,12 @@ class User extends Entity
 
     protected function _setTfaSecret(string $secret): string
     {
-        return (new Entrada)->criptografar($secret);
+        return Criptografia::criptografar($secret);
     }
 
     public function descripSecret2FA(): string
     {
-        return (new Entrada)->descriptografar($this->tfa_secret);
+        return Criptografia::descriptografar($this->tfa_secret);
     }
 
     public function geraSecret2FA()
