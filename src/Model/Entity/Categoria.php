@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use App\Criptografia\Criptografia;
 use Cake\ORM\Entity;
 
 /**
@@ -33,14 +34,38 @@ class Categoria extends Entity
         'entradas' => true
     ];
 
-
-    public function nomeEncurtado(int $tamanho): string
+    /**
+     * Mutator usado para criptografar o nome
+     *
+     * @access protected
+     * @param string $textoPuro
+     * @return string
+     */
+    protected function _setNome(string $textoPuro): string
     {
-        if (strlen($this->nome) > $tamanho)
+        return Criptografia::criptografar($textoPuro);
+    }
+
+    /**
+     * Retorna o nome descriptografado
+     *p
+     * @access	public
+     * @return	string
+     */
+    public function nomeDescrip(): string
+    {
+        return Criptografia::descriptografar($this->nome);
+    }
+
+    public function nomeEncurtado(int $tamanho = 35): string
+    {
+        $nomeDescrip = $this->nomeDescrip();
+
+        if (strlen($nomeDescrip) > $tamanho)
         {
-            return substr($this->nome, 0, $tamanho) . ' ...';
-        }else{
-            return $this->nome;
+            $nomeDescrip = substr($nomeDescrip, 0, $tamanho) . ' ...';
         }
+
+        return $nomeDescrip;
     }
 }

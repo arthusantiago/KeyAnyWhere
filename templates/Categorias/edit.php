@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-sm-auto">
-        <span class="titulo">Categoria <?=$categoria->nome?></span>
+        <span class="titulo">Categoria <?=$categoria->nomeDescrip()?></span>
     </div>
 </div>
 
@@ -11,7 +11,7 @@
 	<div class="row">
 		<div class="col-sm-4">
 		  <label for="nome">Nome da categoria</label>
-		  <input type="text" class="form-control inputs" id="nome" name="nome" value="<?=$categoria->nome?>">
+		  <input type="text" class="form-control inputs" id="nome" name="nome" value="<?=$categoria->nomeDescrip()?>">
 		</div>
 	</div>
 	<div class="row">

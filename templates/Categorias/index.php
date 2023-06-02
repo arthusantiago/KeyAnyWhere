@@ -17,7 +17,7 @@
     <tbody>
         <?php foreach ($query as $categoria): ?>
             <tr class="text-center">
-                <td><?= h($categoria->nome) ?></td>
+                <td><?= h($categoria->nomeDescrip()) ?></td>
                 <td>
                     <?=$this->element('Diversos/btnEditar', ['parametros' => ['controller' => 'Categorias', 'id' => $categoria->id]])?>
                     <?= $this->element('Diversos/btnExcluir', ['parametros' => ['controller' => 'Categorias', 'id' => $categoria->id]])?>
