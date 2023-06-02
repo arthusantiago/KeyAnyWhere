@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use App\Criptografia\Criptografia;
 use Cake\ORM\Entity;
-use Throwable;
 
 /**
  * Entrada Entity
@@ -59,7 +59,7 @@ class Entrada extends Entity
 
     public function linkEncurtado(int $tamanho = 70): string
     {
-        return substr($this->descriptografar($this->link), 0, $tamanho);
+        return substr(Criptografia::descriptografar($this->link), 0, $tamanho);
     }
 
     /**
@@ -71,7 +71,7 @@ class Entrada extends Entity
      */
     protected function _setPassword(string $textoPuro): string
     {
-        return $this->criptografar($textoPuro);
+        return Criptografia::criptografar($textoPuro);
     }
 
     /**
@@ -82,7 +82,7 @@ class Entrada extends Entity
      */
     public function passwordDescrip(): string
     {
-        return $this->descriptografar($this->password);
+        return Criptografia::descriptografar($this->password);
     }
 
     /**
@@ -94,7 +94,7 @@ class Entrada extends Entity
      */
     protected function _setUsername(string $textoPuro): string
     {
-        return $this->criptografar($textoPuro);
+        return Criptografia::criptografar($textoPuro);
     }
 
     /**
@@ -105,7 +105,7 @@ class Entrada extends Entity
      */
     public function usernameDescrip(): string
     {
-        return $this->descriptografar($this->username);
+        return Criptografia::descriptografar($this->username);
     }
 
     /**
@@ -117,7 +117,7 @@ class Entrada extends Entity
      */
     protected function _setTitulo(string $textoPuro): string
     {
-        return $this->criptografar($textoPuro);
+        return Criptografia::criptografar($textoPuro);
     }
 
     /**
@@ -128,7 +128,7 @@ class Entrada extends Entity
      */
     public function tituloDescrip(): string
     {
-        return $this->descriptografar($this->titulo);
+        return Criptografia::descriptografar($this->titulo);
     }
 
     /**
@@ -140,7 +140,7 @@ class Entrada extends Entity
      */
     protected function _setLink(string $textoPuro): string
     {
-        return $this->criptografar($textoPuro);
+        return Criptografia::criptografar($textoPuro);
     }
 
     /**
@@ -151,7 +151,7 @@ class Entrada extends Entity
      */
     public function linkDescrip(): string
     {
-        return $this->descriptografar($this->link);
+        return Criptografia::descriptografar($this->link);
     }
 
     /**
@@ -163,7 +163,7 @@ class Entrada extends Entity
      */
     protected function _setAnotacoes(string $textoPuro): string
     {
-        return $this->criptografar($textoPuro);
+        return Criptografia::criptografar($textoPuro);
     }
 
     /**
@@ -174,53 +174,6 @@ class Entrada extends Entity
      */
     public function anotacoesDescrip(): string
     {
-        return $this->descriptografar($this->anotacoes);
-    }
-
-    public function criptografar(string $textoPuro): string
-    {
-        $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
-        $encrypted = sodium_crypto_secretbox(
-            $textoPuro,
-            $nonce,
-            sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
-        );
-
-        sodium_memzero($textoPuro);
-
-        return sodium_bin2hex($nonce . $encrypted);
-    }
-
-    public function descriptografar(string $dado): string
-    {
-        try {
-            $decoded = sodium_hex2bin($dado);
-            sodium_memzero($dado);
-
-            $nonce = substr($decoded, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
-            $ciphertext = substr($decoded, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, null);
-            sodium_memzero($decoded);
-        } catch (\Throwable $ex) {
-            return 'Erro ao obter as informações para descriptografar: ' . $ex->getMessage();
-        }
-
-        try {
-            $return = sodium_crypto_secretbox_open(
-                $ciphertext,
-                $nonce,
-                sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
-            );
-
-            sodium_memzero($ciphertext);
-            sodium_memzero($nonce);
-
-            if ($return === false) {
-                $return = 'Não foi possivel descriptografar.';
-            }
-        } catch (Throwable $ex) {
-            $return = 'Erro ao descriptografar: ' . $ex->getMessage();
-        }
-
-        return $return;
+        return Criptografia::descriptografar($this->anotacoes);
     }
 }

@@ -15,7 +15,7 @@ class AumentarTamanhoColunasEntradas extends AbstractMigration
     public function change(): void
     {
         $this->table('entradas')
-        ->changeColumn('titulo', 'string', ['limit' => 255])
+        ->changeColumn('titulo', 'string', ['limit' => 256])
         ->update();
     }
 }
