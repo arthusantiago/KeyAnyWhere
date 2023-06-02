@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Event\EventInterface;
 /**
  * Categorias Controller
  *
@@ -11,6 +12,12 @@ namespace App\Controller;
  */
 class CategoriasController extends AppController
 {
+    public function beforeFilter(EventInterface $event)
+    {
+        parent::beforeFilter($event);
+        // desabilitando o cache por segurança.
+        $this->response = $this->response->withDisabledCache();
+    }
     /**
      * A listagem das entradas da categoria informada
      *
@@ -44,19 +51,6 @@ class CategoriasController extends AppController
         $query = $this->paginate($query);
 
         $this->set(compact('query'));
-    }
-
-    /**
-     * View method
-     *
-     * @param string|null $id Categoria id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $categoria = $this->Categorias->get($id, [ 'contain' => ['Entradas']]);
-        $this->set(compact('categoria'));
     }
 
     /**
