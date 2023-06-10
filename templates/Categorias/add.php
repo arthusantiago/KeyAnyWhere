@@ -11,7 +11,7 @@
   <div class="row">
     <div class="col-sm-4">
       <label for="nome">Nome da categoria</label>
-      <input type="text" class="form-control inputs" id="nome" name="nome">
+      <input type="text" class="form-control inputs" id="nome" name="nome" maxlength="88">
     </div>
   </div>
   <br>

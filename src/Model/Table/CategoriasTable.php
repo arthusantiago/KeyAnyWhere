@@ -66,9 +66,9 @@ class CategoriasTable extends Table
 
         $validator
             ->scalar('nome')
-            ->maxLength('nome', 100)
-            ->requirePresence('nome', 'create')
-            ->notEmptyString('nome');
+            ->maxLength('nome', 88, 'O nome da categoria pode ter no máximo 88 caracteres')
+            ->requirePresence('nome', 'create', 'O nome da categoria precisa ser informado')
+            ->notEmptyString('nome', 'O nome da categoria precisa ser informado');
 
         return $validator;
     }

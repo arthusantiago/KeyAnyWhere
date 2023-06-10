@@ -71,26 +71,36 @@ class EntradasTable extends Table
 
         $validator
             ->scalar('titulo')
-            ->maxLength('titulo', 100)
-            ->requirePresence('titulo', 'create')
-            ->notEmptyString('titulo');
+            ->maxLength('titulo', 87, 'A título pode ter no máximo 87 caracteres')
+            ->requirePresence('titulo', 'create', 'O título precisa ser informado')
+            ->notEmptyString('titulo', 'O título não pode estar vazio');
 
         $validator
             ->scalar('username')
-            ->maxLength('username', 100)
-            ->requirePresence('username', 'create')
-            ->notEmptyString('username');
+            ->maxLength('username', 88, 'O username pode ter no máximo 88 caracteres')
+            ->requirePresence('username', 'create', 'O username precisa ser informado')
+            ->notEmptyString('username', 'O username não pode estar vazio');
 
         $validator
             ->scalar('password')
-            ->maxLength('password', 256)
-            ->requirePresence('password', 'create')
-            ->notEmptyString('password');
+            ->maxLength('password', 88, 'A senha pode ter no máximo 88 caracteres')
+            ->requirePresence('password', 'create', 'A senha precisa ser informada')
+            ->notEmptyString('password', 'A senha não pode estar vazia');
 
         $validator
-            ->scalar('link')
-            ->maxLength('link', 500)
+            ->numeric('categoria_id', 'Precisa informar um ID de categoria válido')
+            ->requirePresence('categoria_id', true, 'O ID da categoria precisa ser informado')
+            ->notEmptyString('categoria_id', 'O ID da categoria precisa ser informado');
+
+        $validator
+            ->url('link', 'O link precisa ser uma URL válida')
+            ->urlWithProtocol('link', 'O link precisa ter o protocolo, exemplo: http:// ou https://')
+            ->maxLength('link', 210, 'O link pode ter no máximo 210 caracteres')
             ->allowEmptyString('link');
+
+        $validator
+            ->maxLength('anotacoes', 1000, 'A anotação pode ter no máximo 1000 caracteres')
+            ->allowEmptyString('anotacoes');
 
         return $validator;
     }
