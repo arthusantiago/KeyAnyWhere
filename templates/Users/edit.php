@@ -44,7 +44,7 @@
         </div>
         <div class="col-sm-4">
             <label for="email">E-mail (login e rec. de senha)</label>
-            <input type="email" class="form-control inputs" id="email" name="email" autocomplete="email" value="<?=$user->email?>" required>
+            <input type="email" class="form-control inputs" id="email" name="email" autocomplete="email" value="<?=$user->email?>" maxlength="100" required>
         </div>
     </div>
     <br>

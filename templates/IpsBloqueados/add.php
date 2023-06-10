@@ -25,8 +25,8 @@
   <div class="row">
     <div class="col-sm-4">
       <label for="nome">IP</label>
-      <input type="text" class="form-control inputs" id="ip" name="ip" pattern="^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$" title="Insira um endereço IP válido"
-        maxlength="15" placeholder="111.222.333.444" required>
+      <input type="text" class="form-control inputs" id="ip" name="ip" title="Insira um endereço IP válido" maxlength="39" 
+      placeholder="111.222.333.444 ou 0000:0000:0000:0000:0000:0000:0000:0000" required>
     </div>
   </div>
   <br>

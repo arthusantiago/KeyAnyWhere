@@ -55,15 +55,9 @@ class IpsBloqueadosTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->scalar('ip')
-            ->maxLength('ip', 15, 'O IP pode ter no máximo 15 caracteres (com máscara)')
+            ->ip('ip', 'O IP informado é inválido')
             ->requirePresence('ip', 'create', 'O IP precisa ser informado')
-            ->notEmptyString('ip', 'O IP precisa ser informado')
-            ->regex(
-                'ip',
-                '/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/',
-                'O IP informado não atende ao padrão. Ex: 111.222.333.444'
-            );;
+            ->notEmptyString('ip', 'O IP precisa ser informado');
 
         return $validator;
     }

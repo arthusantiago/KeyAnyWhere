@@ -55,33 +55,33 @@ class LogsTable extends Table
     {
         $validator
             ->scalar('evento')
-            ->maxLength('evento', 7)
+            ->maxLength('evento', 7, 'O identificador do evento pode ter no máximo 7 caracteres')
             ->allowEmptyString('evento');
 
         $validator
             ->integer('nivel_severidade')
-            ->requirePresence('nivel_severidade', 'create')
+            ->requirePresence('nivel_severidade', 'create', 'O nivel de severidade precisa ser informado')
             ->notEmptyString('nivel_severidade', 'O Nivel de Severidade precisa ser preencido');
 
         $validator
             ->scalar('recurso')
-            ->maxLength('recurso', 100)
+            ->maxLength('recurso', 100, 'O recurso pode ter no máximo 100 caracteres')
             ->allowEmptyString('recurso');
 
         $validator
-            ->scalar('ip_origem')
-            ->maxLength('ip_origem', 39)
+            ->ip('ip_origem', 'O IP informado é inválido')
+            ->maxLength('ip_origem', 39, 'O IP de Origem pode ter no máximo 39 caracteres')
             ->allowEmptyString('ip_origem');
 
         $validator
             ->scalar('usuario')
-            ->maxLength('usuario', 200)
+            ->maxLength('usuario', 200, 'O usuário pode ter no máximo 200 caracteres')
             ->allowEmptyString('usuario');
 
         $validator
             ->scalar('mensagem')
-            ->maxLength('mensagem', 256)
-            ->requirePresence('mensagem', 'create')
+            ->maxLength('mensagem', 256, 'A mensagem pode ter no máximo 256 caracteres')
+            ->requirePresence('mensagem', 'create', 'A Mensagem precisa ser preencida')
             ->notEmptyString('mensagem', 'A Mensagem precisa ser preencida');
 
         return $validator;

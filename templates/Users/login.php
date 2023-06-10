@@ -29,15 +29,15 @@
                     </div>
                     <div class="mb-3 elementoInterno">
                         <label for="email" class="form-label text-light">Usuário</label>
-                        <input type="text" class="form-control " id="email" name="email" placeholder="seu@e-mail.com" required>
+                        <input type="text" class="form-control " id="email" name="email" placeholder="seu@e-mail.com" maxlength="100" required>
                     </div>
                     <div class="mb-3 elementoInterno">
                         <label for="password" class="form-label text-light">Senha</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="******" required>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="******" minlength="12" required>
                     </div>
                     <div class="mb-3 elementoInterno">
-                        <label for="2fa" class="form-label text-light">2FA (Autenticação de dois fatores)</label>
-                        <input type="text" class="form-control" id="2fa" name="2fa" required>
+                        <label for="2fa" class="form-label text-light" title="Two-Factor Authentication (2FA)">Segundo fator de autenticação</label>
+                        <input type="text" class="form-control" id="2fa" name="2fa" minlength="6" title="Two-Factor Authentication (2FA)" required >
                     </div>
                     <div class="mb-3 elementoInterno">
                         <a href="#">Esqueci minha senha</a>

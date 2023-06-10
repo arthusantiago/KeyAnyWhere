@@ -15,7 +15,7 @@ class CreateIpsBloqueados extends AbstractMigration
     public function change(): void
     {
         $this->table('ips_bloqueados')
-        ->addColumn('ip', 'string', ['limit' => 15, 'null' => false])
+        ->addColumn('ip', 'string', ['limit' => 39, 'null' => false])
         ->addColumn('created', 'datetime')
         ->addColumn('modified', 'datetime')
         ->create();
