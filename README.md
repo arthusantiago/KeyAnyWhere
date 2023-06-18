@@ -9,6 +9,12 @@ O KAW se divide em Web (este projeto), Mobile e Desktop. Cada um sendo desenvolv
 * A ferramenta tem por princípio a segurança em detrimento da escolha do usuário. Ou seja, muitas coisas são obrigatórias para o seu bem ;).
 * Implementamos somente as funcionalidades **essenciais** de um gerenciador de senha. Menos é mais!
 
+# Requisitos minimos
+
+## Software
+
+* PHP >= 8.0
+
 # Principais tecnologia utilizadas
 
 * [Bootstrap 5.0](https://getbootstrap.com/docs/5.0/getting-started/introduction/)

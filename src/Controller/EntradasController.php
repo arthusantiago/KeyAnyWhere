@@ -131,10 +131,19 @@ class EntradasController extends AppController
     {
         $this->request->allowMethod(['post']);
         $pesquisa = $this->request->getParsedBody();
-        $resultado = $this->Entradas
+        $pesquisa['stringBusca'] = strtolower($pesquisa['stringBusca']);
+
+        $query = $this->Entradas
             ->find()
-            ->where(['lower(titulo) LIKE' => strtolower('%' . $pesquisa['stringBusca'] . '%')])
-            ->limit(10);
+            ->select(['id','titulo']);
+
+        $resultado = [];
+        foreach($query as $entrada){
+            if (str_contains(strtolower($entrada->tituloDescrip()), $pesquisa['stringBusca'])) {
+                $resultado[] = $entrada;
+            }
+        }
+
         $this->viewBuilder()->setLayout('layout_vazio');
         $this->set(compact('resultado'));
     }
