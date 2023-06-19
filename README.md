@@ -6,14 +6,20 @@ KeyAnyWhere ou KAW, é um chaveiro que procura focar nas funcionalidades essenci
 O KAW se divide em Web (este projeto), Mobile e Desktop. Cada um sendo desenvolvido em um projeto a parte.
 
 Login
+<div><img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/login.png" width="500" /></div>
 
 Home
+<div><img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/home.png" width="500" /></div>
 
 Entradas
+<div><img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/listagem-entradas.png" width="500" /></div>
+<div><img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/nova-entrada.png" width="500" /></div>
 
 Logs
+<div><img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/logs.png" width="500" /></div>
 
 IPs Bloqueados
+<div><img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/ips-bloqueados.png" width="500" /></div>
 
 # Princípios
 * A ferramenta tem por princípio a segurança em detrimento da escolha do usuário. Ou seja, muitas coisas são obrigatórias para o seu bem ;).
