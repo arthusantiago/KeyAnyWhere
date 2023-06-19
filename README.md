@@ -5,6 +5,16 @@
 KeyAnyWhere ou KAW, é um chaveiro que procura focar nas funcionalidades essenciais de um gerenciador de senhas. 
 O KAW se divide em Web (este projeto), Mobile e Desktop. Cada um sendo desenvolvido em um projeto a parte.
 
+Login
+
+Home
+
+Entradas
+
+Logs
+
+IPs Bloqueados
+
 # Princípios
 * A ferramenta tem por princípio a segurança em detrimento da escolha do usuário. Ou seja, muitas coisas são obrigatórias para o seu bem ;).
 * Implementamos somente as funcionalidades **essenciais** de um gerenciador de senha. Menos é mais!
@@ -15,7 +25,7 @@ O KAW se divide em Web (este projeto), Mobile e Desktop. Cada um sendo desenvolv
 
 * PHP >= 8.0
 
-# Principais tecnologia utilizadas
+# Principais tecnologia aplicadas
 
 * [Bootstrap 5.0](https://getbootstrap.com/docs/5.0/getting-started/introduction/)
 * [Bootstrap Icons](https://icons.getbootstrap.com/)
@@ -24,6 +34,7 @@ O KAW se divide em Web (este projeto), Mobile e Desktop. Cada um sendo desenvolv
 * [CakePHP 4](https://book.cakephp.org/4/en/index.html)
 * [PostgresSQL](https://www.postgresql.org/) (recomendado)
 * [phpDocumentor](https://docs.phpdoc.org/)
+* [OWASP Top Ten](https://owasp.org/www-project-top-ten/) (30% aplicado)
 
 # Documentação
 
