@@ -33,6 +33,9 @@
     </tbody>
 </table>
 
+<br>
+<?= $this->element('paginacao');?>
+
 <!-- usado para marcar em qual categoria o usuário está -->
 <input type="hidden" id="id-categoria-selecionada" value="<?=$categoria_id?>">
 <script type="text/javascript">

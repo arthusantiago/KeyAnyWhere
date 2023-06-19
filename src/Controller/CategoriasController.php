@@ -18,6 +18,7 @@ class CategoriasController extends AppController
         // desabilitando o cache por segurança.
         $this->response = $this->response->withDisabledCache();
     }
+
     /**
      * A listagem das entradas da categoria informada
      *
@@ -30,9 +31,11 @@ class CategoriasController extends AppController
         $this->response = $this->response->withDisabledCache();
 
         $entradas = $this->Categorias->Entradas
-        ->find('all')
-        ->where(['categoria_id' => $categoria_id])
-        ->order(['titulo']);
+            ->find('all')
+            ->where(['categoria_id' => $categoria_id])
+            ->order(['titulo']);
+
+        $entradas = $this->paginate($entradas, ['limit' => 15]);
 
         $this->set(compact('entradas','categoria_id'));
     }
