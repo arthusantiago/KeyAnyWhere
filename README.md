@@ -30,6 +30,7 @@ IPs Bloqueados
 ## Software
 
 * PHP >= 8.0
+* SSL/TLS (leia a documentação)
 
 # Principais tecnologia aplicadas
 
