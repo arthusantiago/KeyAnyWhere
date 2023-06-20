@@ -87,7 +87,7 @@ Este é um **exemplo** de passos que você seguir para colocar a aplicação em 
 1. Seguir os passos listados na seção 'Configuração inicial da aplicação'.
 2. Instalar o Apache2 ([post](https://avds.eti.br/programacao/instalando-o-apache2-e-configurando-ssl-tls/399/)).
     * A pasta `webroot/` deve ser o DocumentRoot do site. No arquivo de configuração do site (ex.:`/etc/apache2/sites-enabled/000-default.conf`), insira a configuração `DocumentRoot /var/www/html/webroot`.
-3. É **extremamente importante** que você configure o SSL/TLS no seu domínio. Nesse [post](https://avds.eti.br/programacao/instalando-o-apache2-e-configurando-ssl-tls/399/) eu ensino como fazer isso.
+3. **É OBRIGATÓRIO** que você configure o SSL/TLS no seu domínio. Nesse [post](https://avds.eti.br/programacao/instalando-o-apache2-e-configurando-ssl-tls/399/) eu ensino como fazer isso.
 4. Permissões de acesso
     * Usando o Apache, sete o `www-data` como dono e grupo da pasta: `sudo chown -R www-data:www-data /var/www/html/`
     * Permissões gerais da aplicação: `sudo chmod -R 750 /var/www/html/`
