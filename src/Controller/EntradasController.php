@@ -42,7 +42,7 @@ class EntradasController extends AppController
         }
         $categorias = $this->Entradas->Categorias
         ->find('all')
-        ->order(['nome']);
+        ->order(['posicao']);
 
         $this->set(compact('entrada', 'categorias'));
     }
@@ -70,7 +70,7 @@ class EntradasController extends AppController
 
         $categorias = $this->Entradas->Categorias
             ->find('all')
-            ->order(['nome']);
+            ->order(['posicao']);
 
         $this->set(compact('entrada', 'categorias'));
     }

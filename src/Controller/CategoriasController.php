@@ -49,7 +49,7 @@ class CategoriasController extends AppController
     {
         $query = $this->Categorias
         ->find('all')
-        ->order(['nome']);
+        ->order(['posicao']);
 
         $query = $this->paginate($query);
 
@@ -68,6 +68,7 @@ class CategoriasController extends AppController
             $categoria = $this->Categorias->patchEntity($categoria, $this->request->getData());
             if ($this->Categorias->save($categoria)) {
                 $this->Flash->success(__('Salvo com sucesso'));
+                $this->Categorias->reordenar();
                 return $this->redirect(['action' => 'edit', $categoria->id]);
             }
             $this->Flash->error(__('Erro ao salvar'));
@@ -90,6 +91,7 @@ class CategoriasController extends AppController
             $categoria = $this->Categorias->patchEntity($categoria, $this->request->getData());
             if ($this->Categorias->save($categoria)) {
                 $this->Flash->success(__('Salvo com sucesso'));
+                $this->Categorias->reordenar();
             }else{
                 $this->Flash->error(null, ['params' => ['mensagens' => $categoria->getErrors()]]);
             }
@@ -114,6 +116,7 @@ class CategoriasController extends AppController
         $categoria = $this->Categorias->get($id);
         if ($this->Categorias->delete($categoria)) {
             $this->Flash->success(__('Excluído com sucesso'));
+            $this->Categorias->reordenar();
         } else {
             $this->Flash->error(null, ['params' => ['mensagens' => $categoria->getErrors()]]);
         }

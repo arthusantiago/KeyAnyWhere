@@ -31,7 +31,8 @@ class Categoria extends Entity
         'nome' => true,
         'created' => true,
         'modified' => true,
-        'entradas' => true
+        'entradas' => true,
+        'posicao' => true
     ];
 
     /**

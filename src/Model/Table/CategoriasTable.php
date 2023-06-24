@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Query;
-use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
@@ -71,5 +69,38 @@ class CategoriasTable extends Table
             ->notEmptyString('nome', 'O nome da categoria precisa ser informado');
 
         return $validator;
+    }
+
+    /**
+     * Reordena as categorias no BD.
+     * Por padrão as categorias são ordenadas alfabeticamente.
+     *
+     * @access	public
+     * @return	void
+     */
+    public function reordenar()
+    {
+        $categorias = $this
+            ->find('all')
+            ->select(['id', 'nome'])
+            ->toArray();
+        $novaOrdenacao = [];
+
+        foreach ($categorias as $categoria) {
+            $novaOrdenacao[] = $categoria->nomeDescrip() . '-' . $categoria->id;
+            unset($categoria);
+        }
+        unset($categorias);
+        sort($novaOrdenacao, SORT_STRING | SORT_FLAG_CASE);
+
+        foreach ($novaOrdenacao as $novaPosicao => $nomeCate) {
+            $posicao = strripos($nomeCate, '-');
+            $idCategoria = substr($nomeCate, ++$posicao);
+            $categoria = $this->get($idCategoria);
+            $categoria->posicao = $novaPosicao;
+            $this->save($categoria);
+            unset($nomeCate, $categoria);
+        }
+        unset($novaOrdenacao);
     }
 }

@@ -37,7 +37,7 @@ class CategoriasMenuCell extends Cell
     {
         $query = $this->Categorias
         ->find('all')
-        ->order(['nome']);
+        ->order(['posicao']);
 
         $this->set(compact('query'));
     }
