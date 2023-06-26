@@ -81,4 +81,14 @@ class IpsBloqueadosTable extends Table
 
         return $rules;
     }
+
+    public function findUltimosBloqueados(Query $query, array $options)
+    {
+        $query
+            ->select(['ip', 'created'])
+            ->orderDesc('created')
+            ->limit(7);
+
+        return $query;
+    }
 }

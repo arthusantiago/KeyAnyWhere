@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Table\LogsTable;
+use App\Model\Table\IpsBloqueadosTable;
 
 /**
  * Static content controller
@@ -33,6 +34,10 @@ class PagesController extends AppController
             ->find('countAtividadesSuspeitas')
             ->toArray();
 
-        $this->set(compact('logs'));
+        $ipsBloqueados = (new IpsBloqueadosTable)
+            ->find('ultimosBloqueados')
+            ->toArray();
+
+        $this->set(compact('logs', 'ipsBloqueados'));
     }
 }
