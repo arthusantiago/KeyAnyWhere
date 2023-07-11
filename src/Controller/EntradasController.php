@@ -17,7 +17,7 @@ class EntradasController extends AppController
         parent::beforeFilter($event);
         // desabilitando o cache por segurança.
         $this->response = $this->response->withDisabledCache();
-        $this->FormProtection->setConfig('unlockedActions', ['busca']);
+        $this->FormProtection->setConfig('unlockedActions', ['busca', 'senhaInsegura']);
     }
 
     /**
@@ -146,5 +146,30 @@ class EntradasController extends AppController
 
         $this->viewBuilder()->setLayout('layout_vazio');
         $this->set(compact('resultado'));
+    }
+
+    /**
+     * Recebe uma senha e verifica se ela está no catalogo de senhas inseguras.
+     * Espera uma request com o header: 'Content-Type': 'application/json'
+     * Espera uma request com JSON no formato: {"password":"senha-para-verificacao"}
+     *
+     * @access	public
+     * @return \Cake\Http\Response
+     */
+    public function senhaInsegura()
+    {
+        $this->request->allowMethod(['post']);
+        $request = $this->request->getParsedBody();
+
+        $password = $this->fetchTable('InsecurePasswords')
+            ->find()
+            ->where(['password' => strtolower($request['password'])])
+            ->first();
+
+        $resultado['localizado'] = $password ? true : false;
+
+        return $this->response
+            ->withType('application/json')
+            ->withStringBody(json_encode($resultado));
     }
 }

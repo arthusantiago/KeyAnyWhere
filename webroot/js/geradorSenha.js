@@ -44,6 +44,7 @@ function generateX() {
 
 function aplicaSenha(idInputPass, idInputSenhaGerada) {
     document.getElementById(idInputPass).value = document.getElementById(idInputSenhaGerada).value;
+    document.getElementById(idInputPass).dispatchEvent(new Event('change'));
 }
 
 function atualizaLabel(idLabel, idInputTamanho) {

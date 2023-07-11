@@ -147,3 +147,42 @@ function obterQrCode2FA(urlParaBusca) {
 		console.log("Erro ao executar a requisição: " + error.message);
 	});
 }
+
+/**
+ * Faz uma chamada para o server verificar se a senha é insegura.
+ *
+ * @param	string	inputName ID do input=text|password onde a senha foi inserida
+ * @return	void
+ */
+function estaComprometida(inputName) {
+	let csrfToken = document.getElementsByName('csrfToken').item([]).getAttribute('content');
+	let dadosParaRequest = JSON.stringify({"password": document.getElementById(inputName).value});
+	let url = window.location.origin + '/entradas/senha-insegura/';
+
+	fetch(
+		url,
+		{
+			'method': 'POST',
+			'headers': {
+				'Content-Type': 'application/json; charset=utf-8',
+				'Accept': 'application/json',
+				'X-CSRF-Token': csrfToken
+			},
+			'body': dadosParaRequest,
+		}
+	)
+	.then((response) => response.json())
+	.then(function (dadoRetornado) {
+		let strClass = document.getElementById(inputName).getAttribute('class');
+		if (dadoRetornado.localizado) {
+			strClass = strClass + ' is-invalid';
+		} else {
+			strClass = strClass.replace(/is-invalid/g, "");
+		}
+		document.getElementById(inputName).setAttribute('class', strClass);
+	})
+	.catch(function (error) {
+		alert('Ocorreu um erro na requisição');
+		console.log("Erro ao executar a requisição: " + error.message);
+	});
+}
