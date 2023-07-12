@@ -1,28 +1,26 @@
 # KeyAnyWhere
-KeyAnyWhere ou KAW, é um chaveiro que procura focar nas funcionalidades essenciais de um gerenciador de senhas. 
+
+KeyAnyWhere ou KAW, é um chaveiro que procura focar nas funcionalidades essenciais de um gerenciador de senhas.
 O KAW se divide em Web (este projeto), Mobile e Desktop. Cada um sendo desenvolvido em um reponsitório a parte.
 
 # Princípios
+
 * A ferramenta tem por princípio a segurança em detrimento da escolha do usuário. Ou seja, muitas coisas são obrigatórias para o seu bem ;).
 * Implementamos somente as funcionalidades **essenciais** de um gerenciador de senha. Menos é mais!
 
 LOGIN
-<div><img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/login.png" width="500" /></div>
-
+<img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/login.png" width="500">
 HOME
-<div><img src="https://github.com/arthusantiago/KeyAnyWhere/blob/c83e3057c5d0d96e5c7c8273aaf20bf599bdcc69/artefatos/imagens/home.png" width="500" /></div>
-
+<img src="https://github.com/arthusantiago/KeyAnyWhere/blob/c83e3057c5d0d96e5c7c8273aaf20bf599bdcc69/artefatos/imagens/home.png" width="500">
 ENTRADAS
-<div><img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/listagem-entradas.png" width="500" /></div>
-<div><img src="https://github.com/arthusantiago/KeyAnyWhere/blob/c83e3057c5d0d96e5c7c8273aaf20bf599bdcc69/artefatos/imagens/entrada-nova.png" width="500" /></div>
+<img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/listagem-entradas.png" width="500">
+<img src="https://github.com/arthusantiago/KeyAnyWhere/blob/c83e3057c5d0d96e5c7c8273aaf20bf599bdcc69/artefatos/imagens/entrada-nova.png" width="500">
 VERIFICAÇÃO DE SENHA INSEGURA/VAZADA
-<div><img src="https://github.com/arthusantiago/KeyAnyWhere/blob/c83e3057c5d0d96e5c7c8273aaf20bf599bdcc69/artefatos/imagens/entrada-senha-insegura.png" width="500" /></div>
-
+<img src="https://github.com/arthusantiago/KeyAnyWhere/blob/c83e3057c5d0d96e5c7c8273aaf20bf599bdcc69/artefatos/imagens/entrada-senha-insegura.png" width="500">
 LOGs DE ATIVIDADES SUSPEITAS
-<div><img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/logs.png" width="500" /></div>
-
+<img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/logs.png" width="500">
 IPs BLOQUEADOS
-<div><img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/ips-bloqueados.png" width="500" /></div>
+<img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/ips-bloqueados.png" width="500">
 
 # Requisitos minimos
 
@@ -68,7 +66,7 @@ Essas são as configurações necessárias para executar o projeto no ambiente d
 4. Na pasta `config/`, crie o arquivo `.env` a partir do arquivo `config/.env.example`. Esse arquivo deve conter as variáveis de ambiente que são utilizadas pela aplicação no **ambiente de desenvolvimento**.
 5. Execute as migrations do BD: `php bin/cake.php migrations migrate`
 6. Você pode utilizar o servidor WEB interno do CakePHP para executar o projeto: `php bin/cake.php server`
-7. Para logar utilize o usuário padrão da seção 'Usuário do primeiro acesso'.
+7. No primeiro acesso você será direcionado para o tutorial inicial.
 
 ### Dados para testes
 
@@ -76,8 +74,8 @@ Execute as Seeds na ordem:
 
 1. Tenha um usuário cadastrado
 2. `php bin/cake.php migrations seed --seed=CategoriasSeed`
-3. `php bin/cake.php migrations seed --seed=EntradasSeed` 
-   Todas as entradas seram vinculadas a usuário ID 1
+3. `php bin/cake.php migrations seed --seed=EntradasSeed`
+Todas as entradas seram vinculadas a usuário ID 1
 
 ## Ambiente de produção
 
@@ -92,20 +90,32 @@ Este é um **exemplo** de passos que você seguir para colocar a aplicação em 
     * Permissões gerais da aplicação: `sudo chmod -R 750 /var/www/html/`
     * Permissões das pastas `/var/www/html/tmp/` e `/var/www/html/logs/`. Instale o utilitário setfacl `sudo apt install acl` e siga o capítulo [Permissions](https://book.cakephp.org/4/en/installation.html#permissions) da documentação do CakePHP.
 5. Configure variáveis de ambiente.
-   Há diferentes maneiras de criá-las, uma delas é criar as variaveis dentro do Apache. [post](https://avds.eti.br/programacao/configurando-variaveis-de-ambiente-no-apache/411/)
-   Para gerar as chaves de segurança, leia a seção 'Gerando chaves de segurança'
+Há diferentes maneiras de criá-las, uma delas é criar as variaveis dentro do Apache. [post](https://avds.eti.br/programacao/configurando-variaveis-de-ambiente-no-apache/411/)
+Para gerar as chaves de segurança, leia a seção 'Gerando chaves de segurança'
 6. Leia o arquivo de configuração `config/app.php` e veja quais variáveis são utilizadas na função `env()`.
 7. Executando a CLI do CakePHP em produção.
-   Dependendo de como você configura as variáveis de ambiente, a CLI do CakePHP não consegue enxerga-lás.
-   Dentro do arquivo `config/app.php`, você precisa passar como segundo parâmetro da função `env()` o valor da variável de ambiente, exemplo: `env('MINHA_VAR_AMB', 'valorDaVarAmb')`.
-   Isso deve ser feito **temporariamente**, somente durante o processo de deploy. Depois de executar tudo o que precisava na CLI do CakePHP, remova do arquivo `config/app.php` todos os valores das variáveis.
+Dependendo de como você configura as variáveis de ambiente, a CLI do CakePHP não consegue enxerga-lás.
+Dentro do arquivo `config/app.php`, você precisa passar como segundo parâmetro da função `env()` o valor da variável de ambiente, exemplo: `env('MINHA_VAR_AMB', 'valorDaVarAmb')`.
+Isso deve ser feito **temporariamente**, somente durante o processo de deploy. Depois de executar tudo o que precisava na CLI do CakePHP, remova do arquivo `config/app.php` todos os valores das variáveis.
 8. Execute as migrations do DB: `php bin/cake.php migrations migrate`
-9. Para logar utilize o usuário padrão da seção 'Usuário do primeiro acesso'.
+9. Execute os Seeds das senhas
+10. No primeiro acesso você será direcionado para o tutorial inicial.
 
 ## Gerando chaves de segurança
 
 * Gerando a chave de criptografia pela CLI: `php -r "echo PHP_EOL . sodium_bin2hex(sodium_crypto_secretbox_keygen()) . PHP_EOL;"`
 * Gerar o SALT pela CLI: `php -r "echo PHP_EOL . bin2hex(random_bytes(32)) . PHP_EOL;"`
+
+## Catálogo de senhas insegura
+
+O KAW possui um catálogo de quase 1 milhão de senhas inseguras. Ele serve para alertar o usuário durante a criação de uma senha.
+Fonte dos dados: https://github.com/danielmiessler/SecLists/tree/master/Passwords/Common-Credentials
+
+### Populando o DB com as senhas inseguras
+
+Execute o comando abaixo na CLI, substituindo o '[X]' pelo número correspondente ao arquivo da pasta `config/Seeds/`:
+`php bin/cake.php migrations seed --seed=PasswordsInsecurePt[X]Seed`
+Execute todos os seeds que tiverem o padrão 'PasswordsInsecurePt[X]Seed'
 
 ## Primeiro acesso
 
