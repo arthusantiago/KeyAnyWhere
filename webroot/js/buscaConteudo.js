@@ -1,4 +1,50 @@
 /**
+ * Função responsavel por fazer todas as request ao servidor.
+ *
+ * @param url Pra onde será feita a requisição
+ * @param parametros Objeto que contem todas as configurações para executar a request/response.
+ * 		Tem a mesma função do 'options' do fetch()
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/fetch
+ * @global
+ */
+var factoryRequest = async function (url, parametros)
+{
+	let headersDefault = {
+		'Content-Type': 'application/json; charset=utf-8',
+		'Accept': 'application/json',
+	};
+
+	// Setando valores default
+	if (parametros == undefined) {
+		parametros = {'headers': headersDefault};
+	} else {
+		if (parametros.headers != undefined) {
+			if (parametros.headers['Content-Type'] == undefined) {
+				parametros.headers['Content-Type'] = headersDefault['Content-Type'];
+			}
+
+			if (parametros.headers['Accept'] == undefined) {
+				parametros.headers['Accept'] = headersDefault['Accept'];
+			}
+		} else {
+			parametros.headers = headersDefault;
+		}
+	}
+
+	parametros.headers['X-CSRF-Token'] = document.getElementsByName('csrfToken').item([]).getAttribute('content');
+
+	return await fetch (
+		url,
+		{
+			'method': parametros['method'] ?? 'POST',
+			'headers': parametros.headers,
+			'credentials': "same-origin",
+			'body': parametros['body'] ?? null,
+		}
+	);
+}
+
+/**
  * Função responsável por buscar as informações de user e senha e escrever na área de transferencia.
  *
  * @param elementHTML button O botão que foi clicado
@@ -7,21 +53,25 @@
  */
 async function buscaUserPass(button)
 {
-	if(button.getAttribute('data-clipboard-tipo') == 'pass'){
-		endpoint = '/entradas/clipboard-pass/';
-	}else{
-		endpoint = '/entradas/clipboard-user/';
-	}
+	let body = {'type' : null, 'id' : null};
+	body.type = button.getAttribute('data-clipboard-tipo') == 'pass' ? 'password' : 'user' ;
+	body.id = button.getAttribute('data-clipboard-entrada-id');
+	let urlParaBusca = window.location.origin + '/entradas/clipboard/';
 
-	let urlParaBusca = window.location.origin + endpoint + button.getAttribute('data-clipboard-entrada-id');
-
-	fetch(urlParaBusca)
-	.then(response => response.text())
+	factoryRequest(urlParaBusca, {'body' : JSON.stringify(body)})
+	.then((response) => {
+		if (!response.ok) {
+			throw new Error(response.status + '-'+ response.statusText);
+		}
+		return  response.json();
+	})
 	.then(function(dadoRetornado){
-		navigator.clipboard.writeText(dadoRetornado);
+		navigator.clipboard.writeText(dadoRetornado.data);
 	})
 	.catch(function(error){
-		console.log("Aconteceu um erro na busca do usuário/senha: " + error.message);
+		let msgErro = 'Ocorreu um erro na requisição ao servidor: ' + error.message;
+		alert(msgErro);
+		console.error(msgErro);
 	});
 }
 
@@ -37,7 +87,7 @@ async function buscaUserPass(button)
 					  Informar em milissegundos. O padrão é 2000 ms (2 segundos)
  		'paramAdicional' : Você pode adicionar a requisição algum dado desejado em formato de JSON.
  */
-var paraExecutar;
+let paraExecutar;
 function buscaGenerica(idInputOrigemBusca, destinoHtmlRetorno, urlParaBusca, config)
 {
 	let inputOrigemBusca = document.getElementById(idInputOrigemBusca);
@@ -53,34 +103,32 @@ function buscaGenerica(idInputOrigemBusca, destinoHtmlRetorno, urlParaBusca, con
 					stringBusca: inputOrigemBusca.value,
 					paramAdicional: config.paramAdicional
 				});
-				let csrfToken = document.getElementsByName('csrfToken').item([]).getAttribute('content');
 
-				//executando a busca
-				fetch(
+				factoryRequest(
 					urlParaBusca,
 					{
-						'method': 'POST',
-						'headers': {
-							'Content-Type': 'text/json; charset=utf-8',
-							'Accept': 'text/html, application/json',
-							'X-CSRF-Token': csrfToken
-						},
-						'body': dadosParaRequest,
+						'headers' : {'Accept': 'text/html'},
+						'body' : dadosParaRequest,
 					}
 				)
-				.then(response => response.text())
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error(response.status + '-'+ response.statusText);
+					}
+					return response.text();
+				})
 				.then(function(dadoRetornado){
 					document.getElementById(destinoHtmlRetorno).innerHTML = dadoRetornado;
 				})
 				.catch(function(error){
-					alert('Ocorreu um erro na busca');
-					console.log("Erro ao executar a busca: " + error.message);
+					let msgErro = 'Ocorreu um erro na requisição ao servidor: ' + error.message;
+					alert(msgErro);
+					console.error(msgErro);
 				});
 			}
 		};
 
-		if(config.tempoEspera)
-		{
+		if(config.tempoEspera){
 			paraExecutar = setTimeout(chamadaAoServidor, config.tempoEspera);
 		}else{
 			paraExecutar = setTimeout(chamadaAoServidor, 2000);
@@ -119,59 +167,50 @@ function removeResultadoBuscaGenerico(idInputOrigemBusca, idUlBusca) {
  *
  * @param string urlParaBusca URL alvo da busca.
  */
-function obterQrCode2FA(urlParaBusca) {
-	let csrfToken = document.getElementsByName('csrfToken').item([]).getAttribute('content');
+function obterQrCode2FA(urlParaBusca)
+{
+	let parametros = 		{
+		'method': 'GET',
+		'headers': {
+			'Accept': 'text/html',
+		}
+	};
 
-	fetch(
-		urlParaBusca,
-		{
-			'method': 'GET',
-			'headers': {
-				'Content-Type': 'text/json; charset=utf-8',
-				'Accept': 'text/html, application/json',
-				'X-CSRF-Token': csrfToken
-			}
-		}
-	)
+	factoryRequest(urlParaBusca, parametros)
 	.then((response) => {
-		if (response.ok) {
-			return response.text();
+		if (!response.ok) {
+			throw new Error(response.status + '-'+ response.statusText);
 		}
-		alert('Erro ' + response.status + '\n' + response.statusText);
+		return response.text();
 	})
 	.then(function (dadoRetornado) {
 		document.getElementById('imagemQrCode').innerHTML = dadoRetornado;
 	})
 	.catch(function (error) {
-		alert('Ocorreu um erro na requisição');
-		console.log("Erro ao executar a requisição: " + error.message);
+		let msgErro = 'Ocorreu um erro na requisição ao servidor: ' + error.message;
+		alert(msgErro);
+		console.error(msgErro);
 	});
 }
 
 /**
  * Faz uma chamada para o server verificar se a senha é insegura.
  *
- * @param	string	inputName ID do input=text|password onde a senha foi inserida
- * @return	void
+ * @param string inputName ID do input=text|password onde a senha foi inserida
+ * @return void
  */
-function estaComprometida(inputName) {
-	let csrfToken = document.getElementsByName('csrfToken').item([]).getAttribute('content');
-	let dadosParaRequest = JSON.stringify({"password": document.getElementById(inputName).value});
+function estaComprometida(inputName)
+{
+	let body = JSON.stringify({"password": document.getElementById(inputName).value});
 	let url = window.location.origin + '/entradas/senha-insegura/';
 
-	fetch(
-		url,
-		{
-			'method': 'POST',
-			'headers': {
-				'Content-Type': 'application/json; charset=utf-8',
-				'Accept': 'application/json',
-				'X-CSRF-Token': csrfToken
-			},
-			'body': dadosParaRequest,
+	factoryRequest(url, {'body' : body})
+	.then(function(response){
+		if (!response.ok) {
+			throw new Error(response.status + '-'+ response.statusText);
 		}
-	)
-	.then((response) => response.json())
+		return response.json();
+	})
 	.then(function (dadoRetornado) {
 		let strClass = document.getElementById(inputName).getAttribute('class');
 		if (dadoRetornado.localizado) {
@@ -182,7 +221,8 @@ function estaComprometida(inputName) {
 		document.getElementById(inputName).setAttribute('class', strClass);
 	})
 	.catch(function (error) {
-		alert('Ocorreu um erro na requisição');
-		console.log("Erro ao executar a requisição: " + error.message);
+		let msgErro = 'Ocorreu um erro na requisição ao servidor: ' + error.message;
+		alert(msgErro);
+		console.error(msgErro);
 	});
 }

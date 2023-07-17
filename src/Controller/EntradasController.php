@@ -17,7 +17,7 @@ class EntradasController extends AppController
         parent::beforeFilter($event);
         // desabilitando o cache por segurança.
         $this->response = $this->response->withDisabledCache();
-        $this->FormProtection->setConfig('unlockedActions', ['busca', 'senhaInsegura']);
+        $this->FormProtection->setConfig('unlockedActions', ['busca', 'senhaInsegura', 'clipboard']);
     }
 
     /**
@@ -96,31 +96,27 @@ class EntradasController extends AppController
     }
 
     /**
-     * Busca a entrada para retornar a senha dela
+     * Retorna o usuário ou senha de uma entrada.
      *
      * @param string|null $entrada_id Entrada id.
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function clipboardPass($entrada_id)
+    public function clipboard()
     {
-        $entrada = $this->Entradas->get($entrada_id);
-        $this->viewBuilder()->setLayout('layout_vazio');
-        $this->set(compact('entrada'));
-    }
+        $this->request->allowMethod(['post']);
+        $request = $this->request->getParsedBody();
+        $entrada = $this->Entradas->get($request['id']);
 
-    /**
-     * Busca a entrada para retornar o usuário dela
-     *
-     * @param string|null $entrada_id Entrada id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function clipboardUser($entrada_id)
-    {
-        $entrada = $this->Entradas->get($entrada_id);
-        $this->viewBuilder()->setLayout('layout_vazio');
-        $this->set(compact('entrada'));
+        if ($request['type'] == 'password') {
+            $response['data'] = $entrada->passwordDescrip();
+        } else if ($request['type'] == 'user'){
+            $response['data'] = $entrada->usernameDescrip();
+        }
+
+        return $this->response
+            ->withType('application/json')
+            ->withStringBody(json_encode($response));
     }
 
     /**
