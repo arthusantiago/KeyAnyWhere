@@ -34,12 +34,12 @@ class EntradasController extends AppController
             $entrada->user_id = $this->request->getAttribute('identity')->getIdentifier();
 
             if ($this->Entradas->save($entrada)) {
-                $this->Flash->success(__('The entrada has been saved.'));
-
+                $this->Flash->success(__('Salvo com sucesso'));
                 return $this->redirect(['action' => 'edit', $entrada->id]);
             }
-            $this->Flash->error(__('The entrada could not be saved. Please, try again.'));
+            $this->Flash->error(null, ['params' => ['mensagens' => $entrada->getErrors()]]);
         }
+
         $categorias = $this->Entradas->Categorias
         ->find('all')
         ->order(['posicao']);
@@ -87,9 +87,9 @@ class EntradasController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $entrada = $this->Entradas->get($id);
         if ($this->Entradas->delete($entrada)) {
-            $this->Flash->success(__('The entrada has been deleted.'));
+            $this->Flash->success(__('Excluído com sucesso'));
         } else {
-            $this->Flash->error(__('The entrada could not be deleted. Please, try again.'));
+            $this->Flash->error(null, ['params' => ['mensagens' => $entrada->getErrors()]]);
         }
 
         return $this->redirect(['action' => 'index']);
