@@ -92,7 +92,7 @@ class EntradasController extends AppController
             $this->Flash->error(null, ['params' => ['mensagens' => $entrada->getErrors()]]);
         }
 
-        return $this->redirect(['action' => 'index']);
+        return $this->redirect($this->request->referer());
     }
 
     /**

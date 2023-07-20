@@ -1,14 +1,14 @@
-<?php 
+<?php
 /**
   * Botão padrão para excluir alguma coisa.
   *
   * Exemplo de chamada:
-  * 
+  *
   * <?= $this->element('Diversos/btnExcluir', ['parametros' => ['controller' => 'Categoria', 'id' => 5]])?>
   *
-  * Se a action não for informada nos parametros, a action 'delete' é chamada. 
-  * 
-  * Especificando a action: 
+  * Se a action não for informada nos parametros, a action 'delete' é chamada.
+  *
+  * Especificando a action:
   * <?=$this->element('Diversos/btnExcluir', ['parametros' => [
   * 	'controller' => 'Categoria',
   * 	'action' => 'delete',
@@ -20,22 +20,17 @@
   *		'controller' : Controlador
   *		'action' : Metodo do controlador
   *   'id' : ID do registro que será excluído
-**/ 
+  *   'texto' : Texto que exibido dentor do botão
+**/
 
-//Gerando a URL
-$urlExclusao = null;
+$parametros['texto'] = $parametros['texto'] ?? 'Excluir';
 
 $parametrosURL = [
   'controller' => $parametros['controller'],
-  'action' => 'delete', // action padrão
+  'action' => $parametros['action'] ?? 'delete', // action padrão
   'prefix' => false,
   $parametros['id']
-]; 
-
-if (isset($parametros['action']) == true && empty($parametros['action']) == false)
-{
-  $parametrosURL['action'] = $parametros['action'];
-}
+];
 
 $urlExclusao = $this->Url->build($parametrosURL);
 
@@ -48,19 +43,22 @@ $idForm = "form-exclusao-{$parametros['id']}";
 
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-sm btn-outline-danger botoes" data-bs-toggle="modal" data-bs-target="#<?=$idModal?>">
-  <i class="bi bi-trash2 icone-opcao"></i>Excluir
+  <?php if ($parametros['texto']): ?>
+    <i class="bi bi-trash2 icone-opcao"></i><?=$parametros['texto']?>
+  <?php else: ?>
+    <i class="bi bi-trash2"></i>
+  <?php endif; ?>
 </button>
 
 <!-- Modal -->
 <div class="modal fade" id="<?=$idModal?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <p>Realmente deseja excluir esse registro?</p>
-        <p class="bg-danger text-white">Todos os outros registro vinculados a ele também serão excluídos</p>
         <?= $this->Form->create(null, ['url' => $urlExclusao, 'id' => $idForm]); ?>
           <?= $this->Form->hidden('id', ['value' => $parametros['id']]); ?>
         <?= $this->Form->end(['data-type' => 'hidden']);?>

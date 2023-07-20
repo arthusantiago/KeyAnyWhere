@@ -16,17 +16,18 @@
                 	</a>
                 </td>
                 <td>
-            		<button type="button" class="btn btn-sm btn-secondary" title="Copiar usuário"
+            		<button type="button" class="btn btn-sm btn-secondary botoes" title="Copiar usuário"
                         data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user" onclick="buscaUserPass(this)">
 	                    <i class="bi bi-person-fill"></i>
 	                </button>
- 					<button type="button" class="btn btn-sm btn-secondary" title="Copiar senha"
+ 					<button type="button" class="btn btn-sm btn-secondary botoes" title="Copiar senha"
                         data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="pass" onclick="buscaUserPass(this)">
 	                    <i class="bi bi-key-fill"></i>
 	                </button>
-	                <a class="btn btn-sm btn-secondary" role="button"  href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'edit', $entrada->id])?>" title="Editar entrada">
+	                <a class="btn btn-sm btn-secondary botoes" role="button"  href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'edit', $entrada->id])?>" title="Editar entrada">
 	                	<i class="bi bi-pencil-fill"></i>
 	                </a>
+                    <?= $this->element('Diversos/btnExcluir', ['parametros' => ['controller' => 'Entradas', 'id' => $entrada->id, 'texto' => '']])?>
                 </td>
             </tr>
         <?php endforeach; ?>
