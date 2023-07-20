@@ -9,17 +9,29 @@ O KAW se divide em Web (este projeto), Mobile e Desktop. Cada um sendo desenvolv
 * Implementamos somente as funcionalidades **essenciais** de um gerenciador de senha. Menos é mais!
 
 LOGIN
+
 <img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/login.png" width="500">
+
 HOME
+
 <img src="https://github.com/arthusantiago/KeyAnyWhere/blob/c83e3057c5d0d96e5c7c8273aaf20bf599bdcc69/artefatos/imagens/home.png" width="500">
+
 ENTRADAS
+
 <img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/listagem-entradas.png" width="500">
+
 <img src="https://github.com/arthusantiago/KeyAnyWhere/blob/c83e3057c5d0d96e5c7c8273aaf20bf599bdcc69/artefatos/imagens/entrada-nova.png" width="500">
+
 VERIFICAÇÃO DE SENHA INSEGURA/VAZADA
+
 <img src="https://github.com/arthusantiago/KeyAnyWhere/blob/c83e3057c5d0d96e5c7c8273aaf20bf599bdcc69/artefatos/imagens/entrada-senha-insegura.png" width="500">
+
 LOGs DE ATIVIDADES SUSPEITAS
+
 <img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/logs.png" width="500">
+
 IPs BLOQUEADOS
+
 <img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/ips-bloqueados.png" width="500">
 
 # Requisitos minimos
