@@ -63,7 +63,7 @@
     <div class="col-sm">
       <label for="link" class="form-label">Link</label>
       <div class="input-group">
-        <input type="url" class="form-control inputs" name="link" id="link" value="<?=$entrada->linkDescrip()?>" maxlength="210" placeholder="http://seuLink.com.br">
+        <input type="url" class="form-control inputs" name="link" id="link" value="<?=$entrada->linkDescrip()?>" maxlength="400" placeholder="http://seuLink.com.br">
         <div class="btn-group">
           <a <?=$entrada->linkDescrip() ? "href='{$entrada->linkDescrip()}' target='_blank'" : "href='#'";?>>
             <button type="button" class="btn btn-secondary" title="Abrir link"><i class="fa fa-arrow-up-right-from-square"></i></button>

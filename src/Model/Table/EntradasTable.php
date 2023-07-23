@@ -95,7 +95,7 @@ class EntradasTable extends Table
         $validator
             ->url('link', 'O link precisa ser uma URL válida')
             ->urlWithProtocol('link', 'O link precisa ter o protocolo, exemplo: http:// ou https://')
-            ->maxLength('link', 210, 'O link pode ter no máximo 210 caracteres')
+            ->maxLength('link', 400, 'O link pode ter no máximo 210 caracteres')
             ->allowEmptyString('link');
 
         $validator

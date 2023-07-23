@@ -48,7 +48,7 @@
     </div>
     <div class="col-sm">
       <label for="link" class="form-label">Link</label>
-      <input type="url" class="form-control inputs" name="link" id="link" maxlength="210" placeholder="http://seuLink.com.br">
+      <input type="url" class="form-control inputs" name="link" id="link" maxlength="400" placeholder="http://seuLink.com.br">
     </div>
   </div>
   <br>
