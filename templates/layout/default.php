@@ -5,6 +5,7 @@
 	<?= $this->Html->charset() ?>
 	<?= $this->Html->meta('icon', 'favicon.ico') ?>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="sessionTimeout" id="sessionTimeout" content="<?=$sessionTimeout?>">
 	<?=$this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken'));?>
 	<link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
     <?php
@@ -16,7 +17,6 @@
       echo $this->fetch('css');
     ?>
 	<?=$this->Html->script('categorias.js');?>
-	<?=$this->Html->script('ferramentas.js');?>
 	<?=$this->Html->script('geradorSenha.js');?>
 	<script src="https://kit.fontawesome.com/6be704c138.js" crossorigin="anonymous"></script>
   </head>
@@ -41,6 +41,7 @@
 						<i class="bi bi-key icone-opcao"></i>Nova Entrada
 					</a>
 				</div>
+				<div class="col-sm text-center text-white" id="timerSessao"></div>
 				<div class="col-sm-auto ms-auto">
 					<input type="search" class="form-control input-busca" id="buscaEntrada"	placeholder="Mínimo 3 caracteres"
 						onblur="removeResultadoBuscaGenerico('buscaEntrada', 'ul-busca')"
@@ -68,8 +69,27 @@
 			</div>
       		<?= $this->fetch('content') ?>
 		</div>
+
+		<div class="modal fade" id="sessaoExpiradaModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">A sessão expirou</h5>
+					</div>
+					<div class="modal-body">
+						<p>O seu tempo de sessão acabou. Você precisa logar novamente.</p>
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-primary" href="<?=$this->Url->build(['controller' => 'users', 'action' => 'login'])?>" role="button">Entrar</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<?=$this->Html->script('bootstrap/popper.min.js')?>
 		<?=$this->Html->script('bootstrap/bootstrap.js')?>
+		<?=$this->Html->script('easytimer.min.js');?>
 		<?=$this->Html->script('buscaConteudo.js')?>
+		<?=$this->Html->script('ferramentas.js');?>
   	</body>
 </html>

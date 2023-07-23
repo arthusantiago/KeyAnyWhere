@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Core\Configure;
 
 /**
  * Application Controller
@@ -52,7 +53,8 @@ class AppController extends Controller
 
         // Permitindo acesso ao usuário logado em todo os templates
         $userLogado = $this->Authentication->getResult()->getData();
-        $this->set(compact('userLogado'));
+        $sessionTimeout = Configure::read('Session.timeout');
+        $this->set(compact('userLogado', 'sessionTimeout'));
     }
 
 
