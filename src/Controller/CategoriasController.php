@@ -51,7 +51,7 @@ class CategoriasController extends AppController
         ->find('all')
         ->order(['posicao']);
 
-        $query = $this->paginate($query);
+        $query = $this->paginate($query, ['limit' => 15]);
 
         $this->set(compact('query'));
     }

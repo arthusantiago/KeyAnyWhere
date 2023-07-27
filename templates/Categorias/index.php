@@ -26,3 +26,5 @@
         <?php endforeach; ?>
     </tbody>
 </table>
+<br>
+<?= $this->element('paginacao');?>
