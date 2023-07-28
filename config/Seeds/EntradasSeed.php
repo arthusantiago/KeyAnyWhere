@@ -23,8 +23,6 @@ class EntradasSeed extends AbstractSeed
         //Obtendo as categtorias cadastradas
         $categorias = $this->fetchAll('SELECT * FROM categorias');
 
-        //criando as entradas
-        $faker = Faker\Factory::create('pt_BR');
         $data = [];
 
         foreach($categorias as $categoria)
@@ -32,10 +30,10 @@ class EntradasSeed extends AbstractSeed
             for ($i = 0; $i < 20; $i++)
             {
                 $data[] = [
-                    'titulo' => $faker->userName,
-                    'username' => $faker->email,
-                    'password' => sha1($faker->password),
-                    'link' =>  'https://' . $faker->domainName,
+                    'titulo' => 'REFAZER-ESSE-SEED',
+                    'username' =>'REFAZER-ESSE-SEED@REFAZER.COM',
+                    'password' => sha1('REFAZER-ESSE-SEED'),
+                    'link' =>  'https://' . 'REFAZER-ESSE-SEED',
                     'anotacoes' => 'Ut ab voluptas sed a nam. Sint autem inventore aut officia aut aut blanditiis. Ducimus eos odit amet et est ut eum.',
                     'categoria_id' => $categoria['id'],
                     'user_id' => 1,
