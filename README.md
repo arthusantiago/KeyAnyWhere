@@ -34,7 +34,10 @@ IPs BLOQUEADOS
 
 <img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/ips-bloqueados.png" width="500">
 
-# Requisitos minimos
+# Requisitos mínimos
+
+Memória RAM: >= 10MB
+Uso de espaço em disco (ferramenta executando em produção): 235MB
 
 ## Software
 
