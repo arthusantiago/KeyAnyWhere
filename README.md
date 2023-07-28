@@ -36,8 +36,10 @@ IPs BLOQUEADOS
 
 # Requisitos mínimos
 
-Memória RAM: >= 10MB
-Uso de espaço em disco (ferramenta executando em produção): 235MB
+## Hardware
+
+* Memória RAM: >= 10MB
+* Uso de espaço em disco (ferramenta executando em produção): 235MB
 
 ## Software
 
