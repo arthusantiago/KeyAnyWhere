@@ -435,7 +435,7 @@ return [
      */
     'Session' => [
         'defaults' => 'cake',
-        'timeout' => 30,
+        'timeout' => 1440,
         'cookie' => 'KAW',
         'ini' => [
             'session.cookie_secure' => true,
