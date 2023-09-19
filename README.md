@@ -36,10 +36,13 @@ IPs BLOQUEADOS
 
 # Requisitos mínimos
 
-## Hardware
+## Consumo de hardware
 
-* Memória RAM: >= 10MB
-* Uso de espaço em disco (ferramenta executando em produção): 235MB
+* Memória RAM: >= 5MB
+* Uso de espaço em disco: 235MB
+* CPU: 1 Núcleo
+
+Na AWS, dividindo o KAW em instâncias de DB e APP, a instância do tipo t2.nano atende perfeitamente.
 
 ## Software
 
@@ -131,9 +134,16 @@ Fonte dos dados: https://github.com/danielmiessler/SecLists/tree/master/Password
 
 ### Populando o DB com as senhas inseguras
 
-Execute o comando abaixo na CLI, substituindo o '[X]' pelo número correspondente ao arquivo da pasta `config/Seeds/`:
-`php bin/cake.php migrations seed --seed=PasswordsInsecurePt[X]Seed`
-Execute todos os seeds que tiverem o padrão 'PasswordsInsecurePt[X]Seed'
+Execute o comando abaixo na CLI, substituindo o 'X' pelo número correspondente ao arquivo da pasta `config/Seeds/`. Execute todos os seeds que tiverem o padrão 'PasswordsInsecurePtXSeed':
+
+`php bin/cake.php migrations seed --seed=PasswordsInsecurePtXSeed`
+
+Para executar as seeds, o PHP consome um pouco mais de recurso. Em produção destine mais hardware somente nesse momento.
+
+O hardware temporário redomendado :
+
+* 2 CPUs
+* RAM >= 1G
 
 ## Primeiro acesso
 
