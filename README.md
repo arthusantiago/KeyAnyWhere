@@ -1,12 +1,13 @@
 # KeyAnyWhere
 
-KeyAnyWhere ou KAW, é um chaveiro que procura focar nas funcionalidades essenciais de um gerenciador de senhas.
-O KAW se divide em Web (este projeto), Mobile e Desktop. Cada um sendo desenvolvido em um reponsitório a parte.
+KeyAnyWhere (KAW) é um chaveiro que foca nas funcionalidades essenciais de um gerenciador de senha, aplicando o princípio do [KISS](https://en.wikipedia.org/wiki/KISS_principle).
+
+Ele é pensado para quem deseja ter mais controle sobre o gerenciador. Se você precisa de um gerenciador de senha para equipes, recomendo o [Passbolt](https://www.passbolt.com/). Agora se você precisa de um offline, o [KeePassXC](https://keepassxc.org/) irá te atender.
 
 # Princípios
 
 * A ferramenta tem por princípio a segurança em detrimento da escolha do usuário. Ou seja, muitas coisas são obrigatórias para o seu bem ;).
-* Implementamos somente as funcionalidades **essenciais** de um gerenciador de senha. Menos é mais!
+* Implementamos somente as funcionalidades **essenciais** de um gerenciador de senha. [KISS](https://en.wikipedia.org/wiki/KISS_principle).
 
 LOGIN
 
@@ -42,7 +43,7 @@ IPs BLOQUEADOS
 * Uso de espaço em disco: 235MB
 * CPU: 1 Núcleo
 
-Na AWS, dividindo o KAW em instâncias de DB e APP, a instância do tipo t2.nano atende perfeitamente.
+Dica: Na AWS, dividindo o KAW em instâncias de DB e APP, a instância do tipo t2.nano atende perfeitamente.
 
 ## Software
 
