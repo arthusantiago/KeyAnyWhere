@@ -41,15 +41,15 @@
                         ['controller' => 'logs', 'action' => 'analisado', $log->id],
                         [
                             'confirm' => 'Realmente deseja alterar o status do log?',
-                            'class' => 'btn btn-sm btn-secondary',
+                            'class' => 'btn btn-sm btn-outline-secondary botoes',
                             'role' => 'button',
                             'title' => $log->analisado ? 'Marcar como não analisado' : 'Marcar como analisado',
                             'data' => ['analisado' => $log->analisado ? 0 : 1],
                             'escapeTitle' => false
                         ]
                     ) ?>
-                    <a class="btn btn-sm btn-secondary" role="button"  href="<?=$this->Url->build(['controller' => 'Logs', 'action' => 'view', $log->id])?>" title="Detalhes">
-	                	<i class="bi bi-eye-fill"></i>
+                    <a class="btn btn-sm btn-outline-secondary botoes" role="button"  href="<?=$this->Url->build(['controller' => 'Logs', 'action' => 'view', $log->id])?>" title="Detalhes">
+	                	<i class="bi bi-eye-fill"></i> Detalhes
 	                </a>
                 </td>
             </tr>
