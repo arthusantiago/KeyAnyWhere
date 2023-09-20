@@ -379,6 +379,7 @@ class UsersController extends AppController
 
             return $this->redirect(['action' => 'minhaConta']);
         }
+        $this->viewBuilder()->setLayout('administrativo');
         $this->set(compact('user'));
     }
 
