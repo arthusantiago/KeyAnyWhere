@@ -32,13 +32,13 @@
 		<div id="menu-superior">
 			<div class="row" id="opcoes-menu-superior">
 				<div class="col-sm-auto">
-					<a class="btn btn-outline-light botoes" role="button" href="<?=$this->Url->build(['controller' => 'Categorias', 'action' => 'index']);?>">
+					<a class="btn btn-outline-light botoes" role="button" href="<?=$this->Url->build(['controller' => 'Categorias', 'action' => 'index']);?>" title="Listagem categorias">
 						<i class="bi bi-list-ol icone-opcao"></i>Categorias
 					</a>
 				</div>
 				<div class="col-sm-auto ">
-					<a class="btn btn-outline-light botoes" role="button" href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'add']);?>">
-						<i class="bi bi-key icone-opcao"></i>Nova Entrada
+					<a class="btn btn-outline-light botoes" role="button" href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'add']);?>" title="Nova entrada">
+						<i class="bi bi-plus-lg icone-opcao"></i>Entrada
 					</a>
 				</div>
 				<div class="col-sm text-center text-white" id="timerSessao"></div>
