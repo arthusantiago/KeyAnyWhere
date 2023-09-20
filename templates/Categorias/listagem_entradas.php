@@ -12,7 +12,7 @@
                 <td><?= h($entrada->tituloDescrip()) ?></td>
                 <td>
                 	<a href="<?=$entrada->linkDescrip()?>" target="_blank" class="text-decoration-none" title="<?=$entrada->linkDescrip()?>">
-                		<?=$entrada->linkEncurtado()?>
+                		<?=$entrada->linkEncurtado(50)?>
                 	</a>
                 </td>
                 <td>
