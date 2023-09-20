@@ -42,7 +42,7 @@
                     <?=$this->element('Diversos/btnEditar', ['parametros' => ['controller' => 'Users', 'id' => $user->id]])?>
                     <a href="#" class="btn btn-sm btn-outline-secondary botoes" role="button" data-bs-toggle="tooltip" data-bs-placement="top"
                         title="Iniciar o processo de recuperação de senha">
-                        <i class="bi bi-envelope-exclamation"></i> Rec. e-mail
+                        <i class="bi bi-envelope-exclamation icone-opcao"></i>Rec. e-mail
                     </a>
                     <?= $this->element('Diversos/btnExcluir', ['parametros' => ['controller' => 'Users', 'id' => $user->id]])?>
                 </td>
