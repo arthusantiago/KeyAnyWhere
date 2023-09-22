@@ -1,5 +1,10 @@
 <label for="password">Senha</label>
-<input type="text" id="password" name="password" class="form-control inputs" autocomplete="new-password" minlength="12" placeholder="************">
+<div class="input-group">
+    <input type="password" id="password" name="password" class="form-control inputs" autocomplete="new-password" minlength="12" placeholder="************">
+    <div class="btn-group">
+        <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput()"><i class="fa fa-eye" aria-hidden="true"></i></button>
+    </div>
+</div>
 <p>
     <strong>Observação:</strong> Escolha uma senha que atenda a todos os requisitos abaixo:
 </p>
