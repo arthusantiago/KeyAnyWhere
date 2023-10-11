@@ -104,24 +104,25 @@ Todas as entradas seram vinculadas a usuário ID 1
 Este é um **exemplo** de passos que você seguir para colocar a aplicação em produção.
 
 1. Seguir os passos listados na seção 'Configuração inicial da aplicação'.
-2. Instalar o Apache2 ([post](https://avds.eti.br/programacao/instalando-o-apache2-e-configurando-ssl-tls/399/)).
+2. Neste [post](https://avds.eti.br/programacao/postgresql-em-producao/451/) dou algumas dicas de como configurar o banco de dados com segurança em Produção.
+3. Instalar o Apache2 ([post](https://avds.eti.br/programacao/instalando-o-apache2-e-configurando-ssl-tls/399/)).
     * A pasta `webroot/` deve ser o DocumentRoot do site. No arquivo de configuração do site (ex.:`/etc/apache2/sites-enabled/000-default.conf`), insira a configuração `DocumentRoot /var/www/html/webroot`.
-3. **É OBRIGATÓRIO** que você configure o SSL/TLS no seu domínio. Nesse [post](https://avds.eti.br/programacao/instalando-o-apache2-e-configurando-ssl-tls/399/) eu ensino como fazer isso.
-4. Permissões de acesso
+4. **É OBRIGATÓRIO** que você configure o SSL/TLS no seu domínio. Nesse [post](https://avds.eti.br/programacao/instalando-o-apache2-e-configurando-ssl-tls/399/) eu ensino como fazer isso.
+5. Permissões de acesso
     * Usando o Apache, sete o `www-data` como dono e grupo da pasta: `sudo chown -R www-data:www-data /var/www/html/`
     * Permissões gerais da aplicação: `sudo chmod -R 750 /var/www/html/`
     * Permissões das pastas `/var/www/html/tmp/` e `/var/www/html/logs/`. Instale o utilitário setfacl `sudo apt install acl` e siga o capítulo [Permissions](https://book.cakephp.org/4/en/installation.html#permissions) da documentação do CakePHP.
-5. Configure variáveis de ambiente.
+6. Configure variáveis de ambiente.
 Há diferentes maneiras de criá-las, uma delas é criar as variaveis dentro do Apache. [post](https://avds.eti.br/programacao/configurando-variaveis-de-ambiente-no-apache/411/)
 Para gerar as chaves de segurança, leia a seção 'Gerando chaves de segurança'
-6. Leia o arquivo de configuração `config/app.php` e veja quais variáveis são utilizadas na função `env()`.
-7. Executando a CLI do CakePHP em produção.
+7. Leia o arquivo de configuração `config/app.php` e veja quais variáveis são utilizadas na função `env()`.
+8. Executando a CLI do CakePHP em produção.
 Dependendo de como você configura as variáveis de ambiente, a CLI do CakePHP não consegue enxerga-lás.
 Dentro do arquivo `config/app.php`, você precisa passar como segundo parâmetro da função `env()` o valor da variável de ambiente, exemplo: `env('MINHA_VAR_AMB', 'valorDaVarAmb')`.
 Isso deve ser feito **temporariamente**, somente durante o processo de deploy. Depois de executar tudo o que precisava na CLI do CakePHP, remova do arquivo `config/app.php` todos os valores das variáveis.
-8. Execute as migrations do DB: `php bin/cake.php migrations migrate`
-9. Execute os Seeds das senhas
-10. No primeiro acesso você será direcionado para o tutorial inicial.
+9. Execute as migrations do DB: `php bin/cake.php migrations migrate`
+10. Execute os Seeds das senhas
+11.  No primeiro acesso você será direcionado para o tutorial inicial.
 
 ## Gerando chaves de segurança
 
