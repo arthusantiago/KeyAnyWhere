@@ -25,7 +25,6 @@ class CategoriasMenuCell extends Cell
      */
     public function initialize(): void
     {
-        $this->loadModel('Categorias');
     }
 
     /**
@@ -35,9 +34,10 @@ class CategoriasMenuCell extends Cell
      */
     public function display()
     {
-        $query = $this->Categorias
-        ->find('all')
-        ->order(['posicao']);
+        $categorias = $this->fetchTable('Categorias');
+        $query = $categorias
+            ->find('all')
+            ->order(['posicao']);
 
         $this->set(compact('query'));
     }
