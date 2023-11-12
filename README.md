@@ -1,13 +1,15 @@
 # KeyAnyWhere
 
-KeyAnyWhere (KAW) é um chaveiro que foca nas funcionalidades essenciais de um gerenciador de senha, aplicando o princípio do [KISS](https://en.wikipedia.org/wiki/KISS_principle).
+KeyAnyWhere (KAW) é uma ferramenta que foca nas funcionalidades essenciais de um gerenciador de senha. Ele é pensado para quem deseja ou precisa de algo simples.
 
-Ele é pensado para quem deseja ter mais controle sobre o gerenciador. Se você precisa de um gerenciador de senha para equipes, recomendo o [Passbolt](https://www.passbolt.com/). Agora se você precisa de um offline, o [KeePassXC](https://keepassxc.org/) irá te atender.
+Se você precisa de uma ferramenta mais robusta e que atenda equipes, recomendo o [Passbolt](https://www.passbolt.com/). Agora se você precisa de um offline, o [KeePassXC](https://keepassxc.org/) é a melhor escolha.
+
+Você pode testar o KAW nesse ambiente de demonstração: [demo.keyanywhere.com.br](https://demo.keyanywhere.com.br/)
 
 # Princípios
 
-* A ferramenta tem por princípio a segurança em detrimento da escolha do usuário. Ou seja, muitas coisas são obrigatórias para o seu bem ;).
-* Implementamos somente as funcionalidades **essenciais** de um gerenciador de senha. [KISS](https://en.wikipedia.org/wiki/KISS_principle).
+* Segurança em detrimento da escolha do usuário. Ou seja, algumas coisas são obrigatórias para o seu bem.
+* Implementamos somente as funcionalidades essenciais, se baseando no principio do [KISS](https://en.wikipedia.org/wiki/KISS_principle). Com essa abordagem alguns benefícios podem ser destacados, como: diminui a superfície de ataque, consumo reduzido de hardware e fácil utilização.
 
 LOGIN
 
