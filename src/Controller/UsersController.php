@@ -233,13 +233,20 @@ class UsersController extends AppController
                         'evento' => 'C1-1',
                         'request' => $this->request,
                         'usuario' => [
-                            'dados' => [ 'e-mail' => $this->request->getData('email')],
+                            'dados' => ['e-mail' => $this->request->getData('email')],
                             'texto' => 'Credenciais utilizadas para logar: '
                         ]
                     ]);
                 }
             } else if ($resultLogin->isValid() && $tfaValido == false) {
-                GerenciadorEventos::notificarEvento(['evento' => 'C1-2', 'request' => $this->request]);
+                GerenciadorEventos::notificarEvento([
+                    'evento' => 'C1-2',
+                    'request' => $this->request,
+                    'usuario' => [
+                        'dados' => ['e-mail' => $this->request->getData('email')],
+                        'texto' => 'Credenciais utilizadas para logar: '
+                    ]
+                ]);
             }
 
             $this->Authentication->logout();
