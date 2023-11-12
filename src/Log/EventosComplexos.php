@@ -81,7 +81,7 @@ class EventosComplexos
     }
 
     /**
-     * Evento descrito no catálogo src\Log\Eventos::$catalogoEventos
+     * Evento descrito no catálogo src\Log\GerenciadorEventos::$catalogoEventos
      *
      * @access	private
      * @param	Evento	$eventoOrigemLog
@@ -123,7 +123,7 @@ class EventosComplexos
     }
 
     /**
-     * Evento descrito no catálogo src\Log\Eventos::$catalogoEventos
+     * Evento descrito no catálogo src\Log\GerenciadorEventos::$catalogoEventos
      *
      * @access	private
      * @param	Evento	$eventoOrigemLog

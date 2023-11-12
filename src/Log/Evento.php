@@ -16,7 +16,7 @@ use Cake\Http\ServerRequest;
  *
  * 1. Acontece um evento. Quem o identifica também fica responsável por notificá-lo.
  *    Quem notifica o evento também deve informar todos os dados necessários.
- * 2. A classe /kaw/src/Log/GerenciamentoLogs.php fica responsável receber as informações, criar o evento e tranforma-lo em um log.
+ * 2. A classe src/Log/GerenciadorEventos fica responsável por receber as informações, criar o evento e tranforma-lo em um log.
  *
  * Para a classificar a severidade do log, é utilizado o conceito de progressão no nível do Syslog.
  * @see https://en.wikipedia.org/wiki/Syslog#Severity_level
@@ -31,11 +31,11 @@ class Evento
     private $request;
     private $recurso;
     private $ipOrigem;
-    private $usuario;
+    private $usuario = 'Sem informações de usuário';
     private $eventoGatilho = [];
 
     /**
-     * Ler a documentação da classe App\Log\Eventos para entender como catalogar um evento.
+     * Ler a documentação da classe src\Log\GerenciadorEventos para entender como catalogar um evento.
      *
      * @access	public
      * @param	array	$infoBasicas
@@ -190,13 +190,11 @@ class Evento
      * ]);
      *
      * @access	public
-     * @param	string	$user	Default: 'Sem informações de usuário'
+     * @param	string	$user
      * @return	void
      */
-    public function setUsuario(mixed $user = 'Sem informações de usuário'): void
+    public function setUsuario(mixed $user): void
     {
-        $this->usuario = $user;
-
         if ($user instanceof User) {
             $this->usuario = 'ID: ' . $user->id . ' | usuario: ' . $user->username . ' | e-mail:' . $user->email;
         }

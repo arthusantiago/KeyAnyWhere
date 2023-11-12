@@ -10,23 +10,28 @@ use Cake\Core\Exception\CakeException;
 class GerenciadorEventos
 {
     /**
-     * Eventos catalogados.
+     * Você pode inserir o seu evento no Catalogo de eventos.
      *
      * O evento deve pertencer a uma categoria, que é representada pelo 'C?' do identificador do evento.
      * As categorias agrupam eventos semelhantes.
      *
-     * Estrutura de um evento:
+     * Estrutura::
      * 'C1-1' => [
-     *      'nivel_severidade' => 'notice', // [obrigatorio] Seguir o padrão do Syslog.
-     *      'mensagem' => 'Durante o login o usuario errou o user ou password', // [obrigatorio] Texto descrevendo o problema. Esse é a menssagem do log.
-     *      'evento_gatilho' => ['C1-1', 'C1-2'] // [Opcional] Diz se o evento será disparado a partir do registro de outros eventos. Ler classe /kaw/src/Log/EventosComplexos.php
+     *      // [obrigatorio] Seguir o padrão do Syslog.
+     *      'nivel_severidade' => 'notice',
+     *
+     *      // [obrigatorio] Texto descrevendo o problema. Esse é a menssagem do log.
+     *      'mensagem' => 'Durante o login o usuario errou o user ou password',
+     *
+     *      // [Opcional] Diz se o evento será disparado a partir do registro de outros eventos. Ler classe src/Log/EventosComplexos.php
+     *      'evento_gatilho' => ['C1-1', 'C1-2']
      *  ]
      *
      * @var array $catalogoEventos
      */
     private static $catalogoEventos = [
-        /* Categoria: 1. LOGIN
-         *
+        /*
+         * Categoria 1: LOGIN
          * Eventos que acontecerem antes, durante e depois do login no sistema.
          */
         'C1-1' => [
@@ -47,7 +52,9 @@ class GerenciadorEventos
             'mensagem' => 'Durante o login o usuário excedeu a quantidade máxima de tentativas erradas. O seu IP foi bloqueado.',
             'evento_gatilho' => ['C1-3']
         ],
-        /* Categoria: 2. ACESSO NÃO AUTORIZADO
+
+        /*
+         * Categoria 2: ACESSO NÃO AUTORIZADO
          *
          * Descreve as tentativas de acesso a algum recurso ao qual o usuário não tem permissão.
          */
@@ -63,8 +70,8 @@ class GerenciadorEventos
      * O parâmetros esperados:
      * [
      *      'evento' => 'Ex: C2-3' -- Obrigatório
-     *      'request' => Leia a documentação do método src/Log/Evento::setInformacoesRequest()
-     *      'usuario' => Leia a documentação do método src/Log/Evento::setInformacoesUsuario()
+     *      'request' => Leia a documentação do método src/Log/Evento::setRequest()
+     *      'usuario' => Leia a documentação do método src/Log/Evento::setUsuario()
      * ]
      *
      * @access	public static
@@ -96,7 +103,7 @@ class GerenciadorEventos
         $infoBasicas = self::eventoCatalogado($dados['evento']);
 
         if ($infoBasicas == false) {
-            throw new CakeException('O evento ' . $dados['evento'] . ' não foi catalogado. Cadastre-o em App\Log\Eventos');
+            throw new CakeException('O evento ' . $dados['evento'] . ' não foi catalogado.');
         }
 
         return new Evento($infoBasicas, $dados);
