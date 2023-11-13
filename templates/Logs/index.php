@@ -5,8 +5,7 @@
         ['caminho' => [
             ['Pages', 'index', 'Home'],
             'Configurações',
-            'Logs',
-            'Listagem'
+            'Logs'
         ]]
     );?>
   </div>
