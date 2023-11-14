@@ -33,7 +33,7 @@
                 <td><?= h($log->created) ?></td>
                 <td><?=$this->element('Logs/badge', ['param' => ['severidade' => $log->nivel_severidade, 'exibicao' => $log->stringNivelSeveridade()]])?></td>
                 <td><?= $log->analisado ? 'Analisado' : 'Não analisado';?></td>
-                <td><?= h($log->mensagem)?></td>
+                <td><?= $log->mensagemEncurtada()?></td>
                 <td>
                     <?= $this->Form->postLink(
                         $log->analisado ? '<i class="bi bi-x-lg"></i>' : '<i class="bi bi-check-lg"></i>',

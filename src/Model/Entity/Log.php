@@ -46,4 +46,14 @@ class Log extends Entity
     {
         return ucfirst(LogLevelInt::toString($this->nivel_severidade));
     }
+
+    public function mensagemEncurtada(int $tamanho = 50): string
+    {
+        if (strlen($this->mensagem) >= $tamanho) {
+            $txt = mb_substr($this->mensagem, 0, $tamanho, 'UTF-8') . '(...)';
+        } else {
+            $txt = $this->mensagem;
+        }
+        return $txt;
+    }
 }
