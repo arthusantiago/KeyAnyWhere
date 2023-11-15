@@ -151,4 +151,3 @@ O hardware temporário redomendado :
 ## Primeiro acesso
 
 No primeiro acesso da ferramenta você será redirecionado para o passo a passo da configuração inicial.
-
