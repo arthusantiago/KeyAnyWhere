@@ -1,6 +1,6 @@
 ---
 name: Nova funcionalidade
-about: Sugestão de funcionalidade
+about: Sugestão de nova funcionalidade
 title: "[FEATURE]"
 labels: ''
 assignees: ''
@@ -8,10 +8,11 @@ assignees: ''
 ---
 
 **ATENÇÃO**
+
 Apresente a ideia da sua nova funcionalidade antes de submeter o código.
 A sua ideia será avaliada por mim, buscando adequá-la aos objetivos do projeto, podendo ser aprovada ou não.
--------------------------
-Siga as dicas abaixo:
+
+Use as dicas abaixo:
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
