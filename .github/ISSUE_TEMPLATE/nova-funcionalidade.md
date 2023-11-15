@@ -9,7 +9,7 @@ assignees: ''
 
 **ATENÇÃO**
 
-Apresente a ideia da sua nova funcionalidade antes de submeter o código.
+Apresente a ideia da sua nova funcionalidade em uma ISSUE antes de submeter o código em uma PR.
 A sua ideia será avaliada por mim, buscando adequá-la aos objetivos do projeto, podendo ser aprovada ou não.
 
 Use as dicas abaixo:
