@@ -20,7 +20,10 @@ class LogsController extends AppController
     {
         $logs = $this->paginate(
             $this->Logs,
-            ['order' => ['created' => 'desc']]
+            [
+                'order' => ['created' => 'desc'],
+                'limit' => 15
+            ]
         );
 
         $this->viewBuilder()->setLayout('administrativo');

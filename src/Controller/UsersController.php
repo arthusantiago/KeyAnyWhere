@@ -68,6 +68,7 @@ class UsersController extends AppController
         $ipBloqueado = (new IpsBloqueadosTable)
         ->find()
         ->where(['ip' => $this->request->clientIp()])
+        ->limit(1)
         ->toArray();
 
         return empty($ipBloqueado) ? false : true ;
@@ -278,7 +279,7 @@ class UsersController extends AppController
         $users = $this->paginate(
             $this->Users,
             [
-                'limit' => 20,
+                'limit' => 10,
                 'order' => [
                     'Users.username' => 'asc'
                 ]

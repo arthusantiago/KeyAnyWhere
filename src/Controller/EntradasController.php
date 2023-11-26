@@ -131,6 +131,7 @@ class EntradasController extends AppController
 
         $query = $this->Entradas
             ->find()
+            ->limit(10)
             ->select(['id','titulo']);
 
         $resultado = [];
@@ -160,6 +161,7 @@ class EntradasController extends AppController
         $password = $this->fetchTable('InsecurePasswords')
             ->find()
             ->where(['password' => strtolower($request['password'])])
+            ->limit(5)
             ->first();
 
         $resultado['localizado'] = $password ? true : false;
