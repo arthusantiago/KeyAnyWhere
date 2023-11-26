@@ -31,8 +31,7 @@ class UsersController extends AppController
     private const ACTIONS_SEM_AUTENTICACAO = [
         'login',
         'configInicial',
-        'configInicialTfa',
-        'ipBloqueado'
+        'configInicialTfa'
     ];
 
     private const CREDENCIAL_LOGIN_INCORRETO = [
@@ -72,15 +71,6 @@ class UsersController extends AppController
         ->toArray();
 
         return empty($ipBloqueado) ? false : true ;
-    }
-
-    public function ipBloqueado()
-    {
-        if ($this->ipEstaBloqueado() == false) {
-            $this->redirect(['action' => 'login']);
-        }
-
-        $this->viewBuilder()->setLayout('layout_vazio');
     }
 
     /**
@@ -207,16 +197,16 @@ class UsersController extends AppController
     public function login()
     {
         $this->request->allowMethod(['get', 'post']);
-
-        if ($this->ipEstaBloqueado()) {
-            $this->redirect(['action' => 'ipBloqueado']);
-        }
+        $this->viewBuilder()->setLayout('layout_vazio');
 
         if ($this->executarConfigIncial()) {
             $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
         }
 
-        if ($this->request->is('post')) {
+        if (
+            $this->ipEstaBloqueado() == false
+            && $this->request->is('post')
+        ) {
             $resultLogin = $this->Authentication->getResult();
             $tfaValido = false;
             if ($resultLogin->getData() !== null) {
@@ -229,6 +219,7 @@ class UsersController extends AppController
             ) {
                 return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
             } else if ($resultLogin->isValid() == false) {
+                $this->Flash->error('Usuário ou senha inválido');
                 if (array_search($resultLogin->getStatus(), $this::CREDENCIAL_LOGIN_INCORRETO) !== false) {
                     GerenciadorEventos::notificarEvento([
                         'evento' => 'C1-1',
@@ -240,6 +231,7 @@ class UsersController extends AppController
                     ]);
                 }
             } else if ($resultLogin->isValid() && $tfaValido == false) {
+                $this->Flash->error('Segundo Fator de Autenticação incorreto');
                 GerenciadorEventos::notificarEvento([
                     'evento' => 'C1-2',
                     'request' => $this->request,
@@ -249,14 +241,13 @@ class UsersController extends AppController
                     ]
                 ]);
             }
-
-            $this->Authentication->logout();
         }
 
-        $this->viewBuilder()->setLayout('layout_vazio');
-        if ($this->request->getData()) {
-            $this->Flash->error(__('Usuário, senha ou 2FA inválido', ));
+        if ($this->ipEstaBloqueado()) {
+            $this->Flash->error('Seu IP foi bloqueado por inúmeras tentativas erradas de login');
         }
+
+        $this->Authentication->logout();
     }
 
     public function logout()
