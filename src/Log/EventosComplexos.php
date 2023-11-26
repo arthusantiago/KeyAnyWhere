@@ -96,6 +96,7 @@ class EventosComplexos
                 'created >= ' => $this->frozenTime->i18nFormat('yyyy-MM-dd 00:00:00'),
                 'created <= ' => $this->frozenTime->i18nFormat('yyyy-MM-dd 23:59:59'),
             ])
+            ->limit(5)
             ->toArray();
 
         $C1_2 = $this->tableLogs
@@ -105,6 +106,7 @@ class EventosComplexos
                 'created >= ' => $this->frozenTime->i18nFormat('yyyy-MM-dd 00:00:00'),
                 'created <= ' => $this->frozenTime->i18nFormat('yyyy-MM-dd 23:59:59'),
             ])
+            ->limit(5)
             ->toArray();
 
         if (count($C1_1) >= 3 || count($C1_2) >= 3) {
@@ -138,6 +140,7 @@ class EventosComplexos
                 'created >= ' => $this->frozenTime->i18nFormat('yyyy-MM-dd 00:00:00'),
                 'created <= ' => $this->frozenTime->i18nFormat('yyyy-MM-dd 23:59:59'),
             ])
+            ->limit(4)
             ->toArray();
 
         if (count($C1_3) >= 2) {

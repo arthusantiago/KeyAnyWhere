@@ -20,7 +20,10 @@ class IpsBloqueadosController extends AppController
     {
         $ipsBloqueados = $this->paginate(
             $this->IpsBloqueados,
-            ['order' => ['created' => 'desc']]
+            [
+                'order' => ['created' => 'desc'],
+                'limit' => 15
+            ]
         );
 
         $this->viewBuilder()->setLayout('administrativo');
