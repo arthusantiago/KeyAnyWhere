@@ -131,13 +131,16 @@ class EntradasController extends AppController
 
         $query = $this->Entradas
             ->find()
-            ->limit(10)
             ->select(['id','titulo']);
 
         $resultado = [];
         foreach($query as $entrada){
             if (str_contains(strtolower($entrada->tituloDescrip()), $pesquisa['stringBusca'])) {
                 $resultado[] = $entrada;
+            }
+
+            if (count($resultado) > 9) {
+                break;
             }
         }
 
