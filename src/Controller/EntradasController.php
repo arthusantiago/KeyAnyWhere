@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Event\EventInterface;
+use Cake\Validation\Validator;
 /**
  * Entradas Controller
  *
@@ -106,6 +107,26 @@ class EntradasController extends AppController
     {
         $this->request->allowMethod(['post']);
         $request = $this->request->getParsedBody();
+        $validator = new Validator();
+
+        $validator
+            ->requirePresence('id', true, 'O ID da entrada precisa ser informado')
+            ->notEmptyString('id', 'O ID não pode estar vazio')
+            ->integer('id', 'O ID precisa ser um inteiro')
+            ->requirePresence('type', true, 'O type precisa ser informado')
+            ->notEmptyString('type', 'O type não pode estar vazio')
+            ->maxLength('type', 8,'O type pode ter no maximo 8 caracteres')
+            ->inList('type', ['password', 'user'], 'O valor de type não é permitido');
+
+        $erros = $validator->validate($request);
+
+        if ($erros) {
+            return $this->response
+                ->withType('application/json')
+                ->withStatus(400, 'Dados invalidos enviados ao servidor')
+                ->withStringBody(json_encode($erros));
+        }
+
         $entrada = $this->Entradas->get($request['id']);
 
         if ($request['type'] == 'password') {

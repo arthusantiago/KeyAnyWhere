@@ -53,15 +53,16 @@ var factoryRequest = async function (url, parametros)
  */
 async function buscaUserPass(button)
 {
-	let body = {'type' : null, 'id' : null};
-	body.type = button.getAttribute('data-clipboard-tipo') == 'pass' ? 'password' : 'user' ;
-	body.id = button.getAttribute('data-clipboard-entrada-id');
+	let body = {
+		'type' : button.getAttribute('data-clipboard-tipo'),
+		'id' : button.getAttribute('data-clipboard-entrada-id')
+	};
 	let urlParaBusca = window.location.origin + '/entradas/clipboard/';
 
 	factoryRequest(urlParaBusca, {'body' : JSON.stringify(body)})
 	.then((response) => {
 		if (!response.ok) {
-			throw new Error(response.status + '-'+ response.statusText);
+			throw new Error(response.status + ' - '+ response.statusText);
 		}
 		return  response.json();
 	})
@@ -69,9 +70,8 @@ async function buscaUserPass(button)
 		navigator.clipboard.writeText(dadoRetornado.data);
 	})
 	.catch(function(error){
-		let msgErro = 'Ocorreu um erro na requisição ao servidor: ' + error.message;
+		let msgErro = 'Ocorreu um erro \n\n' + error.message;
 		alert(msgErro);
-		console.error(msgErro);
 	});
 }
 
