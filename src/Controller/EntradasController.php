@@ -195,6 +195,20 @@ class EntradasController extends AppController
     {
         $this->request->allowMethod(['post']);
         $request = $this->request->getParsedBody();
+        $validator = new Validator();
+
+        $validator
+            ->requirePresence('password', true, 'A propriedade contendo a string não foi informada')
+            ->notEmptyString('password', 'O password não pode estar vazio');
+
+        $erros = $validator->validate($request);
+
+        if ($erros) {
+            return $this->response
+                ->withType('application/json')
+                ->withStatus(400, 'Dados invalidos enviados ao servidor')
+                ->withStringBody(json_encode($erros));
+        }
 
         $password = $this->fetchTable('InsecurePasswords')
             ->find()
