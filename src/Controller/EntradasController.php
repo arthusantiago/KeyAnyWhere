@@ -147,8 +147,22 @@ class EntradasController extends AppController
     public function busca()
     {
         $this->request->allowMethod(['post']);
-        $pesquisa = $this->request->getParsedBody();
-        $pesquisa['stringBusca'] = strtolower($pesquisa['stringBusca']);
+        $request = $this->request->getParsedBody();
+        $request['stringBusca'] = strtolower($request['stringBusca']);
+        $validator = new Validator();
+
+        $validator
+            ->requirePresence('stringBusca', true, 'A propriedade contendo a string não foi informada')
+            ->notEmptyString('stringBusca', 'A string para busca não informado');
+
+            $erros = $validator->validate($request);
+
+        if ($erros) {
+            return $this->response
+                ->withType('application/json')
+                ->withStatus(400, 'Dados invalidos enviados ao servidor')
+                ->withStringBody(json_encode($erros));
+        }
 
         $query = $this->Entradas
             ->find()
@@ -156,7 +170,7 @@ class EntradasController extends AppController
 
         $resultado = [];
         foreach($query as $entrada){
-            if (str_contains(strtolower($entrada->tituloDescrip()), $pesquisa['stringBusca'])) {
+            if (str_contains(strtolower($entrada->tituloDescrip()), $request['stringBusca'])) {
                 $resultado[] = $entrada;
             }
 
