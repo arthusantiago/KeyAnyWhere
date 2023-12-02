@@ -155,7 +155,7 @@ class EntradasController extends AppController
             ->requirePresence('stringBusca', true, 'A propriedade contendo a string não foi informada')
             ->notEmptyString('stringBusca', 'A string para busca não informado');
 
-            $erros = $validator->validate($request);
+        $erros = $validator->validate($request);
 
         if ($erros) {
             return $this->response
