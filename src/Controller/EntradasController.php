@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Event\EventInterface;
+use Cake\Validation\Validator;
 /**
  * Entradas Controller
  *
@@ -106,6 +107,26 @@ class EntradasController extends AppController
     {
         $this->request->allowMethod(['post']);
         $request = $this->request->getParsedBody();
+        $validator = new Validator();
+
+        $validator
+            ->requirePresence('id', true, 'O ID da entrada precisa ser informado')
+            ->notEmptyString('id', 'O ID não pode estar vazio')
+            ->integer('id', 'O ID precisa ser um inteiro')
+            ->requirePresence('type', true, 'O type precisa ser informado')
+            ->notEmptyString('type', 'O type não pode estar vazio')
+            ->maxLength('type', 8,'O type pode ter no maximo 8 caracteres')
+            ->inList('type', ['password', 'user'], 'O valor de type não é permitido');
+
+        $erros = $validator->validate($request);
+
+        if ($erros) {
+            return $this->response
+                ->withType('application/json')
+                ->withStatus(400, 'Dados invalidos enviados ao servidor')
+                ->withStringBody(json_encode($erros));
+        }
+
         $entrada = $this->Entradas->get($request['id']);
 
         if ($request['type'] == 'password') {
@@ -126,8 +147,22 @@ class EntradasController extends AppController
     public function busca()
     {
         $this->request->allowMethod(['post']);
-        $pesquisa = $this->request->getParsedBody();
-        $pesquisa['stringBusca'] = strtolower($pesquisa['stringBusca']);
+        $request = $this->request->getParsedBody();
+        $request['stringBusca'] = strtolower($request['stringBusca']);
+        $validator = new Validator();
+
+        $validator
+            ->requirePresence('stringBusca', true, 'A propriedade contendo a string não foi informada')
+            ->notEmptyString('stringBusca', 'A string para busca não informado');
+
+        $erros = $validator->validate($request);
+
+        if ($erros) {
+            return $this->response
+                ->withType('application/json')
+                ->withStatus(400, 'Dados invalidos enviados ao servidor')
+                ->withStringBody(json_encode($erros));
+        }
 
         $query = $this->Entradas
             ->find()
@@ -135,7 +170,7 @@ class EntradasController extends AppController
 
         $resultado = [];
         foreach($query as $entrada){
-            if (str_contains(strtolower($entrada->tituloDescrip()), $pesquisa['stringBusca'])) {
+            if (str_contains(strtolower($entrada->tituloDescrip()), $request['stringBusca'])) {
                 $resultado[] = $entrada;
             }
 
@@ -160,6 +195,20 @@ class EntradasController extends AppController
     {
         $this->request->allowMethod(['post']);
         $request = $this->request->getParsedBody();
+        $validator = new Validator();
+
+        $validator
+            ->requirePresence('password', true, 'A propriedade contendo a string não foi informada')
+            ->notEmptyString('password', 'O password não pode estar vazio');
+
+        $erros = $validator->validate($request);
+
+        if ($erros) {
+            return $this->response
+                ->withType('application/json')
+                ->withStatus(400, 'Dados invalidos enviados ao servidor')
+                ->withStringBody(json_encode($erros));
+        }
 
         $password = $this->fetchTable('InsecurePasswords')
             ->find()

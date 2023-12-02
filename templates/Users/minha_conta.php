@@ -1,14 +1,3 @@
-<?php
-  $urlQrCode = $this->Url->build(
-    [
-      'controller' => 'Users',
-      'action' => 'geraQrCode2fa'
-    ],
-    ['fullBase' => true]
-  );
-  $urlNovoQrCode = $urlQrCode . '?novoQrCode=1';
-?>
-
 <div class="row">
   <div class="col-sm-auto">
     <span class="titulo">Minha Conta</span>
@@ -48,7 +37,7 @@
 <br>
 <div class="row">
     <div class="col-sm-4">
-      <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#TFAModal" onclick="obterQrCode2FA('<?=$urlQrCode?>')">
+      <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#TFAModal" onclick="obterQrCode2FA('<?=$user->id?>')">
         Configurar a Autenticação de Dois Fatores (2FA)
       </button>
     </div>
@@ -65,7 +54,7 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="TFAModalLabel">Configurando a Autenticação em Dois Fatores (2FA)</h5>
+        <h5 class="modal-title" id="TFAModalLabel">Configuração da Autenticação em Dois Fatores (2FA)</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -76,13 +65,10 @@
         </div>
         <div class="row">
           <div class="col-sm text-center">
-            <button type="button" class="btn btn-outline-secondary" onclick="obterQrCode2FA('<?=$urlNovoQrCode?>')">
+            <button type="button" class="btn btn-outline-secondary" onclick="obterQrCode2FA('<?=$user->id?>', true)">
               Gerar novo QrCode
             </button>
           </div>
-        </div>
-        <div class="row">
-            <p><b>Observação</b><br>A nova senha 2FA gerada, valerá para o próximo login.</p>
         </div>
       </div>
       <div class="modal-footer">
