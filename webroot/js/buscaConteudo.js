@@ -113,7 +113,7 @@ function buscaGenerica(idInputOrigemBusca, destinoHtmlRetorno, urlParaBusca, con
 				)
 				.then((response) => {
 					if (!response.ok) {
-						throw new Error(response.status + '-'+ response.statusText);
+						throw new Error(response.status + ' - '+ response.statusText);
 					}
 					return response.text();
 				})
@@ -121,9 +121,7 @@ function buscaGenerica(idInputOrigemBusca, destinoHtmlRetorno, urlParaBusca, con
 					document.getElementById(destinoHtmlRetorno).innerHTML = dadoRetornado;
 				})
 				.catch(function(error){
-					let msgErro = 'Ocorreu um erro na requisição ao servidor: ' + error.message;
-					alert(msgErro);
-					console.error(msgErro);
+					alert('Ocorreu um erro \n\n' + error.message);
 				});
 			}
 		};
@@ -205,13 +203,19 @@ function obterQrCode2FA(idUser, novoQrCode = false)
  */
 function estaComprometida(inputName)
 {
-	let body = JSON.stringify({"password": document.getElementById(inputName).value});
+	let password = document.getElementById(inputName).value;
+
+	if (!password) {
+		return;
+	}
+
+	let body = JSON.stringify({"password" : password});
 	let url = window.location.origin + '/entradas/senha-insegura/';
 
-	factoryRequest(url, {'body' : body})
+	factoryRequest(url, {'body':body})
 	.then(function(response){
 		if (!response.ok) {
-			throw new Error(response.status + '-'+ response.statusText);
+			throw new Error(response.status + ' - '+ response.statusText);
 		}
 		return response.json();
 	})
@@ -225,8 +229,6 @@ function estaComprometida(inputName)
 		document.getElementById(inputName).setAttribute('class', strClass);
 	})
 	.catch(function (error) {
-		let msgErro = 'Ocorreu um erro na requisição ao servidor: ' + error.message;
-		alert(msgErro);
-		console.error(msgErro);
+		alert('Ocorreu um erro \n\n' + error.message);
 	});
 }

@@ -42,7 +42,7 @@
           </ul>
         </div>
         <div id="feedbackPasswordInsecure" class="invalid-feedback">
-          <strong>Esta senha é insegura</strong>. A localizamos em vazamentos de dados e pode facilmente ser descoberta.
+          <strong>Esta senha é insegura</strong>. A localizamos em vazamentos de dados e pode facilmente ser hackeada.
         </div>
       </div>
     </div>
