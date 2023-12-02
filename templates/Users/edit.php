@@ -1,15 +1,3 @@
-<?php
-  $urlQrCode = $this->Url->build(
-    [
-      'controller' => 'Users',
-      'action' => 'geraQrCode2fa',
-      '?' => ['idUser' => $user->id]
-    ],
-    ['fullBase' => true]
-  );
-  $urlNovoQrCode = $urlQrCode . '&novoQrCode=1';
-?>
-
 <div class="row">
   <div class="col-sm-auto">
     <?= $this->element(
@@ -69,7 +57,7 @@
 <br>
 <div class="row">
     <div class="col-sm-4">
-    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#TFAModal" onclick="obterQrCode2FA('<?=$urlQrCode?>')">
+    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#TFAModal" onclick="obterQrCode2FA('<?=$user->id?>')">
       Autenticação de Dois Fatores (2FA)
     </button>
     </div>
@@ -79,14 +67,14 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="TFAModalLabel">Configurando a Autenticação de Dois Fatores (2FA)</h5>
+        <h5 class="modal-title" id="TFAModalLabel">Configuração da Autenticação em Dois Fatores (2FA)</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <p>Basta escanear o QrCode com o aplicativo de 2FA de sua preferência.</p>
         <div class="text-center">
           <div id="imagemQrCode"></div>
-          <button type="button" class="btn btn-outline-secondary" onclick="obterQrCode2FA('<?=$urlNovoQrCode?>')">Gerar novo QrCode</button>
+          <button type="button" class="btn btn-outline-secondary" onclick="obterQrCode2FA('<?=$user->id?>', true)">Gerar novo QrCode</button>
         </div>
       </div>
     </div>

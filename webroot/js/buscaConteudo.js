@@ -165,21 +165,27 @@ function removeResultadoBuscaGenerico(idInputOrigemBusca, idUlBusca) {
 /**
  * Busca o QrCode do 2FA.
  *
- * @param string urlParaBusca URL alvo da busca.
+ * @param integer idUser ID do usuario que será manipulado
+ * @param boolean novoQrCode Se deve ser gerado um novo QrCode.
  */
-function obterQrCode2FA(urlParaBusca)
+function obterQrCode2FA(idUser, novoQrCode = false)
 {
+	let body = JSON.stringify({
+		idUser: idUser,
+		novoQrCode: novoQrCode
+	});
+
 	let parametros = 		{
-		'method': 'GET',
-		'headers': {
-			'Accept': 'text/html',
-		}
+		'headers': {'Accept': 'text/html'},
+		'body': body,
 	};
+
+	let urlParaBusca = window.location.origin + '/users/geraQrCode2fa/';
 
 	factoryRequest(urlParaBusca, parametros)
 	.then((response) => {
 		if (!response.ok) {
-			throw new Error(response.status + '-'+ response.statusText);
+			throw new Error(response.status + ' - '+ response.statusText);
 		}
 		return response.text();
 	})
@@ -187,9 +193,7 @@ function obterQrCode2FA(urlParaBusca)
 		document.getElementById('imagemQrCode').innerHTML = dadoRetornado;
 	})
 	.catch(function (error) {
-		let msgErro = 'Ocorreu um erro na requisição ao servidor: ' + error.message;
-		alert(msgErro);
-		console.error(msgErro);
+		alert('Ocorreu um erro \n\n' + error.message);
 	});
 }
 

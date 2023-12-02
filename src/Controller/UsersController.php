@@ -12,6 +12,7 @@ use App\Model\Entity\User;
 use App\Model\Table\IpsBloqueadosTable;
 use App\Log\GerenciadorEventos;
 use Authentication\Authenticator\ResultInterface;
+use Cake\Validation\Validator;
 /**
  * Users Controller
  *
@@ -45,6 +46,7 @@ class UsersController extends AppController
         // desabilitando o cache por segurança.
         $this->response = $this->response->withDisabledCache();
         $this->Authentication->addUnauthenticatedActions(self::ACTIONS_SEM_AUTENTICACAO);
+        $this->FormProtection->setConfig('unlockedActions', ['geraQrCode2fa']);
 
         $caminho = array_values(array_filter(explode('/', $this->request->getPath())));
         if (count($caminho) == 1) {
@@ -389,20 +391,41 @@ class UsersController extends AppController
 
     public function geraQrCode2fa()
     {
-        // por padrão manipulando o usuário logado
-        $user = $this->Authentication->getResult()->getData();
-        $params = $this->request->getParam('?');
+        $this->request->allowMethod(['post']);
+        $request = $this->request->getParsedBody();
+        $validator = new Validator();
 
-        // manipulando outro usuário
-        if (isset($params['idUser'])) {
-            if ($user->root) { // o usuário logado tem permisão?
-                $user = $this->Users->get($params['idUser']);
+        $validator
+            ->requirePresence('idUser', true, 'O ID do usuário não foi informado')
+            ->notEmptyString('idUser', 'O ID do usuário não pode estar vazio')
+            ->integer('idUser', 'O ID do usuário precisa ser um inteiro')
+            ->requirePresence('novoQrCode', true, "A propriedade 'novoQrCode' não foi informada")
+            ->notEmptyString('novoQrCode', "A propriedade 'novoQrCode' não pode estar vazia")
+            ->boolean('novoQrCode', "A propriedade 'novoQrCode' precisa ser um boolean");
+
+        $erros = $validator->validate($request);
+
+        if ($erros) {
+            return $this->response
+                ->withType('application/json')
+                ->withStatus(400, 'Dados invalidos enviados ao servidor')
+                ->withStringBody(json_encode($erros));
+        }
+
+        $user = $this->Authentication->getResult()->getData();
+
+        if ($request['idUser'] !=  $user->id) {
+            if ($user->root) {
+                $user = $this->Users->get($request['idUser']);
             } else {
                 GerenciadorEventos::notificarEvento(['evento' => 'C2-1', 'request' => $this->request, 'usuario' => $user]);
+                return $this->response
+                    ->withType('application/json')
+                    ->withStatus(401, 'Você não tem permissão');
             }
         }
 
-        if (isset($params['novoQrCode']) && $params['novoQrCode'] == '1') {
+        if ($request['novoQrCode']) {
             $user = $this->geraNovoSecret2FA($user->id);
         }
 
@@ -419,9 +442,9 @@ class UsersController extends AppController
 
         $strSvgQrCode = (new Writer($render))->writeString($g2faUrl);
 
-        $this->viewBuilder()->setLayout('layout_vazio');
-        $this->viewBuilder()->setTemplate('qr_code_2fa');
-        $this->set(compact('strSvgQrCode'));
+        return $this->response
+            ->withType('text/html')
+            ->withStringBody($strSvgQrCode);
     }
 
     /**
