@@ -44,7 +44,7 @@
           value="<?=$entrada->passwordDescrip()?>" onchange="estaComprometida('password')" required>
         <div class="btn-group">
           <button type="button" class="btn btn-secondary" title="Copiar senha"
-            data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="pass" onclick="buscaUserPass(this)">
+            data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password" onclick="buscaUserPass(this)">
             <i class="fa-regular fa-clipboard"></i>
 	        </button>
           <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput()"><i class="fa fa-eye" aria-hidden="true"></i></button>
