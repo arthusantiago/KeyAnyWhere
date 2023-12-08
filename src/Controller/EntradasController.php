@@ -122,7 +122,7 @@ class EntradasController extends AppController
 
         if ($erros) {
             return $this->response
-                ->withType('application/json')
+                ->withType('application/json; charset=UTF-8')
                 ->withStatus(400, 'Dados invalidos enviados ao servidor')
                 ->withStringBody(json_encode($erros));
         }
@@ -136,7 +136,7 @@ class EntradasController extends AppController
         }
 
         return $this->response
-            ->withType('application/json')
+            ->withType('application/json; charset=UTF-8')
             ->withStringBody(json_encode($response));
     }
 
@@ -159,7 +159,7 @@ class EntradasController extends AppController
 
         if ($erros) {
             return $this->response
-                ->withType('application/json')
+                ->withType('application/json; charset=UTF-8')
                 ->withStatus(400, 'Dados invalidos enviados ao servidor')
                 ->withStringBody(json_encode($erros));
         }
@@ -205,7 +205,7 @@ class EntradasController extends AppController
 
         if ($erros) {
             return $this->response
-                ->withType('application/json')
+                ->withType('application/json; charset=UTF-8')
                 ->withStatus(400, 'Dados invalidos enviados ao servidor')
                 ->withStringBody(json_encode($erros));
         }
@@ -219,7 +219,7 @@ class EntradasController extends AppController
         $resultado['localizado'] = $password ? true : false;
 
         return $this->response
-            ->withType('application/json')
+            ->withType('application/json; charset=UTF-8')
             ->withStringBody(json_encode($resultado));
     }
 }

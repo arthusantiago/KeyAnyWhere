@@ -407,7 +407,7 @@ class UsersController extends AppController
 
         if ($erros) {
             return $this->response
-                ->withType('application/json')
+                ->withType('application/json; charset=UTF-8')
                 ->withStatus(400, 'Dados invalidos enviados ao servidor')
                 ->withStringBody(json_encode($erros));
         }
@@ -420,7 +420,7 @@ class UsersController extends AppController
             } else {
                 GerenciadorEventos::notificarEvento(['evento' => 'C2-1', 'request' => $this->request, 'usuario' => $user]);
                 return $this->response
-                    ->withType('application/json')
+                    ->withType('application/json; charset=UTF-8')
                     ->withStatus(401, 'Você não tem permissão');
             }
         }
@@ -443,7 +443,7 @@ class UsersController extends AppController
         $strSvgQrCode = (new Writer($render))->writeString($g2faUrl);
 
         return $this->response
-            ->withType('text/html')
+            ->withType('text/html; charset=UTF-8')
             ->withStringBody($strSvgQrCode);
     }
 

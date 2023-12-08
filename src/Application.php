@@ -28,6 +28,7 @@ use Cake\ORM\Locator\TableLocator;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Http\Middleware\HttpsEnforcerMiddleware;
+use Cake\Http\Middleware\SecurityHeadersMiddleware;
 
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
@@ -127,6 +128,20 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                     'preload' => true,
                 ]
             ]));
+
+            $securityHeaders = new SecurityHeadersMiddleware();
+            $securityHeaders
+                ->setXssProtection(SecurityHeadersMiddleware::XSS_DISABLED)
+                ->setReferrerPolicy(SecurityHeadersMiddleware::STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
+                ->setCrossDomainPolicy(SecurityHeadersMiddleware::NONE)
+                ->noSniff()
+                ->noOpen();
+
+            if (Configure::read('debug') == false) {
+                $securityHeaders->setXFrameOptions(SecurityHeadersMiddleware::DENY);
+            }
+
+            $middlewareQueue->add($securityHeaders);
 
         return $middlewareQueue;
     }
