@@ -112,6 +112,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/4/en/controllers/middleware.html#cross-site-request-forgery-csrf-middleware
             ->add(new CsrfProtectionMiddleware([
+                'cookieName' => '__Secure-csrfToken',
                 'httponly' => true,
                 'secure' => true,
                 'samesite' => 'Strict'
@@ -120,7 +121,6 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // Forçando HTTPS em todas as conexões;
             ->add(new HttpsEnforcerMiddleware([
                 'headers' => ['X-Https-Upgrade' => 1],
-                'disableOnDebug' => true,
                 'hsts' => [
                     // 31536000 = 60 * 60 * 24 * 365
                     'maxAge' => 31536000,
