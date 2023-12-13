@@ -104,6 +104,15 @@
 	z-index: 1;
 }
 
+/* Badge */
+#badge-alert {
+	background-color:#ff6c00;
+}
+
+#badge-error {
+	background-color:#b03878;
+}
+
 /* Busca */
 .input-busca {
 	text-align: center;
