@@ -29,7 +29,7 @@ use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Http\Middleware\HttpsEnforcerMiddleware;
 use Cake\Http\Middleware\SecurityHeadersMiddleware;
-
+use App\Middleware\SecurityHeadersKawMiddleware;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
@@ -129,11 +129,12 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 ]
             ]));
 
-            $securityHeaders = new SecurityHeadersMiddleware();
+            $securityHeaders = new SecurityHeadersKawMiddleware();
             $securityHeaders
-                ->setXssProtection(SecurityHeadersMiddleware::XSS_DISABLED)
                 ->setReferrerPolicy(SecurityHeadersMiddleware::STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
+                ->setXssProtection(SecurityHeadersMiddleware::XSS_DISABLED)
                 ->setCrossDomainPolicy(SecurityHeadersMiddleware::NONE)
+                ->setContentSecurityPolicy()
                 ->noSniff()
                 ->noOpen();
 
