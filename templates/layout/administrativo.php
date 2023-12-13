@@ -7,16 +7,15 @@
     <?=$this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken'));?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="sessionTimeout" id="sessionTimeout" content="<?=$sessionTimeout?>">
-    <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
     <?php
       echo $this->Html->css([
       	'bootstrap/bootstrap.min.css',
+        'bootstrap/bootstrap-icons.css',
       	'css-estilizacao-geral',
       ]);
       echo $this->fetch('css');
     ?>
-    <script src="https://kit.fontawesome.com/6be704c138.js" crossorigin="anonymous"></script>
+    <?=$this->Html->script('fontawesome.js');?>
   </head>
   <body>
     <div class="container">

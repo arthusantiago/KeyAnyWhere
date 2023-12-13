@@ -7,7 +7,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="sessionTimeout" id="sessionTimeout" content="<?=$sessionTimeout?>">
 	<?=$this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken'));?>
-	<link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
     <?php
       echo $this->Html->css([
       	'bootstrap/bootstrap.min.css',
@@ -18,7 +17,7 @@
     ?>
 	<?=$this->Html->script('categorias.js');?>
 	<?=$this->Html->script('geradorSenha.js');?>
-	<script src="https://kit.fontawesome.com/6be704c138.js" crossorigin="anonymous"></script>
+	<?=$this->Html->script('fontawesome.js');?>
   </head>
   <body>
 		<div id="div-lateral">
