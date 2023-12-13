@@ -17,7 +17,6 @@
     ?>
 	<?=$this->Html->script('categorias.js');?>
 	<?=$this->Html->script('geradorSenha.js');?>
-	<?=$this->Html->script('fontawesome.js');?>
   </head>
   <body>
 		<div id="div-lateral">

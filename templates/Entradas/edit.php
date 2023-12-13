@@ -28,9 +28,9 @@
         <div class="btn-group">
           <button type="button" class="btn btn-secondary" title="Copiar usuário" onclick="buscaUserPass(this)" 
             data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user">
-            <i class="fa-regular fa-clipboard"></i>
+            <i class="bi bi-clipboard"></i>
 	        </button>
-          <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput('username')"><i class="fa fa-eye" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput('username')"><i class="bi bi-eye" aria-hidden="true"></i></button>
         </div>
       </div>
     </div>
@@ -45,9 +45,9 @@
         <div class="btn-group">
           <button type="button" class="btn btn-secondary" title="Copiar senha"
             data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password" onclick="buscaUserPass(this)">
-            <i class="fa-regular fa-clipboard"></i>
+            <i class="bi bi-clipboard"></i>
 	        </button>
-          <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput()"><i class="fa fa-eye" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput()"><i class="bi bi-eye" aria-hidden="true"></i></button>
           <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="visually-hidden">Opções</span>
           </button>
@@ -66,7 +66,7 @@
         <input type="url" class="form-control inputs" name="link" id="link" value="<?=$entrada->linkDescrip()?>" maxlength="400" placeholder="http://seuLink.com.br">
         <div class="btn-group">
           <a <?=$entrada->linkDescrip() ? "href='{$entrada->linkDescrip()}' target='_blank'" : "href='#'";?>>
-            <button type="button" class="btn btn-secondary" title="Abrir link"><i class="fa fa-arrow-up-right-from-square"></i></button>
+            <button type="button" class="btn btn-secondary" title="Abrir link"><i class="bi bi-arrow-up-right-square"></i></button>
           </a>
         </div>
       </div>

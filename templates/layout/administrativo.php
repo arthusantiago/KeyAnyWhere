@@ -15,7 +15,6 @@
       ]);
       echo $this->fetch('css');
     ?>
-    <?=$this->Html->script('fontawesome.js');?>
   </head>
   <body>
     <div class="container">

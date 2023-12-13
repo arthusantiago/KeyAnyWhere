@@ -33,7 +33,7 @@
         <input type="password" class="form-control inputs pwd" name="password" id="password" maxlength="88" autocomplete="new-password"
           onchange="estaComprometida('password')" required>
         <div class="btn-group">
-          <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput()"><i class="fa fa-eye" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput()"><i class="bi bi-eye" aria-hidden="true"></i></button>
           <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="visually-hidden">Opções</span>
           </button>

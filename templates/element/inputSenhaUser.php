@@ -2,7 +2,7 @@
 <div class="input-group">
     <input type="password" id="password" name="password" class="form-control inputs" autocomplete="new-password" minlength="12" placeholder="************">
     <div class="btn-group">
-        <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput()"><i class="fa fa-eye" aria-hidden="true"></i></button>
+        <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput()"><i class="bi bi-eye" aria-hidden="true"></i></button>
     </div>
 </div>
 <p>
