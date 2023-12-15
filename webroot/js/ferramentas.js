@@ -27,3 +27,12 @@ function exibirConteudoInput(campo = 'password')
 
     document.getElementById(campo).setAttribute('type', valor);
 }
+
+/* Function que fecha os alerts abertos */
+setTimeout(
+    function() {
+        let alert = bootstrap.Alert.getOrCreateInstance(document.getElementById('alert-do-sistema'));
+        alert.close();
+    },
+    6000
+);

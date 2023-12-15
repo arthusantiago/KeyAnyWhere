@@ -46,21 +46,11 @@ if (empty($message))
 }
 ?>
 
-<div class="alert alert-danger align-items-center" role="alert" id="alert-do-sistema">
-    <span>&#10060;</span><?= $message ?>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="alert alert-danger" role="alert" id="alert-do-sistema">
+    <span>&#10060;</span> <?=$message?>
     <ul>
         <?php foreach($mensagensErro AS $mensagem):?>
             <li><?=h($mensagem)?></li>
         <?php endforeach;?>
     </ul>
 </div>
-<script type="text/javascript">
-    setTimeout(
-        function(){
-            let alert = bootstrap.Alert.getOrCreateInstance(document.getElementById('alert-do-sistema'));
-            alert.close();
-        }, 
-        6000
-    );
-</script>

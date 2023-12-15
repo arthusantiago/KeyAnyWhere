@@ -10,8 +10,7 @@
    */
 ?>
 <div class="alert alert-success" role="alert" id="alert-do-sistema">
-    <span>&#128079;</span><?=$message?>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <span>&#128079;</span> <?=$message?>
     <?php if(isset($params['mensagens']) && is_array($params['mensagens'])):?>
         <ul>
             <?php foreach($params['mensagens'] AS $arrayMensagens):?>
@@ -22,12 +21,3 @@
         </ul>
     <?php endif;?>
 </div>
-<script type="text/javascript">
-    setTimeout(
-        function(){
-            let alert = bootstrap.Alert.getOrCreateInstance(document.getElementById('alert-do-sistema'));
-            alert.close();
-        }, 
-        5000
-    );
-</script>
