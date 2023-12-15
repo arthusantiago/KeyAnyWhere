@@ -47,15 +47,15 @@ class LogsController extends AppController
 
     public function analisado($id)
     {
-        if ($this->request->is(['post']))
-        {
-            $log = $this->Logs->get($id);
-            $log = $this->Logs->patchEntity($log, $this->request->getData());
-            if ($this->Logs->save($log)) {
-                $this->Flash->success(__('Salvo com sucesso'));
-            }else{
-                $this->Flash->error(null, ['params' => ['mensagens' => $log->getErrors()]]);
-            }
+        $this->request->allowMethod(['get']);
+
+        $log = $this->Logs->get($id);
+        $log->analisado = !$log->analisado;
+
+        if ($this->Logs->save($log)) {
+            $this->Flash->success(__('Salvo com sucesso'));
+        }else{
+            $this->Flash->error(null, ['params' => ['mensagens' => $log->getErrors()]]);
         }
 
         return $this->redirect($this->referer());
