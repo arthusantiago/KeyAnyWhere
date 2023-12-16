@@ -16,12 +16,12 @@
                 	</a>
                 </td>
                 <td>
-            		<button type="button" class="btn btn-sm btn-outline-secondary botoes" title="Copiar usuário"
-                        data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user" onclick="buscaUserPass(this)">
+            		<button type="button" class="btn btn-sm btn-outline-secondary botoes btn-clipboard" title="Copiar usuário"
+                        data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user">
 	                    <i class="bi bi-person-fill icone-opcao"></i>Usuário
 	                </button>
- 					<button type="button" class="btn btn-sm btn-outline-secondary botoes" title="Copiar senha"
-                        data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password" onclick="buscaUserPass(this)">
+ 					<button type="button" class="btn btn-sm btn-outline-secondary botoes btn-clipboard" title="Copiar senha"
+                        data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password">
 	                    <i class="bi bi-key-fill icone-opcao"></i>Senha
 	                </button>
 	                <a class="btn btn-sm btn-outline-secondary botoes" role="button"  href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'edit', $entrada->id])?>" title="Editar entrada">

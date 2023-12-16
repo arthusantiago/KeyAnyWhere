@@ -45,17 +45,18 @@ var factoryRequest = async function (url, parametros)
 }
 
 /**
- * Função responsável por buscar as informações de user e senha e escrever na área de transferencia.
+ * Função responsável por buscar as informações de user/senha e escrever na área de transferencia.
  *
- * @param elementHTML button O botão que foi clicado
+ * @param Event event Evento que está acinando a function (manipulado)
+ * @see https://developer.mozilla.org/pt-BR/docs/Web/API/Event
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API
  * @see https://web.dev/async-clipboard/
  */
-async function buscaUserPass(button)
+async function buscaUserPass(event)
 {
 	let body = {
-		'type' : button.getAttribute('data-clipboard-tipo'),
-		'id' : button.getAttribute('data-clipboard-entrada-id')
+		'type' : event.target.getAttribute('data-clipboard-tipo'),
+		'id' : event.target.getAttribute('data-clipboard-entrada-id')
 	};
 	let urlParaBusca = window.location.origin + '/entradas/clipboard/';
 
@@ -74,6 +75,12 @@ async function buscaUserPass(button)
 		alert(msgErro);
 	});
 }
+/* Aplicando o manipulador de evento no elemento HTML*/
+document
+	.querySelectorAll(".btn-clipboard")
+	.forEach(function (currentValue, currentIndex, listObj) {
+		currentValue.addEventListener("click", buscaUserPass);
+	});
 
 /**
  * Busca generica que envia ao servidor o JSON e espera receber um HTML de retorno.
