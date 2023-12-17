@@ -153,9 +153,10 @@ function buscaGenerica(event)
 	}
 }
 /* Aplicando o manipulador de evento no elemento HTML*/
-document
-	.getElementById('buscaEntrada')
-	.addEventListener("input", buscaGenerica);
+let element = document.getElementById('buscaEntrada');
+if (element) {
+	element.addEventListener("input", buscaGenerica);
+}
 
 
 /**
@@ -180,9 +181,10 @@ function removeResultadoBuscaGenerico(event) {
 	inputOrigemBusca.value = '';
 }
 /* Aplicando o manipulador de evento no elemento HTML*/
-document
-	.getElementById('buscaEntrada')
-	.addEventListener("blur", removeResultadoBuscaGenerico);
+element = document.getElementById('buscaEntrada');
+if (element) {
+	element.addEventListener("input", buscaGenerica);
+}
 
 
 /**
