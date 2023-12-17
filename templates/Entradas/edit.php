@@ -1,5 +1,6 @@
 <!-- usado para marcar em qual categoria o usuário está -->
 <input type="hidden" id="id-categoria-selecionada" value="<?=$entrada->categoria_id?>">
+<?=$this->Html->script('categorias.js', ['block' => 'script']);?>
 
 <div class="row">
   <div class="col-sm-auto">
@@ -102,6 +103,3 @@
 <?= $this->Form->end(['data-type' => 'hidden']);?>
 
 <?= $this->element('geradorSenha')?>
-<script type="text/javascript">
-  document.dispatchEvent(new Event("categoria"));
-</script>
