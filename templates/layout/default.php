@@ -42,11 +42,10 @@
 				<div class="col-sm text-center text-white" id="timerSessao"></div>
 				<div class="col-sm-auto ms-auto">
 					<input type="search" class="form-control input-busca" id="buscaEntrada" placeholder="Mínimo 3 caracteres"
-						data-busca-inserir-resultado="ul-busca"	data-busca-url="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'busca'], ['fullBase' => true])?>"
-						data-busca-config='{"qtdCaracMin": 3}' onblur="removeResultadoBuscaGenerico('buscaEntrada', 'ul-busca')"
-					>
+						data-busca-inserir-resultado="ul-busca-geral" data-busca-url="<?=$this->Url->build(['controller'=>'Entradas', 'action'=>'busca'],['fullBase'=>true])?>"
+						data-busca-config='{"qtdCaracMin": 3}' data-busca-config='{"qtdCaracMin": 3}'>
 					<div class="div-resultado-busca">
-						<ul class="ul-busca" id="ul-busca"></ul>
+						<ul class="ul-busca" id="ul-busca-geral"></ul>
 					</div>
 				</div>
 				<div class="col-sm-auto">

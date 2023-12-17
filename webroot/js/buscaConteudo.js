@@ -47,7 +47,7 @@ var factoryRequest = async function (url, parametros)
 /**
  * Função responsável por buscar as informações de user/senha e escrever na área de transferencia.
  *
- * @param Event event Evento que está acinando a function (manipulado)
+ * @param Event event Evento que está acionando a function (manipulado)
  * @see https://developer.mozilla.org/pt-BR/docs/Web/API/Event
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API
  * @see https://web.dev/async-clipboard/
@@ -82,9 +82,10 @@ document
 		currentValue.addEventListener("click", buscaUserPass);
 	});
 
+
 /**
  * Busca generica que envia ao servidor o JSON e espera receber um HTML de retorno.
- * 
+ *
  * A função ira acessar três atributos no elemento HTML que acionou o manipulador:
  * 'data-busca-inserir-resultado' : ID do elemento HTML onde será inserido o html de retorno do servidor
  * 'data-busca-url' : URL para onde será disparada a request
@@ -95,7 +96,7 @@ document
  *		'paramAdicional' : Você pode adicionar a requisição algum dado desejado em formato de JSON.
  *      @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON
 
- * @param Event event Evento que está acinando a function (manipulado)
+ * @param Event event Evento que está acionando a function (manipulado)
  */
 let paraExecutar;
 function buscaGenerica(event)
@@ -156,16 +157,17 @@ document
 	.getElementById('buscaEntrada')
 	.addEventListener("input", buscaGenerica);
 
+
 /**
  * Função que limpa o resultado da busca.
  *
- * @param string idInputOrigemBusca ID do input onde foi digitado o texto da busca.
- * @param string idUlBusca ID do elemento UL que contem a listagem do resultado da busca.
+ * @param Event event Evento que está acionando a function (manipulado)
  */
-function removeResultadoBuscaGenerico(idInputOrigemBusca, idUlBusca) {
+function removeResultadoBuscaGenerico(event) {
+	let inputOrigemBusca = event.target;
 	setTimeout(
 		function () {
-			let temp_element = document.getElementById(idUlBusca);
+			let temp_element = document.getElementById(inputOrigemBusca.getAttribute('data-busca-inserir-resultado'));
 			if (temp_element) {
 				while (temp_element.childNodes[0] != null) {
 					temp_element.removeChild(temp_element.childNodes[0]);
@@ -175,8 +177,13 @@ function removeResultadoBuscaGenerico(idInputOrigemBusca, idUlBusca) {
 		500
 	);
 
-	document.getElementById(idInputOrigemBusca).value = '';
+	inputOrigemBusca.value = '';
 }
+/* Aplicando o manipulador de evento no elemento HTML*/
+document
+	.getElementById('buscaEntrada')
+	.addEventListener("blur", removeResultadoBuscaGenerico);
+
 
 /**
  * Busca o QrCode do 2FA.
