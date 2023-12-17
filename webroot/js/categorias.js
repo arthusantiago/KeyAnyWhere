@@ -3,7 +3,7 @@
  * Função que pinta no menu lateral esquerdo em qual categoria o usuário está.
  *
  **/
-document.addEventListener('categoria', function()
+window.addEventListener('load', function(event)
 {
 	let menuLateral = document.getElementById('menu-lateral');
 

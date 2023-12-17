@@ -14,9 +14,9 @@
       	'css-estilizacao-geral',
       ]);
       echo $this->fetch('css');
+	  echo $this->Html->script('geradorSenha.js');
+	  echo $this->fetch('script');
     ?>
-	<?=$this->Html->script('categorias.js');?>
-	<?=$this->Html->script('geradorSenha.js');?>
   </head>
   <body>
 		<div id="div-lateral">

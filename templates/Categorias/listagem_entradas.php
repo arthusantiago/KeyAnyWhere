@@ -1,3 +1,7 @@
+<!-- usado para marcar em qual categoria o usuário está -->
+<input type="hidden" id="id-categoria-selecionada" value="<?=$categoria_id?>">
+<?=$this->Html->script('categorias.js');?>
+
 <table class="table table-borderless table-striped table-hover">
     <thead>
         <tr class="text-center titulo-coluna-tabela">
@@ -36,9 +40,3 @@
 
 <br>
 <?= $this->element('paginacao');?>
-
-<!-- usado para marcar em qual categoria o usuário está -->
-<input type="hidden" id="id-categoria-selecionada" value="<?=$categoria_id?>">
-<script type="text/javascript">
-    document.dispatchEvent(new Event("categoria"));
-</script>
