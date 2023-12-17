@@ -29,9 +29,8 @@
       <div class="input-group">
         <input type="password" class="form-control inputs" name="username" id="username" value="<?=$entrada->usernameDescrip()?>" maxlength="88" required>
         <div class="btn-group">
-          <button type="button" class="btn btn-secondary" title="Copiar usuário" onclick="buscaUserPass(this)" 
-            data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user">
-            <i class="bi bi-clipboard"></i>
+          <button type="button" class="btn btn-secondary btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user">
+            <i class="bi bi-clipboard" title="Copiar usuário"></i>
 	        </button>
           <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput('username')"><i class="bi bi-eye" aria-hidden="true"></i></button>
         </div>
@@ -46,9 +45,8 @@
         <input type="password" class="form-control inputs pwd" name="password" id="password" autocomplete="new-password" maxlength="88" 
           value="<?=$entrada->passwordDescrip()?>" onchange="estaComprometida('password')" required>
         <div class="btn-group">
-          <button type="button" class="btn btn-secondary" title="Copiar senha"
-            data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password" onclick="buscaUserPass(this)">
-            <i class="bi bi-clipboard"></i>
+          <button type="button" class="btn btn-secondary btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password">
+            <i class="bi bi-clipboard" title="Copiar senha"></i>
 	        </button>
           <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput()"><i class="bi bi-eye" aria-hidden="true"></i></button>
           <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
