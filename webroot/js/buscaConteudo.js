@@ -84,20 +84,27 @@ document
 
 /**
  * Busca generica que envia ao servidor o JSON e espera receber um HTML de retorno.
- *
- * @param string idInputOrigemBusca ID do input onde foi digitado o texto da busca
- * @param string destinoHtmlRetorno ID do elemento HTML onde será inserido o retorno da request.
- * @param string urlParaBusca URL alvo da busca.
- * @param Objeto config Configurações adicionais para a execução da request.
- 		'qtdCaracMin' (Obrigatório) Quantidade mínima de caracteres que o usuário precisa inserir no campo.
- 		'tempoEspera' (Opcional) Tempo que a função deve esperar para executar a request pro servidor.
-					  Informar em milissegundos. O padrão é 2000 ms (2 segundos)
- 		'paramAdicional' : Você pode adicionar a requisição algum dado desejado em formato de JSON.
+ * 
+ * A função ira acessar três atributos no elemento HTML que acionou o manipulador:
+ * 'data-busca-inserir-resultado' : ID do elemento HTML onde será inserido o html de retorno do servidor
+ * 'data-busca-url' : URL para onde será disparada a request
+ * 'data-busca-config' : Configurações adicionais para a execução da request.
+ * 		'qtdCaracMin' (Obrigatório) Quantidade mínima de caracteres que o usuário precisa inserir no campo.
+ * 		'tempoEspera' (Opcional) Tempo que a função deve esperar para executar a request pro servidor.
+ *				  Informar em milissegundos. O padrão é 2000 ms (2 segundos)
+ *		'paramAdicional' : Você pode adicionar a requisição algum dado desejado em formato de JSON.
+ *      @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON
+
+ * @param Event event Evento que está acinando a function (manipulado)
  */
 let paraExecutar;
-function buscaGenerica(idInputOrigemBusca, destinoHtmlRetorno, urlParaBusca, config)
+function buscaGenerica(event)
 {
-	let inputOrigemBusca = document.getElementById(idInputOrigemBusca);
+	let inputOrigemBusca = event.target;
+	let destinoHtmlRetorno = inputOrigemBusca.getAttribute('data-busca-inserir-resultado');
+	let urlParaBusca = inputOrigemBusca.getAttribute('data-busca-url');
+	let config = JSON.parse(inputOrigemBusca.getAttribute('data-busca-config'));
+
 	if(inputOrigemBusca.value.length >= config.qtdCaracMin)
 	{
 		clearTimeout(paraExecutar);
@@ -144,6 +151,10 @@ function buscaGenerica(idInputOrigemBusca, destinoHtmlRetorno, urlParaBusca, con
 		document.getElementById(destinoHtmlRetorno).innerHTML = "<li><a>Digite no mínimo " + config.qtdCaracMin + " caracteres.</a></li>";
 	}
 }
+/* Aplicando o manipulador de evento no elemento HTML*/
+document
+	.getElementById('buscaEntrada')
+	.addEventListener("input", buscaGenerica);
 
 /**
  * Função que limpa o resultado da busca.
