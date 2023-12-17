@@ -223,20 +223,20 @@ function obterQrCode2FA(idUser, novoQrCode = false)
 }
 
 /**
- * Faz uma chamada para o server verificar se a senha é insegura.
+ * Faz uma chamada ao servidor para verificar se a senha é insegura.
  *
- * @param string inputName ID do input=text|password onde a senha foi inserida
+ * @param Event event Evento que está acionando a function (manipulado)
  * @return void
  */
-function estaComprometida(inputName)
+function estaComprometida(event, inputName)
 {
-	let password = document.getElementById(inputName).value;
+	let input = event.target;
 
-	if (!password) {
+	if (!input.value) {
 		return;
 	}
 
-	let body = JSON.stringify({"password" : password});
+	let body = JSON.stringify({"password" : input.value});
 	let url = window.location.origin + '/entradas/senha-insegura/';
 
 	factoryRequest(url, {'body':body})
@@ -247,15 +247,21 @@ function estaComprometida(inputName)
 		return response.json();
 	})
 	.then(function (dadoRetornado) {
-		let strClass = document.getElementById(inputName).getAttribute('class');
+		let strClass = input.getAttribute('class');
 		if (dadoRetornado.localizado) {
 			strClass = strClass + ' is-invalid';
 		} else {
 			strClass = strClass.replace(/is-invalid/g, "");
 		}
-		document.getElementById(inputName).setAttribute('class', strClass);
+		input.setAttribute('class', strClass);
 	})
 	.catch(function (error) {
 		alert('Ocorreu um erro \n\n' + error.message);
 	});
 }
+/* Aplicando o manipulador de evento no elemento HTML*/
+document
+	.querySelectorAll(".pwd")
+	.forEach(function (currentValue, currentIndex, listObj) {
+		currentValue.addEventListener("change", estaComprometida);
+	});

@@ -30,8 +30,7 @@
     <div class="col-sm">
       <label for="password" class="form-label">Senha</label>
       <div class="input-group">
-        <input type="password" class="form-control inputs pwd" name="password" id="password" maxlength="88" autocomplete="new-password"
-          onchange="estaComprometida('password')" required>
+        <input type="password" class="form-control inputs pwd" name="password" id="password" maxlength="88" autocomplete="new-password" required>
         <div class="btn-group">
           <button type="button" class="btn btn-secondary btn-revelar" data-revelar="password">
             <i class="bi bi-eye" aria-hidden="true" title="Revelar" data-revelar="password"></i>

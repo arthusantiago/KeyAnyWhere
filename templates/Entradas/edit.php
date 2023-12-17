@@ -45,7 +45,7 @@
       <label for="password" class="form-label">Senha</label>
       <div class="input-group">
         <input type="password" class="form-control inputs pwd" name="password" id="password" autocomplete="new-password" maxlength="88" 
-          value="<?=$entrada->passwordDescrip()?>" onchange="estaComprometida('password')" required>
+          value="<?=$entrada->passwordDescrip()?>" required>
         <div class="btn-group">
           <button type="button" class="btn btn-secondary btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password">
             <i class="bi bi-clipboard" title="Copiar senha"></i>
