@@ -1,3 +1,5 @@
+<!-- usado para marcar em qual categoria o usuário está -->
+<input type="hidden" id="id-categoria-selecionada" value="<?=$entrada->categoria_id?>">
 
 <div class="row">
   <div class="col-sm-auto">
@@ -99,8 +101,6 @@
   </div>
 <?= $this->Form->end(['data-type' => 'hidden']);?>
 
-<!-- usado para marcar em qual categoria o usuário está -->
-<input type="hidden" id="id-categoria-selecionada" value="<?=$entrada->categoria_id?>">
 <?= $this->element('geradorSenha')?>
 <script type="text/javascript">
   document.dispatchEvent(new Event("categoria"));

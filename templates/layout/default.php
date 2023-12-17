@@ -14,7 +14,6 @@
       	'css-estilizacao-geral',
       ]);
       echo $this->fetch('css');
-	  echo $this->Html->script('geradorSenha.js');
 	  echo $this->fetch('script');
     ?>
   </head>

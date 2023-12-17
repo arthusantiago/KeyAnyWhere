@@ -1,3 +1,5 @@
+<?=$this->Html->script('geradorSenha.js', ['block' => 'script']);?>
+
 <div class="modal" tabindex="-1" id="modalGeradorSenha">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
