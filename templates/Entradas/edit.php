@@ -32,7 +32,9 @@
           <button type="button" class="btn btn-secondary btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user">
             <i class="bi bi-clipboard" title="Copiar usuário"></i>
 	        </button>
-          <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput('username')"><i class="bi bi-eye" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-secondary btn-revelar" data-revelar="username">
+            <i class="bi bi-eye" aria-hidden="true" title="Revelar" data-revelar="username"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -48,7 +50,9 @@
           <button type="button" class="btn btn-secondary btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password">
             <i class="bi bi-clipboard" title="Copiar senha"></i>
 	        </button>
-          <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput()"><i class="bi bi-eye" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-secondary btn-revelar" data-revelar="password">
+            <i class="bi bi-eye" aria-hidden="true" title="Revelar" data-revelar="password"></i>
+          </button>
           <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="visually-hidden">Opções</span>
           </button>
