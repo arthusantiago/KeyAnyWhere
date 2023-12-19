@@ -1,6 +1,6 @@
 <!-- usado para marcar em qual categoria o usuário está -->
 <input type="hidden" id="id-categoria-selecionada" value="<?=$entrada->categoria_id?>">
-<?=$this->Html->script('categorias.js', ['block' => 'script']);?>
+<?=$this->Html->script('categorias.js', ['block' => 'script-first-load']);?>
 
 <div class="row">
   <div class="col-sm-auto">
@@ -57,7 +57,7 @@
             <span class="visually-hidden">Opções</span>
           </button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalGeradorSenha" onclick="generatePassword('tamanho', 'senhaGerada')">Gerador de senha</a></li>
+            <li><a class="dropdown-item" id="btn-gerador-senha" href="#" data-bs-toggle="modal" data-bs-target="#modalGeradorSenha">Gerador de senha</a></li>
           </ul>
         </div>
         <div id="feedbackPasswordInsecure" class="invalid-feedback">

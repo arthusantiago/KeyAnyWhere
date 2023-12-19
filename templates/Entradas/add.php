@@ -39,7 +39,7 @@
             <span class="visually-hidden">Opções</span>
           </button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalGeradorSenha" onclick="generatePassword('tamanho', 'senhaGerada')">Gerador de senha</a></li>
+            <li><a class="dropdown-item" id="btn-gerador-senha" href="#" data-bs-toggle="modal" data-bs-target="#modalGeradorSenha">Gerador de senha</a></li>
           </ul>
         </div>
         <div id="feedbackPasswordInsecure" class="invalid-feedback">

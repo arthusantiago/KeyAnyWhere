@@ -14,7 +14,7 @@
       	'css-estilizacao-geral',
       ]);
       echo $this->fetch('css');
-	  echo $this->fetch('script');
+	  echo $this->fetch('script-first-load');
     ?>
   </head>
   <body>
@@ -76,11 +76,13 @@
 				</div>
 			</div>
 		</div>
-
-		<?=$this->Html->script('bootstrap/popper.min.js')?>
-		<?=$this->Html->script('bootstrap/bootstrap.js')?>
-		<?=$this->Html->script('easytimer.min.js');?>
-		<?=$this->Html->script('buscaConteudo.js')?>
-		<?=$this->Html->script('ferramentas.js');?>
+		<?php
+			echo $this->Html->script('bootstrap/popper.min.js');
+			echo $this->Html->script('bootstrap/bootstrap.js');
+			echo $this->Html->script('easytimer.min.js');
+			echo $this->Html->script('buscaConteudo.js');
+			echo $this->Html->script('ferramentas.js');
+			echo $this->fetch('script-last-load');
+		?>
   	</body>
 </html>

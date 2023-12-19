@@ -1,4 +1,4 @@
-<?=$this->Html->script('geradorSenha.js', ['block' => 'script']);?>
+<?=$this->Html->script('geradorSenha.js', ['block' => 'script-last-load']);?>
 
 <div class="modal" tabindex="-1" id="modalGeradorSenha">
   <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -13,8 +13,7 @@
             <div class="col-sm">
               <label for="tamanho" class="form-label" id="labelTamanho">Tamanho: 14 caracteres</label>
               <div class="input-group">
-                <input type="range" class="form-range" name="tamanho" id="tamanho" min="12" max="20" step="1" value="14" 
-                    onchange="atualizaLabel('labelTamanho', 'tamanho'); generatePassword('tamanho', 'senhaGerada')"  required>
+                <input type="range" class="form-range" name="tamanho" id="tamanho" min="12" max="20" step="1" value="14" required>
               </div>
             </div>
           </div>
@@ -30,7 +29,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="aplicaSenha('password', 'senhaGerada')">Aplicar senha</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btn-aplica-senha">Aplicar senha</button>
       </div>
     </div>
   </div>
