@@ -13,18 +13,18 @@
   'password'
 ]); ?>
 <div class="row">
-  <div class="col-sm-5">
+  <div class="col-sm">
     <label for="username">Nome do Usuário</label>
     <input type="text" class="form-control inputs" id="username" name="username" value="<?= $user->username ?>" maxlength="50">
   </div>
-  <div class="col-sm-5">
+  <div class="col-sm">
     <label for="email">E-mail (login e rec. de senha)</label>
     <input type="email" class="form-control inputs" id="email" name="email" value="<?= $user->email ?>" maxlength="100" autocomplete="email">
   </div>
 </div>
 <br>
 <div class="row">
-  <div class="col-sm-auto">
+  <div class="col-sm-6">
     <?= $this->element('inputSenhaUser')?>
   </div>
 </div>
