@@ -190,14 +190,13 @@ if (element) {
 /**
  * Busca o QrCode do 2FA.
  *
- * @param integer idUser ID do usuario que será manipulado
- * @param boolean novoQrCode Se deve ser gerado um novo QrCode.
+ * @param Event event Evento que está acionando a function (manipulado)
  */
-function obterQrCode2FA(idUser, novoQrCode = false)
+function obterQrCode2FA(event)
 {
 	let body = JSON.stringify({
-		idUser: idUser,
-		novoQrCode: novoQrCode
+		idUser: event.target.getAttribute('data-qrcode-user-id'),
+		novoQrCode: event.target.getAttribute('data-qrcode-user-id') ? true : false
 	});
 
 	let parametros = 		{
@@ -221,6 +220,13 @@ function obterQrCode2FA(idUser, novoQrCode = false)
 		alert('Ocorreu um erro \n\n' + error.message);
 	});
 }
+/* Aplicando o manipulador de evento no elemento HTML*/
+document
+	.querySelectorAll(".btn-gerar-qrcode")
+	.forEach(function (currentValue, currentIndex, listObj) {
+		currentValue.addEventListener("click", obterQrCode2FA);
+	});
+
 
 /**
  * Faz uma chamada ao servidor para verificar se a senha é insegura.
