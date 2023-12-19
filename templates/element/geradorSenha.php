@@ -5,7 +5,6 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Gerador de senha</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div class="container-fluid">
@@ -22,7 +21,7 @@
             <div class="col-sm-5">
               <label for="tamanho" class="form-label">Senha gerada</label>
               <div class="input-group">
-                <input type="text" class="form-control inputs" name="senhaGerada" id="senhaGerada" placeholder="senha forte aqui " readonly>
+                <input type="text" class="form-control inputs" name="senhaGerada" id="senhaGerada" readonly>
               </div>
             </div>
           </div>
@@ -30,6 +29,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btn-aplica-senha">Aplicar senha</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
       </div>
     </div>
   </div>
