@@ -13,18 +13,18 @@
   'password'
 ]); ?>
 <div class="row">
-  <div class="col-sm-4">
+  <div class="col-sm">
     <label for="username">Nome do Usuário</label>
     <input type="text" class="form-control inputs" id="username" name="username" value="<?= $user->username ?>" maxlength="50">
   </div>
-  <div class="col-sm-4">
+  <div class="col-sm">
     <label for="email">E-mail (login e rec. de senha)</label>
     <input type="email" class="form-control inputs" id="email" name="email" value="<?= $user->email ?>" maxlength="100" autocomplete="email">
   </div>
 </div>
 <br>
 <div class="row">
-  <div class="col-sm-4">
+  <div class="col-sm-6">
     <?= $this->element('inputSenhaUser')?>
   </div>
 </div>
@@ -37,7 +37,7 @@
 <br>
 <div class="row">
     <div class="col-sm-4">
-      <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#TFAModal" onclick="obterQrCode2FA('<?=$user->id?>')">
+      <button type="button" class="btn btn-outline-secondary btn-gerar-qrcode" data-bs-toggle="modal" data-bs-target="#TFAModal" data-qrcode-user-id="<?=$user->id?>">
         Configurar a Autenticação de Dois Fatores (2FA)
       </button>
     </div>
@@ -55,9 +55,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="TFAModalLabel">Configuração da Autenticação em Dois Fatores (2FA)</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <p>Basta escanear o QrCode com o aplicativo de 2FA de sua preferência.</p>
         <div class="row">
           <div class="col-sm text-center">
             <div id="imagemQrCode"></div>
@@ -65,7 +65,7 @@
         </div>
         <div class="row">
           <div class="col-sm text-center">
-            <button type="button" class="btn btn-outline-secondary" onclick="obterQrCode2FA('<?=$user->id?>', true)">
+            <button type="button" class="btn btn-outline-secondary btn-gerar-qrcode" data-qrcode-user-id="<?=$user->id?>" data-qrcode-novo="1">
               Gerar novo QrCode
             </button>
           </div>

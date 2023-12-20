@@ -7,7 +7,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="sessionTimeout" id="sessionTimeout" content="<?=$sessionTimeout?>">
 	<?=$this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken'));?>
-	<link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
     <?php
       echo $this->Html->css([
       	'bootstrap/bootstrap.min.css',
@@ -15,10 +14,8 @@
       	'css-estilizacao-geral',
       ]);
       echo $this->fetch('css');
+	  echo $this->fetch('script-first-load');
     ?>
-	<?=$this->Html->script('categorias.js');?>
-	<?=$this->Html->script('geradorSenha.js');?>
-	<script src="https://kit.fontawesome.com/6be704c138.js" crossorigin="anonymous"></script>
   </head>
   <body>
 		<div id="div-lateral">
@@ -43,17 +40,11 @@
 				</div>
 				<div class="col-sm text-center text-white" id="timerSessao"></div>
 				<div class="col-sm-auto ms-auto">
-					<input type="search" class="form-control input-busca" id="buscaEntrada"	placeholder="Mínimo 3 caracteres"
-						onblur="removeResultadoBuscaGenerico('buscaEntrada', 'ul-busca')"
-						oninput="buscaGenerica(
-							'buscaEntrada',
-							'ul-busca',
-							'<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'busca'], ['fullBase' => true])?>',
-							{qtdCaracMin:'3'}
-						)"
-					>
+					<input type="search" class="form-control input-busca" id="buscaEntrada" placeholder="Mínimo 3 caracteres"
+						data-busca-inserir-resultado="ul-busca-geral" data-busca-url="<?=$this->Url->build(['controller'=>'Entradas', 'action'=>'busca'],['fullBase'=>true])?>"
+						data-busca-config='{"qtdCaracMin": 3}'>
 					<div class="div-resultado-busca">
-						<ul class="ul-busca" id="ul-busca"></ul>
+						<ul class="ul-busca" id="ul-busca-geral"></ul>
 					</div>
 				</div>
 				<div class="col-sm-auto">
@@ -85,11 +76,13 @@
 				</div>
 			</div>
 		</div>
-
-		<?=$this->Html->script('bootstrap/popper.min.js')?>
-		<?=$this->Html->script('bootstrap/bootstrap.js')?>
-		<?=$this->Html->script('easytimer.min.js');?>
-		<?=$this->Html->script('buscaConteudo.js')?>
-		<?=$this->Html->script('ferramentas.js');?>
+		<?php
+			echo $this->Html->script('bootstrap/popper.min.js');
+			echo $this->Html->script('bootstrap/bootstrap.js');
+			echo $this->Html->script('easytimer.min.js');
+			echo $this->Html->script('buscaConteudo.js');
+			echo $this->Html->script('ferramentas.js');
+			echo $this->fetch('script-last-load');
+		?>
   	</body>
 </html>

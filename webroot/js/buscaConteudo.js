@@ -45,17 +45,18 @@ var factoryRequest = async function (url, parametros)
 }
 
 /**
- * Função responsável por buscar as informações de user e senha e escrever na área de transferencia.
+ * Função responsável por buscar as informações de user/senha e escrever na área de transferencia.
  *
- * @param elementHTML button O botão que foi clicado
+ * @param Event event Evento que está acionando a function (manipulado)
+ * @see https://developer.mozilla.org/pt-BR/docs/Web/API/Event
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API
  * @see https://web.dev/async-clipboard/
  */
-async function buscaUserPass(button)
+async function buscaUserPass(event)
 {
 	let body = {
-		'type' : button.getAttribute('data-clipboard-tipo'),
-		'id' : button.getAttribute('data-clipboard-entrada-id')
+		'type' : event.target.getAttribute('data-clipboard-tipo'),
+		'id' : event.target.getAttribute('data-clipboard-entrada-id')
 	};
 	let urlParaBusca = window.location.origin + '/entradas/clipboard/';
 
@@ -74,23 +75,37 @@ async function buscaUserPass(button)
 		alert(msgErro);
 	});
 }
+/* Aplicando o manipulador de evento no elemento HTML*/
+document
+	.querySelectorAll(".btn-clipboard")
+	.forEach(function (currentValue, currentIndex, listObj) {
+		currentValue.addEventListener("click", buscaUserPass);
+	});
+
 
 /**
  * Busca generica que envia ao servidor o JSON e espera receber um HTML de retorno.
  *
- * @param string idInputOrigemBusca ID do input onde foi digitado o texto da busca
- * @param string destinoHtmlRetorno ID do elemento HTML onde será inserido o retorno da request.
- * @param string urlParaBusca URL alvo da busca.
- * @param Objeto config Configurações adicionais para a execução da request.
- 		'qtdCaracMin' (Obrigatório) Quantidade mínima de caracteres que o usuário precisa inserir no campo.
- 		'tempoEspera' (Opcional) Tempo que a função deve esperar para executar a request pro servidor.
-					  Informar em milissegundos. O padrão é 2000 ms (2 segundos)
- 		'paramAdicional' : Você pode adicionar a requisição algum dado desejado em formato de JSON.
+ * A função ira acessar três atributos no elemento HTML que acionou o manipulador:
+ * 'data-busca-inserir-resultado' : ID do elemento HTML onde será inserido o html de retorno do servidor
+ * 'data-busca-url' : URL para onde será disparada a request
+ * 'data-busca-config' : Configurações adicionais para a execução da request.
+ * 		'qtdCaracMin' (Obrigatório) Quantidade mínima de caracteres que o usuário precisa inserir no campo.
+ * 		'tempoEspera' (Opcional) Tempo que a função deve esperar para executar a request pro servidor.
+ *				  Informar em milissegundos. O padrão é 2000 ms (2 segundos)
+ *		'paramAdicional' : Você pode adicionar a requisição algum dado desejado em formato de JSON.
+ *      @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON
+
+ * @param Event event Evento que está acionando a function (manipulado)
  */
 let paraExecutar;
-function buscaGenerica(idInputOrigemBusca, destinoHtmlRetorno, urlParaBusca, config)
+function buscaGenerica(event)
 {
-	let inputOrigemBusca = document.getElementById(idInputOrigemBusca);
+	let inputOrigemBusca = event.target;
+	let destinoHtmlRetorno = inputOrigemBusca.getAttribute('data-busca-inserir-resultado');
+	let urlParaBusca = inputOrigemBusca.getAttribute('data-busca-url');
+	let config = JSON.parse(inputOrigemBusca.getAttribute('data-busca-config'));
+
 	if(inputOrigemBusca.value.length >= config.qtdCaracMin)
 	{
 		clearTimeout(paraExecutar);
@@ -137,17 +152,23 @@ function buscaGenerica(idInputOrigemBusca, destinoHtmlRetorno, urlParaBusca, con
 		document.getElementById(destinoHtmlRetorno).innerHTML = "<li><a>Digite no mínimo " + config.qtdCaracMin + " caracteres.</a></li>";
 	}
 }
+/* Aplicando o manipulador de evento no elemento HTML*/
+let element = document.getElementById('buscaEntrada');
+if (element) {
+	element.addEventListener("input", buscaGenerica);
+}
+
 
 /**
  * Função que limpa o resultado da busca.
  *
- * @param string idInputOrigemBusca ID do input onde foi digitado o texto da busca.
- * @param string idUlBusca ID do elemento UL que contem a listagem do resultado da busca.
+ * @param Event event Evento que está acionando a function (manipulado)
  */
-function removeResultadoBuscaGenerico(idInputOrigemBusca, idUlBusca) {
+function removeResultadoBuscaGenerico(event) {
+	let inputOrigemBusca = event.target;
 	setTimeout(
 		function () {
-			let temp_element = document.getElementById(idUlBusca);
+			let temp_element = document.getElementById(inputOrigemBusca.getAttribute('data-busca-inserir-resultado'));
 			if (temp_element) {
 				while (temp_element.childNodes[0] != null) {
 					temp_element.removeChild(temp_element.childNodes[0]);
@@ -157,20 +178,25 @@ function removeResultadoBuscaGenerico(idInputOrigemBusca, idUlBusca) {
 		500
 	);
 
-	document.getElementById(idInputOrigemBusca).value = '';
+	inputOrigemBusca.value = '';
 }
+/* Aplicando o manipulador de evento no elemento HTML*/
+element = document.getElementById('buscaEntrada');
+if (element) {
+	element.addEventListener("input", buscaGenerica);
+}
+
 
 /**
  * Busca o QrCode do 2FA.
  *
- * @param integer idUser ID do usuario que será manipulado
- * @param boolean novoQrCode Se deve ser gerado um novo QrCode.
+ * @param Event event Evento que está acionando a function (manipulado)
  */
-function obterQrCode2FA(idUser, novoQrCode = false)
+function obterQrCode2FA(event)
 {
 	let body = JSON.stringify({
-		idUser: idUser,
-		novoQrCode: novoQrCode
+		idUser: event.target.getAttribute('data-qrcode-user-id'),
+		novoQrCode: event.target.getAttribute('data-qrcode-user-id') ? true : false
 	});
 
 	let parametros = 		{
@@ -194,22 +220,29 @@ function obterQrCode2FA(idUser, novoQrCode = false)
 		alert('Ocorreu um erro \n\n' + error.message);
 	});
 }
+/* Aplicando o manipulador de evento no elemento HTML*/
+document
+	.querySelectorAll(".btn-gerar-qrcode")
+	.forEach(function (currentValue, currentIndex, listObj) {
+		currentValue.addEventListener("click", obterQrCode2FA);
+	});
+
 
 /**
- * Faz uma chamada para o server verificar se a senha é insegura.
+ * Faz uma chamada ao servidor para verificar se a senha é insegura.
  *
- * @param string inputName ID do input=text|password onde a senha foi inserida
+ * @param Event event Evento que está acionando a function (manipulado)
  * @return void
  */
-function estaComprometida(inputName)
+function estaComprometida(event, inputName)
 {
-	let password = document.getElementById(inputName).value;
+	let input = event.target;
 
-	if (!password) {
+	if (!input.value) {
 		return;
 	}
 
-	let body = JSON.stringify({"password" : password});
+	let body = JSON.stringify({"password" : input.value});
 	let url = window.location.origin + '/entradas/senha-insegura/';
 
 	factoryRequest(url, {'body':body})
@@ -220,15 +253,21 @@ function estaComprometida(inputName)
 		return response.json();
 	})
 	.then(function (dadoRetornado) {
-		let strClass = document.getElementById(inputName).getAttribute('class');
+		let strClass = input.getAttribute('class');
 		if (dadoRetornado.localizado) {
 			strClass = strClass + ' is-invalid';
 		} else {
 			strClass = strClass.replace(/is-invalid/g, "");
 		}
-		document.getElementById(inputName).setAttribute('class', strClass);
+		input.setAttribute('class', strClass);
 	})
 	.catch(function (error) {
 		alert('Ocorreu um erro \n\n' + error.message);
 	});
 }
+/* Aplicando o manipulador de evento no elemento HTML*/
+document
+	.querySelectorAll(".pwd")
+	.forEach(function (currentValue, currentIndex, listObj) {
+		currentValue.addEventListener("change", estaComprometida);
+	});

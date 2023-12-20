@@ -1,3 +1,6 @@
+<!-- usado para marcar em qual categoria o usuário está -->
+<input type="hidden" id="id-categoria-selecionada" value="<?=$entrada->categoria_id?>">
+<?=$this->Html->script('categorias.js', ['block' => 'script-first-load']);?>
 
 <div class="row">
   <div class="col-sm-auto">
@@ -26,11 +29,12 @@
       <div class="input-group">
         <input type="password" class="form-control inputs" name="username" id="username" value="<?=$entrada->usernameDescrip()?>" maxlength="88" required>
         <div class="btn-group">
-          <button type="button" class="btn btn-secondary" title="Copiar usuário" onclick="buscaUserPass(this)" 
-            data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user">
-            <i class="fa-regular fa-clipboard"></i>
+          <button type="button" class="btn btn-secondary btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user">
+            <i class="bi bi-clipboard" title="Copiar usuário" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user"></i>
 	        </button>
-          <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput('username')"><i class="fa fa-eye" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-secondary btn-revelar" data-revelar="username">
+            <i class="bi bi-eye" aria-hidden="true" title="Revelar" data-revelar="username"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -41,18 +45,19 @@
       <label for="password" class="form-label">Senha</label>
       <div class="input-group">
         <input type="password" class="form-control inputs pwd" name="password" id="password" autocomplete="new-password" maxlength="88" 
-          value="<?=$entrada->passwordDescrip()?>" onchange="estaComprometida('password')" required>
+          value="<?=$entrada->passwordDescrip()?>" required>
         <div class="btn-group">
-          <button type="button" class="btn btn-secondary" title="Copiar senha"
-            data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password" onclick="buscaUserPass(this)">
-            <i class="fa-regular fa-clipboard"></i>
+          <button type="button" class="btn btn-secondary btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password">
+            <i class="bi bi-clipboard" title="Copiar senha" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password"></i>
 	        </button>
-          <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput()"><i class="fa fa-eye" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-secondary btn-revelar" data-revelar="password">
+            <i class="bi bi-eye" aria-hidden="true" title="Revelar" data-revelar="password"></i>
+          </button>
           <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="visually-hidden">Opções</span>
           </button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalGeradorSenha" onclick="generatePassword('tamanho', 'senhaGerada')">Gerador de senha</a></li>
+            <li><a class="dropdown-item" id="btn-gerador-senha" href="#" data-bs-toggle="modal" data-bs-target="#modalGeradorSenha">Gerador de senha</a></li>
           </ul>
         </div>
         <div id="feedbackPasswordInsecure" class="invalid-feedback">
@@ -66,7 +71,7 @@
         <input type="url" class="form-control inputs" name="link" id="link" value="<?=$entrada->linkDescrip()?>" maxlength="400" placeholder="http://seuLink.com.br">
         <div class="btn-group">
           <a <?=$entrada->linkDescrip() ? "href='{$entrada->linkDescrip()}' target='_blank'" : "href='#'";?>>
-            <button type="button" class="btn btn-secondary" title="Abrir link"><i class="fa fa-arrow-up-right-from-square"></i></button>
+            <button type="button" class="btn btn-secondary" title="Abrir link"><i class="bi bi-arrow-up-right-square"></i></button>
           </a>
         </div>
       </div>
@@ -99,9 +104,4 @@
   </div>
 <?= $this->Form->end(['data-type' => 'hidden']);?>
 
-<!-- usado para marcar em qual categoria o usuário está -->
-<input type="hidden" id="id-categoria-selecionada" value="<?=$entrada->categoria_id?>">
 <?= $this->element('geradorSenha')?>
-<script type="text/javascript">
-  document.dispatchEvent(new Event("categoria"));
-</script>

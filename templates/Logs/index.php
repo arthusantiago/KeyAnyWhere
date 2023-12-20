@@ -35,18 +35,15 @@
                 <td><?= $log->analisado ? 'Analisado' : 'Não analisado';?></td>
                 <td><?= $log->mensagemEncurtada()?></td>
                 <td>
-                    <?= $this->Form->postLink(
-                        $log->analisado ? '<i class="bi bi-x-lg"></i>' : '<i class="bi bi-check-lg"></i>',
-                        ['controller' => 'logs', 'action' => 'analisado', $log->id],
-                        [
-                            'confirm' => 'Realmente deseja alterar o status do log?',
-                            'class' => 'btn btn-sm btn-outline-secondary botoes',
-                            'role' => 'button',
-                            'title' => $log->analisado ? 'Marcar como não analisado' : 'Marcar como analisado',
-                            'data' => ['analisado' => $log->analisado ? 0 : 1],
-                            'escapeTitle' => false
-                        ]
-                    ) ?>
+                <?php if ($log->analisado): ?>
+                    <a class="btn btn-sm btn-outline-secondary botoes" role="button"  href="<?=$this->Url->build(['controller' => 'Logs', 'action' => 'analisado', $log->id])?>" title="Marcar como não analisado">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                <?php else: ?>
+                    <a class="btn btn-sm btn-outline-secondary botoes" role="button"  href="<?=$this->Url->build(['controller' => 'Logs', 'action' => 'analisado', $log->id])?>" title="Marcar como analisado">
+                        <i class="bi bi-check-lg"></i>
+                    </a>
+                <?php endif; ?>
                     <a class="btn btn-sm btn-outline-secondary botoes" role="button"  href="<?=$this->Url->build(['controller' => 'Logs', 'action' => 'view', $log->id])?>" title="Detalhes">
 	                	<i class="bi bi-eye-fill icone-opcao"></i>Detalhes
 	                </a>

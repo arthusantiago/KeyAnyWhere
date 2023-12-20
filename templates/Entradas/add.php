@@ -30,15 +30,16 @@
     <div class="col-sm">
       <label for="password" class="form-label">Senha</label>
       <div class="input-group">
-        <input type="password" class="form-control inputs pwd" name="password" id="password" maxlength="88" autocomplete="new-password"
-          onchange="estaComprometida('password')" required>
+        <input type="password" class="form-control inputs pwd" name="password" id="password" maxlength="88" autocomplete="new-password" required>
         <div class="btn-group">
-          <button type="button" class="btn btn-secondary" onclick="exibirConteudoInput()"><i class="fa fa-eye" aria-hidden="true"></i></button>
+          <button type="button" class="btn btn-secondary btn-revelar" data-revelar="password">
+            <i class="bi bi-eye" aria-hidden="true" title="Revelar" data-revelar="password"></i>
+          </button>
           <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="visually-hidden">Opções</span>
           </button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalGeradorSenha" onclick="generatePassword('tamanho', 'senhaGerada')">Gerador de senha</a></li>
+            <li><a class="dropdown-item" id="btn-gerador-senha" href="#" data-bs-toggle="modal" data-bs-target="#modalGeradorSenha">Gerador de senha</a></li>
           </ul>
         </div>
         <div id="feedbackPasswordInsecure" class="invalid-feedback">
