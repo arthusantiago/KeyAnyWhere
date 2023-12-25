@@ -80,12 +80,7 @@ class UsersTable extends Table
             ->minLength('password', 12, 'A senha precisa ter no mínimo 12 caracteres')
             ->maxLength('password', 255, 'A senha pode ter no máximo 255 caracteres')
             ->requirePresence('password')
-            ->notEmptyString('password', 'A senha precisa ser preenchida', 'create')
-            ->regex(
-                'password',
-                '/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()-_=+])[a-zA-Z0-9!@#$%^&*()-_=+]{12,}$/',
-                'A senha não atende aos requisitos mínimos de segurança'
-            );
+            ->notEmptyString('password', 'A senha precisa ser preenchida', 'create');
 
         return $validator;
     }
