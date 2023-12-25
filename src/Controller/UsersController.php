@@ -126,7 +126,8 @@ class UsersController extends AppController
         }
 
         if ($this->request->is('post')) {
-            $user = $this->Users->newEmptyEntity(['guard' => false]);
+            $user = $this->Users->newEmptyEntity();
+            $user->setAccess('password', true);
             $user = $this->Users->patchEntity($user, $this->request->getData());
             $user->root = true;
 
@@ -138,7 +139,7 @@ class UsersController extends AppController
             }
         }
 
-        $this->viewBuilder()->setLayout('layout_vazio');
+        $this->viewBuilder()->setLayout('config_inicial');
     }
 
     /**
@@ -192,7 +193,7 @@ class UsersController extends AppController
 
         $strSvgQrCode = (new Writer($render))->writeString($g2faUrl);
 
-        $this->viewBuilder()->setLayout('layout_vazio');
+        $this->viewBuilder()->setLayout('config_inicial');
         $this->set(compact('user', 'strSvgQrCode'));
     }
 
@@ -291,8 +292,9 @@ class UsersController extends AppController
      */
     public function add()
     {
-        $user = $this->Users->newEmptyEntity(['guard' => false]);
+        $user = $this->Users->newEmptyEntity();
         if ($this->request->is('post')) {
+            $user->setAccess('password', true);
             $user = $this->Users->patchEntity($user, $this->request->getData());
             $user->tfa_secret = $user->geraSecret2FA();
             if ($this->Users->save($user)) {
@@ -324,7 +326,7 @@ class UsersController extends AppController
             $user = $this->Users->patchEntity($user, $this->request->getData());
             if($this->request->getData('password'))
             {
-                $user->password = $this->request->getData('password');
+                $user->set('password', $this->request->getData('password'));
             }
 
             if ($this->Users->save($user)) {
@@ -374,7 +376,7 @@ class UsersController extends AppController
 
             if($this->request->getData('password'))
             {
-                $user->password = $this->request->getData('password');
+                $user->set('password', $this->request->getData('password'));
             }
 
             if ($this->Users->save($user)) {
