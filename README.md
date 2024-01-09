@@ -1,43 +1,9 @@
 # KeyAnyWhere
 
-KeyAnyWhere (KAW) é uma ferramenta que foca nas funcionalidades essenciais de um gerenciador de senha. Ele é pensado para quem deseja ou precisa de algo simples.
+KeyAnyWhere ou KAW, é um gerenciador de senha, focado nas funcionalidades essenciais de um chaveiro. Você deve baixar e executar a aplicação na sua infraestrutura.
+Fique tranquilo, os [requisitos mínimos](https://github.com/arthusantiago/KeyAnyWhere/wiki/1%E2%80%90-Requisitos-m%C3%ADnimos) são bem acessíveis.
 
-Se você precisa de uma ferramenta mais robusta e que atenda equipes, recomendo o [Passbolt](https://www.passbolt.com/). Agora se você precisa de um offline, o [KeePassXC](https://keepassxc.org/) é a melhor escolha.
-
-Você pode testar o KAW nesse ambiente de demonstração: [demo.keyanywhere.com.br](https://demo.keyanywhere.com.br/)
-
-# Princípios
-
-* Segurança em detrimento da escolha do usuário. Ou seja, algumas coisas são obrigatórias para o seu bem.
-* Implementamos somente as funcionalidades essenciais, se baseando no principio do [KISS](https://en.wikipedia.org/wiki/KISS_principle). Com essa abordagem alguns benefícios podem ser destacados, como: diminui a superfície de ataque, consumo reduzido de hardware e fácil utilização.
-
-## Telas
-
-LOGIN
-
-<img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/login.png" width="500">
-
-HOME
-
-<img src="https://github.com/arthusantiago/KeyAnyWhere/blob/c83e3057c5d0d96e5c7c8273aaf20bf599bdcc69/artefatos/imagens/home.png" width="500">
-
-ENTRADAS
-
-<img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/listagem-entradas.png" width="500">
-
-<img src="https://github.com/arthusantiago/KeyAnyWhere/blob/c83e3057c5d0d96e5c7c8273aaf20bf599bdcc69/artefatos/imagens/entrada-nova.png" width="500">
-
-VERIFICAÇÃO DE SENHA INSEGURA/VAZADA
-
-<img src="https://github.com/arthusantiago/KeyAnyWhere/blob/c83e3057c5d0d96e5c7c8273aaf20bf599bdcc69/artefatos/imagens/entrada-senha-insegura.png" width="500">
-
-LOGs DE ATIVIDADES SUSPEITAS
-
-<img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/logs.png" width="500">
-
-IPs BLOQUEADOS
-
-<img src="https://github.com/arthusantiago/KeyAnyWhere/blob/49f7de3d915af3b27e0982630e04a05cab9f275a/artefatos/imagens/ips-bloqueados.png" width="500">
+Para ter acesso ao ambiente de demonstração, entende a origem e princípios do projeto, acesse nosso site [keyanywhere.com.br](https://keyanywhere.com.br/) .
 
 # Documentação
 
