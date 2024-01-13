@@ -3,7 +3,9 @@
 KeyAnyWhere ou KAW, é um gerenciador de senha, focado nas funcionalidades essenciais de um chaveiro. Você deve baixar e executar a aplicação na sua infraestrutura.
 Fique tranquilo, os [requisitos mínimos](https://github.com/arthusantiago/KeyAnyWhere/wiki/1%E2%80%90-Requisitos-m%C3%ADnimos) são bem acessíveis.
 
-Para ter acesso ao ambiente de demonstração, entende a origem e princípios do projeto, acesse nosso site [keyanywhere.com.br](https://keyanywhere.com.br/) .
+Para ter acesso ao ambiente de demonstração, entende a origem e princípios do projeto, acesse nosso site [keyanywhere.com.br](https://keyanywhere.com.br/).
+
+Atualmente a ferramenta está em versão **BETA**.
 
 # Documentação
 
