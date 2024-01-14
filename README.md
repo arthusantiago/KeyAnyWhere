@@ -7,6 +7,12 @@ Para ter acesso ao ambiente de demonstração, entende a origem e princípios do
 
 Atualmente a ferramenta está em versão **BETA**.
 
+# Pesquisa de satisfação
+
+Por favor, responda a pesquisa de satisfação, ela é rápida. Vai me ajudar muito a melhorar a ferramenta e no TCC.
+
+[Responder pesquisa](https://docs.google.com/forms/d/e/1FAIpQLSdFOKGfRWYIRdJcH3Zvi4947GLwipajLjXW5Fa2FdnlG78V3w/viewform?usp=sf_link)
+
 # Documentação
 
 Toda a documentação está na [wiki do projeto](https://github.com/arthusantiago/KeyAnyWhere/wiki).
