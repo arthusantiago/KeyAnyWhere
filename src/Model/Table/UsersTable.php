@@ -79,8 +79,28 @@ class UsersTable extends Table
             ->scalar('password')
             ->minLength('password', 12, 'A senha precisa ter no mínimo 12 caracteres')
             ->maxLength('password', 255, 'A senha pode ter no máximo 255 caracteres')
-            ->requirePresence('password')
-            ->notEmptyString('password', 'A senha precisa ser preenchida', 'create');
+            ->requirePresence('password', 'create', 'A senha precisa ser preenchida')
+            ->notEmptyString('password', 'A senha precisa ser preenchida', 'create')
+            ->add(
+                'password',
+                'requiMinPassword', [
+                'rule' => function ($senha) {
+                    $regexs = [
+                        '/[a-z]/i',
+                        '/\d/mxi',
+                        '/[!@#$%\^&*()\-_=+]+/xm',
+                    ];
+
+                    foreach ($regexs as $regex) {
+                        if (preg_match($regex, $senha) === 0) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                },
+                'message' => 'A senha não atende aos requisitos mínimos de segurança'
+            ]);
 
         return $validator;
     }
