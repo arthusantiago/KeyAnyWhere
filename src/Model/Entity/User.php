@@ -41,7 +41,7 @@ class User extends Entity
     protected $_accessible = [
         'username' => true,
         'email' => true,
-        'password' => false,
+        'password' => true,
         'created' => true,
         'modified' => true,
         'entradas' => true,
@@ -63,21 +63,12 @@ class User extends Entity
     ];
 
     /**
-     * Método que gera o hash da senha informada
-     * Esse método é invocado automaticamente ao setar valores na propriedade 'password'
-     *
-     * @param string $password Senha informada no frontend
+     * @param string $password
      * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
      */
-    protected function _setPassword(string $password = ''): string
+    protected function _setPassword(string $password): string
     {
-        if (strlen($password) > 0) {
-            $password = (new DefaultPasswordHasher())->hash($password);
-        } else {
-            $password = $this->password;
-        }
-
-        return $password;
+        return (new DefaultPasswordHasher())->hash($password);
     }
 
     protected function _setTfaSecret(string $secret): string

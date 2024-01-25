@@ -127,7 +127,6 @@ class UsersController extends AppController
 
         if ($this->request->is('post')) {
             $user = $this->Users->newEmptyEntity();
-            $user->setAccess('password', true);
             $user = $this->Users->patchEntity($user, $this->request->getData());
             $user->root = true;
 
@@ -294,7 +293,6 @@ class UsersController extends AppController
     {
         $user = $this->Users->newEmptyEntity();
         if ($this->request->is('post')) {
-            $user->setAccess('password', true);
             $user = $this->Users->patchEntity($user, $this->request->getData());
             $user->tfa_secret = $user->geraSecret2FA();
             if ($this->Users->save($user)) {
@@ -323,12 +321,7 @@ class UsersController extends AppController
     {
         $user = $this->Users->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $user = $this->Users->patchEntity($user, $this->request->getData());
-            if($this->request->getData('password'))
-            {
-                $user->set('password', $this->request->getData('password'));
-            }
-
+            $user = $this->Users->patchEntity($user, array_filter($this->request->getData()));
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Salvo com sucesso'));
             } else {
@@ -372,12 +365,7 @@ class UsersController extends AppController
 
         if ($this->request->is(['patch', 'post', 'put']))
         {
-            $user = $this->Users->patchEntity($user, $this->request->getData());
-
-            if($this->request->getData('password'))
-            {
-                $user->set('password', $this->request->getData('password'));
-            }
+            $user = $this->Users->patchEntity($user, array_filter($this->request->getData()));
 
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Salvo com sucesso'));
