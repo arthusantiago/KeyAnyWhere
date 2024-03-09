@@ -4,8 +4,6 @@
  * @param url Pra onde será feita a requisição
  * @param parametros Objeto que contem todas as configurações para executar a request/response.
  * 		Tem a mesma função do 'options' do fetch()
- * @see https://developer.mozilla.org/en-US/docs/Web/API/fetch
- * @global
  */
 var factoryRequest = async function (url, parametros)
 {
@@ -48,9 +46,6 @@ var factoryRequest = async function (url, parametros)
  * Função responsável por buscar as informações de user/senha e escrever na área de transferencia.
  *
  * @param Event event Evento que está acionando a function (manipulado)
- * @see https://developer.mozilla.org/pt-BR/docs/Web/API/Event
- * @see https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API
- * @see https://web.dev/async-clipboard/
  */
 async function buscaUserPass(event)
 {
@@ -94,8 +89,6 @@ document
  * 		'tempoEspera' (Opcional) Tempo que a função deve esperar para executar a request pro servidor.
  *				  Informar em milissegundos. O padrão é 2000 ms (2 segundos)
  *		'paramAdicional' : Você pode adicionar a requisição algum dado desejado em formato de JSON.
- *      @link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON
-
  * @param Event event Evento que está acionando a function (manipulado)
  */
 let paraExecutar;
