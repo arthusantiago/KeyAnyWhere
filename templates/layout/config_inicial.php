@@ -26,7 +26,7 @@
             <?= $this->fetch('content') ?>
         </div>
         <?php
-			echo $this->Html->script('bootstrap/bootstrap.js');
+			echo $this->Html->script('bootstrap/bootstrap.min.js');
 			echo $this->Html->script('ferramentas.js');
 			echo $this->fetch('script-last-load');
 		?>

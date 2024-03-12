@@ -55,7 +55,7 @@
 			</div>
 		</div>
     <?=$this->Html->script('bootstrap/popper.min.js')?>
-		<?=$this->Html->script('bootstrap/bootstrap.js')?>
+		<?=$this->Html->script('bootstrap/bootstrap.min.js')?>
     <?=$this->Html->script('easytimer.min.js');?>
 		<?=$this->Html->script('buscaConteudo.js')?>
     <?=$this->Html->script('ferramentas.js');?>

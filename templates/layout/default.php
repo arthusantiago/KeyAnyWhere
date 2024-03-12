@@ -78,7 +78,7 @@
 		</div>
 		<?php
 			echo $this->Html->script('bootstrap/popper.min.js');
-			echo $this->Html->script('bootstrap/bootstrap.js');
+			echo $this->Html->script('bootstrap/bootstrap.min.js');
 			echo $this->Html->script('easytimer.min.js');
 			echo $this->Html->script('buscaConteudo.js');
 			echo $this->Html->script('ferramentas.js');
