@@ -9,7 +9,7 @@
         <?php
         echo $this->Html->css([
             'bootstrap/bootstrap.min.css',
-            'bootstrap/bootstrap-icons.css',
+            'bootstrap/bootstrap-icons.min.css',
             'css-estilizacao-geral',
         ]);
         echo $this->fetch('css');
