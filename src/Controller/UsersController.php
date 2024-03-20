@@ -199,7 +199,7 @@ class UsersController extends AppController
     public function login()
     {
         $this->request->allowMethod(['get', 'post']);
-        $this->viewBuilder()->setLayout('layout_vazio');
+        $this->viewBuilder()->setLayout('login');
 
         if ($this->executarConfigIncial()) {
             $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
