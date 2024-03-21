@@ -10,7 +10,7 @@
         echo $this->Html->css([
             'bootstrap/bootstrap.min.css',
             'bootstrap/bootstrap-icons.min.css',
-            'css-estilizacao-geral',
+            'kaw.min.css',
         ]);
         echo $this->fetch('css');
         echo $this->fetch('script-first-load');
@@ -26,7 +26,7 @@
             <?= $this->fetch('content') ?>
         </div>
         <?php
-			echo $this->Html->script('bootstrap/bootstrap.min.js');
+			echo $this->Html->script('minified/bootstrap.min.js');
 			echo $this->Html->script('ferramentas.js');
 			echo $this->fetch('script-last-load');
 		?>

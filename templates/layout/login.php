@@ -19,6 +19,6 @@
         </div>
         <?= $this->fetch('content') ?>
     </div>
-    <?=$this->Html->script('bootstrap/bootstrap.min.js');?>
+    <?=$this->Html->script('minified/bootstrap.min.js');?>
   </body>
 </html>

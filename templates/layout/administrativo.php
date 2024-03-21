@@ -11,7 +11,7 @@
       echo $this->Html->css([
       	'bootstrap/bootstrap.min.css',
         'bootstrap/bootstrap-icons.min.css',
-      	'css-estilizacao-geral',
+      	'kaw.min.css',
       ]);
       echo $this->fetch('css');
     ?>
@@ -54,9 +54,9 @@
 				</div>
 			</div>
 		</div>
-    <?=$this->Html->script('bootstrap/popper.min.js')?>
-		<?=$this->Html->script('bootstrap/bootstrap.min.js')?>
-    <?=$this->Html->script('easytimer.min.js');?>
+    <?=$this->Html->script('minified/popper.min.js')?>
+		<?=$this->Html->script('minified/bootstrap.min.js')?>
+    <?=$this->Html->script('minified/easytimer.min.js');?>
 		<?=$this->Html->script('buscaConteudo.js')?>
     <?=$this->Html->script('ferramentas.js');?>
   </body>

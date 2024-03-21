@@ -9,7 +9,7 @@
     <title>KAW - Configuração inicial</title>
     <?= $this->Html->css([
         'bootstrap/bootstrap.min.css',
-        'css-estilizacao-geral',
+        'kaw.min.css',
     ]);
     ?>
 </head>
@@ -49,6 +49,6 @@
                 </div>
             </div>
         <?= $this->Form->end(['data-type' => 'hidden']); ?>
-        <?= $this->Html->script('bootstrap/bootstrap.min.js'); ?>
+        <?= $this->Html->script('minified/bootstrap.min.js'); ?>
 </body>
 </html>
