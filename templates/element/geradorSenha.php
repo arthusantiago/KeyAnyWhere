@@ -1,4 +1,4 @@
-<?=$this->Html->script('geradorSenha.js', ['block' => 'script-last-load']);?>
+<?=$this->Html->script('minified/geradorSenha.min.js', ['block' => 'script-last-load']);?>
 
 <div class="modal" tabindex="-1" id="modalGeradorSenha">
   <div class="modal-dialog modal-dialog-centered modal-lg">

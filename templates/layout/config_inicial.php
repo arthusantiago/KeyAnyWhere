@@ -27,7 +27,7 @@
         </div>
         <?php
 			echo $this->Html->script('minified/bootstrap.min.js');
-			echo $this->Html->script('ferramentas.js');
+			echo $this->Html->script('minified/ferramentas.min.js');
 			echo $this->fetch('script-last-load');
 		?>
     </body>
