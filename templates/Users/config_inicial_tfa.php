@@ -8,8 +8,8 @@
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
     <title>KAW - Configuração inicial</title>
     <?= $this->Html->css([
-        'bootstrap/bootstrap.min.css',
-        'css-estilizacao-geral',
+        'minified/bootstrap.min.css',
+        'minified/kaw.min.css',
     ]);
     ?>
 </head>
@@ -49,6 +49,6 @@
                 </div>
             </div>
         <?= $this->Form->end(['data-type' => 'hidden']); ?>
-        <?= $this->Html->script('bootstrap/bootstrap.min.js'); ?>
+        <?= $this->Html->script('minified/bootstrap.min.js'); ?>
 </body>
 </html>

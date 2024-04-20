@@ -8,9 +8,9 @@
         <?= $this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken')); ?>
         <?php
         echo $this->Html->css([
-            'bootstrap/bootstrap.min.css',
-            'bootstrap/bootstrap-icons.css',
-            'css-estilizacao-geral',
+            'minified/bootstrap.min.css',
+            'minified/bootstrap-icons.min.css',
+            'minified/kaw.min.css',
         ]);
         echo $this->fetch('css');
         echo $this->fetch('script-first-load');
@@ -26,7 +26,7 @@
             <?= $this->fetch('content') ?>
         </div>
         <?php
-			echo $this->Html->script('bootstrap/bootstrap.js');
+			echo $this->Html->script('minified/bootstrap.min.js');
 			echo $this->Html->script('ferramentas.js');
 			echo $this->fetch('script-last-load');
 		?>

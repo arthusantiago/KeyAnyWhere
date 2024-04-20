@@ -9,9 +9,9 @@
 	<?=$this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken'));?>
     <?php
       echo $this->Html->css([
-      	'bootstrap/bootstrap.min.css',
-      	'bootstrap/bootstrap-icons.css',
-      	'css-estilizacao-geral',
+      	'minified/bootstrap.min.css',
+      	'minified/bootstrap-icons.min.css',
+		'minified/kaw.min.css'
       ]);
       echo $this->fetch('css');
 	  echo $this->fetch('script-first-load');
@@ -77,9 +77,9 @@
 			</div>
 		</div>
 		<?php
-			echo $this->Html->script('bootstrap/popper.min.js');
-			echo $this->Html->script('bootstrap/bootstrap.js');
-			echo $this->Html->script('easytimer.min.js');
+			echo $this->Html->script('minified/popper.min.js');
+			echo $this->Html->script('minified/bootstrap.min.js');
+			echo $this->Html->script('minified/easytimer.min.js');
 			echo $this->Html->script('buscaConteudo.js');
 			echo $this->Html->script('ferramentas.js');
 			echo $this->fetch('script-last-load');
