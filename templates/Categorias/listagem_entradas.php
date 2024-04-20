@@ -1,6 +1,6 @@
 <!-- usado para marcar em qual categoria o usuário está -->
 <input type="hidden" id="id-categoria-selecionada" value="<?=$categoria_id?>">
-<?=$this->Html->script('categorias.js', ['block' => 'script-first-load']);?>
+<?=$this->Html->script('minified/categorias.min.js', ['block' => 'script-first-load']);?>
 
 <table class="table table-borderless table-striped table-hover">
     <thead>

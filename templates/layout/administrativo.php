@@ -57,7 +57,7 @@
     <?=$this->Html->script('minified/popper.min.js')?>
 		<?=$this->Html->script('minified/bootstrap.min.js')?>
     <?=$this->Html->script('minified/easytimer.min.js');?>
-		<?=$this->Html->script('buscaConteudo.js')?>
-    <?=$this->Html->script('ferramentas.js');?>
+		<?=$this->Html->script('minified/buscaConteudo.min.js')?>
+    <?=$this->Html->script('minified/ferramentas.min.js');?>
   </body>
 </html>
