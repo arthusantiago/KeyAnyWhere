@@ -8,8 +8,8 @@
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
     <title>KAW - Configuração inicial</title>
     <?= $this->Html->css([
-        'bootstrap/bootstrap.min.css',
-        'kaw.min.css',
+        'minified/bootstrap.min.css',
+        'minified/kaw.min.css',
     ]);
     ?>
 </head>

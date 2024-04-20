@@ -6,8 +6,8 @@
 	<?= $this->Html->meta('icon', 'favicon.ico') ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?=$this->Html->css([
-    	'bootstrap/bootstrap.min.css',
-    	'kaw.min.css'
+    	'minified/bootstrap.min.css',
+    	'minified/kaw.min.css'
     ]);?>
   </head>
   <body>

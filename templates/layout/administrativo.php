@@ -9,9 +9,9 @@
     <meta name="sessionTimeout" id="sessionTimeout" content="<?=$sessionTimeout?>">
     <?php
       echo $this->Html->css([
-      	'bootstrap/bootstrap.min.css',
-        'bootstrap/bootstrap-icons.min.css',
-      	'kaw.min.css',
+      	'minified/bootstrap.min.css',
+        'minified/bootstrap-icons.min.css',
+      	'minified/kaw.min.css',
       ]);
       echo $this->fetch('css');
     ?>
