@@ -44,6 +44,7 @@ var factoryRequest = async function (url, parametros)
 
 /**
  * Função responsável por buscar as informações de user/senha e escrever na área de transferencia.
+ * Também exibe o tooltip da copia.
  *
  * @param Event event Evento que está acionando a function (manipulado)
  */
@@ -64,6 +65,15 @@ async function buscaUserPass(event)
 	})
 	.then(function(dadoRetornado){
 		navigator.clipboard.writeText(dadoRetornado.data);
+		let tooltip = new bootstrap.Tooltip(
+			event.target,
+			{
+				'trigger': 'manual',
+				'title': body.type == 'user' ? 'Usuário copiado' : 'Senha copiada',
+			}
+		);
+		tooltip.show();
+		setInterval(() => {tooltip.hide()}, 2000);
 	})
 	.catch(function(error){
 		let msgErro = 'Ocorreu um erro \n\n' + error.message;
