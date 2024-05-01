@@ -27,9 +27,6 @@ class CategoriasController extends AppController
      */
     public function listagemEntradas(string $categoria_id)
     {
-        // desabilitando o cache por segurança.
-        $this->response = $this->response->withDisabledCache();
-
         $entradas = $this->Categorias->Entradas
             ->find('all')
             ->where(['categoria_id' => $categoria_id])
