@@ -30,7 +30,7 @@
         <input type="password" class="form-control inputs" name="username" id="username" value="<?=$entrada->usernameDescrip()?>" maxlength="88" required>
         <div class="btn-group">
           <button type="button" class="btn btn-secondary btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user">
-            <i class="bi bi-clipboard" title="Copiar usuário" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user"></i>
+            <i class="bi bi-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user"></i>
 	        </button>
           <button type="button" class="btn btn-secondary btn-revelar" data-revelar="username">
             <i class="bi bi-eye" aria-hidden="true" title="Revelar" data-revelar="username"></i>
@@ -48,7 +48,7 @@
           value="<?=$entrada->passwordDescrip()?>" required>
         <div class="btn-group">
           <button type="button" class="btn btn-secondary btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password">
-            <i class="bi bi-clipboard" title="Copiar senha" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password"></i>
+            <i class="bi bi-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password"></i>
 	        </button>
           <button type="button" class="btn btn-secondary btn-revelar" data-revelar="password">
             <i class="bi bi-eye" aria-hidden="true" title="Revelar" data-revelar="password"></i>
