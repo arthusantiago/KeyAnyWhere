@@ -186,7 +186,7 @@ function removeResultadoBuscaGenerico(event) {
 /* Aplicando o manipulador de evento no elemento HTML*/
 element = document.getElementById('buscaEntrada');
 if (element) {
-	element.addEventListener("input", buscaGenerica);
+	element.addEventListener("blur", removeResultadoBuscaGenerico);
 }
 
 
