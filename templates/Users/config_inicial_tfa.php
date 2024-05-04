@@ -33,7 +33,7 @@
                 Recomendamos o <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" class="text-decoration-none" target="_blank">Google Authenticator</a>.
             </p>
             <p class="text-center">
-                Para ativar o 2FA do usuário <strong><?=$user->username?> (<?=$user->email?>)</strong>, escaneie o QR Code com o aplicativo authenticator.
+                Para ativar o 2FA do usuário <strong><?=h($user->username)?> (<?=h($user->email)?>)</strong>, escaneie o QR Code com o aplicativo authenticator.
             </p>
         </div>
         <div class="row justify-content-center">

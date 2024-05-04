@@ -23,32 +23,32 @@
         <table class="table table-md">
             <tbody>
                 <tr>
-                    <th><?= __('Evento') ?></th>
-                    <td><?= h($log->evento) ?></td>
+                    <th><?='Evento'?></th>
+                    <td><?=$log->evento?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Recurso') ?></th>
-                    <td><?= h($log->recurso) ?></td>
+                    <th><?='Recurso'?></th>
+                    <td><?=$log->recurso?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Ip Origem') ?></th>
+                    <th><?='Ip Origem'?></th>
                     <td><?= h($log->ip_origem) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Usuário') ?></th>
-                    <td><?= h($log->usuario) ?></td>
+                    <th><?='Usuário'?></th>
+                    <td><?=h($log->usuario)?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Mensagem') ?></th>
-                    <td><?= h($log->mensagem) ?></td>
+                    <th><?='Mensagem'?></th>
+                    <td><?=h($log->mensagem) ?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Nivel Severidade') ?></th>
+                    <th><?='Nivel Severidade'?></th>
                     <td><?=$log->stringNivelSeveridade();?></td>
                 </tr>
                 <tr>
-                    <th><?= __('Data') ?></th>
-                    <td><?= h($log->created) ?></td>
+                    <th><?='Data'?></th>
+                    <td><?=$log->created?></td>
                 </tr>
             </tbody>
         </table>

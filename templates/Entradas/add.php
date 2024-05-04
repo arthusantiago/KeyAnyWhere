@@ -59,7 +59,7 @@
       <select class="form-select inputs" id="categoria_id" name="categoria_id" required>
         <option value="" disabled selected>Escolha a Categoria</option>
         <?php foreach ($categorias as $categoria):?>
-          <option value="<?=$categoria->id?>"><?=$categoria->nomeDescrip()?></option>
+          <option value="<?=$categoria->id?>"><?=h($categoria->nomeDescrip())?></option>
         <?php endforeach ?>
       </select> 
     </div>

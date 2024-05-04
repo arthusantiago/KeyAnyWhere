@@ -30,20 +30,20 @@
     <tbody>
         <?php foreach ($logs as $log): ?>
             <tr class="text-center">
-                <td><?= h($log->created) ?></td>
+                <td><?=$log->created?></td>
                 <td><?=$this->element('Logs/badge', ['param' => ['severidade' => $log->nivel_severidade, 'exibicao' => $log->stringNivelSeveridade()]])?></td>
                 <td><?= $log->analisado ? 'Analisado' : 'Não analisado';?></td>
-                <td><?= $log->mensagemEncurtada()?></td>
+                <td><?=h($log->mensagemEncurtada())?></td>
                 <td>
-                <?php if ($log->analisado): ?>
-                    <a class="btn btn-sm btn-outline-secondary botoes" role="button"  href="<?=$this->Url->build(['controller' => 'Logs', 'action' => 'analisado', $log->id])?>" title="Marcar como não analisado">
-                        <i class="bi bi-x-lg"></i>
-                    </a>
-                <?php else: ?>
-                    <a class="btn btn-sm btn-outline-secondary botoes" role="button"  href="<?=$this->Url->build(['controller' => 'Logs', 'action' => 'analisado', $log->id])?>" title="Marcar como analisado">
-                        <i class="bi bi-check-lg"></i>
-                    </a>
-                <?php endif; ?>
+                    <?php if ($log->analisado): ?>
+                        <a class="btn btn-sm btn-outline-secondary botoes" role="button"  href="<?=$this->Url->build(['controller' => 'Logs', 'action' => 'analisado', $log->id])?>" title="Marcar como não analisado">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    <?php else: ?>
+                        <a class="btn btn-sm btn-outline-secondary botoes" role="button"  href="<?=$this->Url->build(['controller' => 'Logs', 'action' => 'analisado', $log->id])?>" title="Marcar como analisado">
+                            <i class="bi bi-check-lg"></i>
+                        </a>
+                    <?php endif; ?>
                     <a class="btn btn-sm btn-outline-secondary botoes" role="button"  href="<?=$this->Url->build(['controller' => 'Logs', 'action' => 'view', $log->id])?>" title="Detalhes">
 	                	<i class="bi bi-eye-fill icone-opcao"></i>Detalhes
 	                </a>

@@ -15,7 +15,7 @@
         <ul>
             <?php foreach($params['mensagens'] AS $arrayMensagens):?>
                 <?php foreach($arrayMensagens AS $mensagem):?>
-                    <li><?=$mensagem?></li>
+                    <li><?=h($mensagem)?></li>
                 <?php endforeach;?>
             <?php endforeach;?>
         </ul>

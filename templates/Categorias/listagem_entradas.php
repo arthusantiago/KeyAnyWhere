@@ -15,8 +15,8 @@
             <tr class="text-center">
                 <td><?= h($entrada->tituloDescrip()) ?></td>
                 <td>
-                	<a href="<?=$entrada->linkDescrip()?>" target="_blank" class="text-decoration-none" title="<?=$entrada->linkDescrip()?>">
-                		<?=$entrada->linkEncurtado(50)?>
+                	<a href="<?=h($entrada->linkDescrip())?>" target="_blank" class="text-decoration-none" title="<?=h($entrada->linkDescrip())?>">
+                		<?=h($entrada->linkEncurtado(50))?>
                 	</a>
                 </td>
                 <td>
