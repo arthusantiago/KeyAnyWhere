@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Model\Table;
 
 use Cake\ORM\Table;
+use App\Model\Custom\ValidatorKaw;
 use Cake\Validation\Validator;
 
 /**
@@ -48,13 +49,15 @@ class CategoriasTable extends Table
         $this->hasMany('Entradas', [
             'foreignKey' => 'categoria_id',
         ]);
+
+        $this->_validatorClass = ValidatorKaw::class;
     }
 
     /**
      * Default validation rules.
      *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
+     * @param \App\Model\Custom\ValidatorKaw $validator Validator instance.
+     * @return \App\Model\Custom\ValidatorKaw
      */
     public function validationDefault(Validator $validator): Validator
     {
@@ -66,7 +69,8 @@ class CategoriasTable extends Table
             ->scalar('nome')
             ->maxLength('nome', 88, 'O nome da categoria pode ter no máximo 88 caracteres')
             ->requirePresence('nome', 'create', 'O nome da categoria precisa ser informado')
-            ->notEmptyString('nome', 'O nome da categoria precisa ser informado');
+            ->notEmptyString('nome', 'O nome da categoria precisa ser informado')
+            ->checkXSS('nome');
 
         return $validator;
     }

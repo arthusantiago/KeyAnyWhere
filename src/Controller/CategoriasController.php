@@ -68,7 +68,7 @@ class CategoriasController extends AppController
                 $this->Categorias->reordenar();
                 return $this->redirect(['action' => 'edit', $categoria->id]);
             }
-            $this->Flash->error(__('Erro ao salvar'));
+            $this->Flash->error(null, ['params' => ['mensagens' => $categoria->getErrors()]]);
         }
         $this->set(compact('categoria'));
     }

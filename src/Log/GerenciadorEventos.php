@@ -62,6 +62,16 @@ class GerenciadorEventos
             'nivel_severidade' => 'warning',
             'mensagem' => 'O usuário tentou acessar um recurso que somente o root tem permissão.'
         ],
+
+        /*
+         * Categoria 3: POSSÍVEL ATAQUE
+         *
+         * Descreve os tipos de tentativa de ataque
+         */
+        'C3-1' => [ // XSS
+            'nivel_severidade' => 'alert',
+            'mensagem' => 'Foi detectado um possível ataque do tipo XSS.',
+        ],
     ];
 
     /**
@@ -92,9 +102,9 @@ class GerenciadorEventos
      *
      * @access	public static
      * @param	string	$idEvento Exemplo: 'C1-2'
-     * @return	array Retorna as informações básicas evento solicitado.
+     * @return	array Retorna as informações básicas do evento solicitado.
      */
-    public static function getEvento(string $idEvento): mixed
+    public static function getEvento(string $idEvento): array
     {
         $catalogoEventos = self::getCatalogoEventos();
         $idEvento = strtoupper($idEvento);
