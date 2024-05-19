@@ -38,14 +38,15 @@ class Evento
     private $eventoGatilho = [];
 
     /**
-     * Ler a documentação da classe App\Log\GerenciadorEventos::$catalogoEventos para entender 
+     * Ler a documentação da classe App\Log\GerenciadorEventos::$catalogoEventos para entender
      * como catalogar um evento e de quais informações ele é composto.
-     * 
-     * No parâmetro $complemento pode ser fornecido dados complementares para construir o Evento:
+     *
+     * $complemento Pode ser fornecido dados adicionais para construir o Evento:
      * [
-     *      'usuario' => '' // Ler a documentação do método $this->setUsuario()
-     *      'request' => '' // Ler a documentação do método $this->setRequest()
-     *      'recurso' => '' // Ler a documentação do método $this->setRecurso()
+     *      'usuario' => '', // Ler a documentação do método $this->setUsuario()
+     *      'request' => '', // Ler a documentação do método $this->setRequest()
+     *      'recurso' => '', // Ler a documentação do método $this->setRecurso()
+     *      'mensagem' => '', // Um texto adicional a mensagem default do evento.
      * ]
      *
      * @param	string $idEvento Exemplo: C2-3
