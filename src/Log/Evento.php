@@ -4,7 +4,6 @@ namespace App\Log;
 
 use App\Log\LogLevelInt;
 use App\Model\Entity\User;
-use Cake\Core\Exception\CakeException;
 use Cake\Http\ServerRequest;
 
 /**
@@ -28,6 +27,10 @@ class Evento
     private $nivelSeveridadeString;
     private $nivelSeveridade;
     private $mensagem;
+
+    /**
+     * @var	\Cake\Http\ServerRequest
+     */
     private $request;
     private $recurso;
     private $ipOrigem;
@@ -35,44 +38,58 @@ class Evento
     private $eventoGatilho = [];
 
     /**
-     * Ler a documentação da classe src\Log\GerenciadorEventos para entender como catalogar um evento.
+     * Ler a documentação da classe App\Log\GerenciadorEventos::$catalogoEventos para entender 
+     * como catalogar um evento e de quais informações ele é composto.
+     * 
+     * No parâmetro $complemento pode ser fornecido dados complementares para construir o Evento:
+     * [
+     *      'usuario' => '' // Ler a documentação do método $this->setUsuario()
+     *      'request' => '' // Ler a documentação do método $this->setRequest()
+     *      'recurso' => '' // Ler a documentação do método $this->setRecurso()
+     * ]
      *
-     * @access	public
-     * @param	array	$infoBasicas
-     * @param	array	$dados      	Default: null
-     * @return	void
+     * @param	string $idEvento Exemplo: C2-3
+     * @param   string|int $nivelSeveridade Ler documentação App\Log\LogLevelInt
+     * @param   string $mensagem
+     * @param	array $complemento Informações complementares
+     * @param   array $eventoGatilho = []
      */
-    public function __construct(array $infoBasicas, array $dados = null)
-    {
-        if (empty($infoBasicas['evento'])) {
-            throw new CakeException('O ID do evento não foi informado');
+    function __construct(
+        string $idEvento,
+        string|int $nivelSeveridade,
+        string $mensagem,
+        array $complemento = [],
+        array $eventoGatilho = []
+    ){
+        $this->setId($idEvento);
+        $this->setMensagem($mensagem, $complemento);
+        $this->setNivelSeveridade($nivelSeveridade);
+        $this->setEventoGatilho($eventoGatilho);
+
+        if (isset($complemento['usuario'])) {
+            $this->setUsuario($complemento['usuario']);
         }
 
-        if (empty($infoBasicas['nivel_severidade'])) {
-            throw new CakeException('O Nível de Severidade não foi informado');
+        if (isset($complemento['request'])) {
+            $this->setRequest($complemento['request']);
         }
 
-        if (empty($infoBasicas['mensagem'])) {
-            throw new CakeException('O ID do evento não foi informado');
+        if (isset($complemento['recurso'])) {
+            $this->setRecurso($complemento['recurso']);
         }
 
-        $this->setId($infoBasicas['evento']);
-        $this->setMensagem($infoBasicas['mensagem']);
-        $this->setNivelSeveridade($infoBasicas['nivel_severidade']);
-
-        if (isset($infoBasicas['evento_gatilho'])) {
-            $this->setEventoGatilho($infoBasicas['evento_gatilho']);
-        }
-
-        if (isset($dados['request'])) {
-            $this->setRequest($dados['request']);
-        }
-
-        if (isset($dados['usuario'])) {
-            $this->setUsuario($dados['usuario']);
+        if ($eventoGatilho) {
+            $this->setEventoGatilho($eventoGatilho);
         }
     }
 
+    /**
+     * Seta o ID do evento, exemplo: C2-3
+     *
+     * @access	public
+     * @param	string	$id
+     * @return	void
+     */
     public function setId(string $id): void
     {
         $this->id = strtoupper($id);
@@ -125,8 +142,19 @@ class Evento
         return $nivelSeveridade;
     }
 
-    public function setMensagem(string $mensagem): void
+    /**
+     * Seta o texto da mensagem que descreve o evento ocorrido.
+     *
+     * @access	public
+     * @param	string  $mensagem
+     * @param	array   $complemento
+     * @return	void
+     */
+    public function setMensagem(string $mensagem, array $complemento = []): void
     {
+        if (isset($complemento['mensagem'])) {
+            $mensagem .= $complemento['mensagem'];
+        }
         $this->mensagem = $mensagem;
     }
 
@@ -145,13 +173,25 @@ class Evento
     public function setRequest(ServerRequest $request): void
     {
         $this->request = $request;
-        $this->recurso = $request->getPath();
+        $this->setRecurso($request->getPath());
         $this->ipOrigem = $request->clientIp();
     }
 
     public function getRequest(): ServerRequest
     {
         return $this->request;
+    }
+
+    /**
+     * Seta o recurso que foi acessado, exemplo: categorias/edit/2
+     *
+     * @access	public
+     * @param	string	$recurso
+     * @return	void
+     */
+    public function setRecurso(string $recurso): void
+    {
+        $this->recurso = $recurso;
     }
 
     public function getRecurso(): string
@@ -190,10 +230,10 @@ class Evento
      * ]);
      *
      * @access	public
-     * @param	string	$user
+     * @param	string|array|User	$user
      * @return	void
      */
-    public function setUsuario(mixed $user): void
+    public function setUsuario(string|array|User $user): void
     {
         if ($user instanceof User) {
             $this->usuario = 'ID: ' . $user->id . ' | usuario: ' . $user->username . ' | e-mail:' . $user->email;
@@ -241,7 +281,7 @@ class Evento
      */
     public function aguardaPeloEvento(string $idEvento): bool
     {
-        return in_array($idEvento, $this->eventoGatilho);
+        return in_array($idEvento, $this->getEventoGatilho());
     }
 
     public function toArray(): array

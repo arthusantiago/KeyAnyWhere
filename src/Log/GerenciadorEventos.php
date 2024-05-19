@@ -17,14 +17,14 @@ class GerenciadorEventos
      *
      * Estrutura::
      * 'C1-1' => [
-     *      // [obrigatorio] Seguir o padrão do Syslog.
+     *      // [obrigatório] Seguir o padrão do Syslog.
      *      'nivel_severidade' => 'notice',
      *
-     *      // [obrigatorio] Texto descrevendo o problema. Esse é a menssagem do log.
+     *      // [obrigatório] Texto descrevendo o problema. Esse é a mensagem do log.
      *      'mensagem' => 'Durante o login o usuario errou o user ou password',
      *
      *      // [Opcional] Diz se o evento será disparado a partir do registro de outros eventos. Ler classe src/Log/EventosComplexos.php
-     *      'evento_gatilho' => ['C1-1', 'C1-2']
+     *      'evento_gatilho' => ['C1-2', 'C1-3']
      *  ]
      *
      * @var array $catalogoEventos
@@ -36,11 +36,11 @@ class GerenciadorEventos
          */
         'C1-1' => [
             'nivel_severidade' => 'notice',
-            'mensagem' => 'Durante o login o usuario errou o user ou password'
+            'mensagem' => 'Durante o login o usuário errou o user ou password.'
         ],
         'C1-2' => [
             'nivel_severidade' => 'notice',
-            'mensagem' => 'Durante o login o usuario errou o 2FA'
+            'mensagem' => 'Durante o login o usuário errou o 2FA.'
         ],
         'C1-3' => [
             'nivel_severidade' => 'warning',
@@ -62,17 +62,20 @@ class GerenciadorEventos
             'nivel_severidade' => 'warning',
             'mensagem' => 'O usuário tentou acessar um recurso que somente o root tem permissão.'
         ],
+
+        /*
+         * Categoria 3: POSSÍVEL ATAQUE
+         *
+         * Descreve os tipos de tentativa de ataque
+         */
+        'C3-1' => [ // XSS
+            'nivel_severidade' => 'alert',
+            'mensagem' => 'Foi detectado um possível ataque do tipo XSS.',
+        ],
     ];
 
     /**
-     * Recebe a notificação que um evento aconteceu. Esse evento contém as informações que darão origem a um registro de log.
-     *
-     * O parâmetros esperados:
-     * [
-     *      'evento' => 'Ex: C2-3' -- Obrigatório
-     *      'request' => Leia a documentação do método src/Log/Evento::setRequest()
-     *      'usuario' => Leia a documentação do método src/Log/Evento::setUsuario()
-     * ]
+     * Recebe as informações necessárias criar um Evento. Esse evento dará origem a um registro de log.
      *
      * @access	public static
      * @param	array $dados
@@ -80,11 +83,14 @@ class GerenciadorEventos
      */
     public static function notificarEvento(array $dados)
     {
-        if (empty($dados['evento'])) {
-            throw new CakeException('O ID do evento não foi informado');
-        }
-
-        $evento = self::getEvento($dados);
+        $infoBasicas = self::getEvento($dados['evento']);
+        $evento = new Evento(
+            $infoBasicas['evento'],
+            $infoBasicas['nivel_severidade'],
+            $infoBasicas['mensagem'],
+            $dados,
+            $infoBasicas['evento_gatilho']
+        );
 
         if (self::criarLog($evento)) {
             (new EventosComplexos)->novoLogSalvo($evento);
@@ -92,60 +98,79 @@ class GerenciadorEventos
     }
 
     /**
-     * Retorna o evento desejado
+     * Busca o evento informado no catalogo de eventos.
      *
      * @access	public static
-     * @param	array	$idEvento
-     * @return	Evento
+     * @param	string	$idEvento Exemplo: 'C1-2'
+     * @return	array Retorna as informações básicas evento solicitado.
      */
-    public static function getEvento(array $dados): Evento
+    public static function getEvento(string $idEvento): mixed
     {
-        $infoBasicas = self::eventoCatalogado($dados['evento']);
+        $catalogoEventos = self::getCatalogoEventos();
+        $idEvento = strtoupper($idEvento);
+        $evento = false;
 
-        if ($infoBasicas == false) {
-            throw new CakeException('O evento ' . $dados['evento'] . ' não foi catalogado.');
+        if (array_key_exists($idEvento, $catalogoEventos)) {
+            $evento = $catalogoEventos[$idEvento];
+            $evento['evento'] = $idEvento;
         }
 
-        return new Evento($infoBasicas, $dados);
+        if (!$evento) {
+            throw new CakeException('O evento \'' . $idEvento . '\' não foi encontrado no catálogo');
+        }
+
+        return $evento;
     }
 
     /**
      * Retorna todos os eventos do catalogo
      *
      * @access	public static
-     * @return	array
+     * @return	App\Log\Evento[]
      */
     public static function getEventos(): array
     {
         $eventos = [];
-
-        foreach (self::$catalogoEventos as $idEvento => $infoBasicas) {
+        $catalogoEventos = self::getCatalogoEventos();
+        foreach ($catalogoEventos as $idEvento => $infoBasicas) {
             $idEvento = strtoupper($idEvento);
             $infoBasicas['evento'] = $idEvento;
-            $eventos[$idEvento] = new Evento($infoBasicas);
+            $eventos[$idEvento] = new Evento(
+                $infoBasicas['evento'],
+                $infoBasicas['nivel_severidade'],
+                $infoBasicas['mensagem'],
+                [],
+                $infoBasicas['evento_gatilho']
+            );
         }
 
         return $eventos;
     }
 
     /**
-     * Verifica se o evento informado se encontra no catalogo de eventos.
+     * Retorna o catalogo de eventos já padronizado.
+     * Método que garante que o todos os eventos estarão no padrão esperado.
      *
      * @access	public static
-     * @param	string	$idEvento Exemplo: 'C1-2'
-     * @return	false|array Retorna o evento solicitado, 'false' caso contrario.
+     * @return	array
      */
-    public static function eventoCatalogado(string $idEvento): mixed
+    public static function getCatalogoEventos(): array
     {
-        $idEvento = strtoupper($idEvento);
-        $evento = false;
+        $catalogoEventos = self::$catalogoEventos;
+        foreach ($catalogoEventos as $idEvento => $infoBasicas) {
+            // Adicionando posições no array eventos, que todos precisam ter
+            if (!array_key_exists('evento_gatilho', $infoBasicas)) {
+                $catalogoEventos[$idEvento]['evento_gatilho'] = [];
+            }
 
-        if (array_key_exists($idEvento, self::$catalogoEventos)) {
-            $evento = self::$catalogoEventos[$idEvento];
-            $evento['evento'] = $idEvento;
+            // Padronizando o texto da mensagem
+            $infoBasicas['mensagem'] = trim($infoBasicas['mensagem']);
+            if (!(substr($infoBasicas['mensagem'], -1) === '.')) {
+                $catalogoEventos[$idEvento]['mensagem'] = $infoBasicas['mensagem'] . '. ';
+            }
         }
 
-        return $evento;
+        return $catalogoEventos;
     }
 
     /**
