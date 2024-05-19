@@ -144,7 +144,11 @@ class EventosComplexos
             ->toArray();
 
         if (count($C1_3) >= 2) {
-            GerenciadorEventos::notificarEvento(['evento' => 'C1-4', 'usuario' => $eventoOrigemLog->getUsuario()]);
+            GerenciadorEventos::notificarEvento([
+                'evento' => 'C1-4',
+                'request' => $eventoOrigemLog->getRequest(),
+                'usuario' => $eventoOrigemLog->getUsuario()
+            ]);
 
             $ipTable = new IpsBloqueadosTable();
             $novoIp = $ipTable->newEmptyEntity();

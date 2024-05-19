@@ -8,7 +8,7 @@ use Cake\Core\Exception\CakeException;
 class LogLevelInt
 {
     /*
-    * Representação numerica de acordo com a RFC 5424
+    * Representação numérica de acordo com a RFC 5424
     * @see https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
     */
     const EMERGENCY = 0;
