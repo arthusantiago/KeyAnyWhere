@@ -62,16 +62,6 @@ class GerenciadorEventos
             'nivel_severidade' => 'warning',
             'mensagem' => 'O usuário tentou acessar um recurso que somente o root tem permissão.'
         ],
-
-        /*
-         * Categoria 3: POSSÍVEL ATAQUE
-         *
-         * Descreve os tipos de tentativa de ataque
-         */
-        'C3-1' => [ // XSS
-            'nivel_severidade' => 'alert',
-            'mensagem' => 'Foi detectado um possível ataque do tipo XSS.',
-        ],
     ];
 
     /**
