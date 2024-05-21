@@ -18,6 +18,6 @@ if (empty($resultado)) {
             $texto = substr($texto, 0, 30) . ' (...)';
         }
 
-        echo '<li><a href="' . $url . '">' . $texto . '</a></li>';
+        echo '<li><a href="' . $url . '">' . h($texto) . '</a></li>';
     }
 }

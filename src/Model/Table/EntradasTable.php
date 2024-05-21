@@ -6,6 +6,7 @@ namespace App\Model\Table;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use App\Model\Custom\ValidatorKaw;
 
 /**
  * Entradas Model
@@ -55,13 +56,15 @@ class EntradasTable extends Table
             'foreignKey' => 'user_id',
             'joinType' => 'INNER',
         ]);
+
+        $this->_validatorClass = ValidatorKaw::class;
     }
 
     /**
      * Default validation rules.
      *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
+     * @param \App\Model\Custom\ValidatorKaw $validator Validator instance.
+     * @return \App\Model\Custom\ValidatorKaw
      */
     public function validationDefault(Validator $validator): Validator
     {
@@ -73,19 +76,22 @@ class EntradasTable extends Table
             ->scalar('titulo')
             ->maxLength('titulo', 87, 'A título pode ter no máximo 87 caracteres')
             ->requirePresence('titulo', 'create', 'O título precisa ser informado')
-            ->notEmptyString('titulo', 'O título não pode estar vazio');
+            ->notEmptyString('titulo', 'O título não pode estar vazio')
+            ->checkXSS('titulo');
 
         $validator
             ->scalar('username')
             ->maxLength('username', 88, 'O username pode ter no máximo 88 caracteres')
             ->requirePresence('username', 'create', 'O username precisa ser informado')
-            ->notEmptyString('username', 'O username não pode estar vazio');
+            ->notEmptyString('username', 'O username não pode estar vazio')
+            ->checkXSS('username');
 
         $validator
             ->scalar('password')
             ->maxLength('password', 88, 'A senha pode ter no máximo 88 caracteres')
             ->requirePresence('password', 'create', 'A senha precisa ser informada')
-            ->notEmptyString('password', 'A senha não pode estar vazia');
+            ->notEmptyString('password', 'A senha não pode estar vazia')
+            ->checkXSS('password');
 
         $validator
             ->numeric('categoria_id', 'Precisa informar um ID de categoria válido')
@@ -96,11 +102,13 @@ class EntradasTable extends Table
             ->url('link', 'O link precisa ser uma URL válida')
             ->urlWithProtocol('link', 'O link precisa ter o protocolo, exemplo: http:// ou https://')
             ->maxLength('link', 400, 'O link pode ter no máximo 210 caracteres')
-            ->allowEmptyString('link');
+            ->allowEmptyString('link')
+            ->checkXSS('link');
 
         $validator
             ->maxLength('anotacoes', 1000, 'A anotação pode ter no máximo 1000 caracteres')
-            ->allowEmptyString('anotacoes');
+            ->allowEmptyString('anotacoes')
+            ->checkXSS('anotacoes');
 
         return $validator;
     }

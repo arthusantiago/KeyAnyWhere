@@ -153,6 +153,9 @@ class UsersController extends AppController
             $this->redirect(['controller' => 'Users', 'action' => 'login']);
         }
 
+        /**
+         * @var	\App\Model\Entity\User
+         */
         $user = $this->Users
             ->find()
             ->orderDesc('id')

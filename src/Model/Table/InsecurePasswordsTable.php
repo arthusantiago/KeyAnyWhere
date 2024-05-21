@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
-
+use App\Model\Custom\ValidatorKaw;
 /**
  * InsecurePasswords Model
  *
@@ -44,13 +43,14 @@ class InsecurePasswordsTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->_validatorClass = ValidatorKaw::class;
     }
 
     /**
      * Default validation rules.
      *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
+     * @param \App\Model\Custom\ValidatorKaw $validator Validator instance.
+     * @return \App\Model\Custom\ValidatorKaw
      */
     public function validationDefault(Validator $validator): Validator
     {
@@ -58,7 +58,8 @@ class InsecurePasswordsTable extends Table
             ->scalar('password')
             ->maxLength('password', 100)
             ->requirePresence('password', 'create')
-            ->notEmptyString('password');
+            ->notEmptyString('password')
+            ->checkXSS('password');
 
         return $validator;
     }

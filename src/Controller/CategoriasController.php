@@ -27,9 +27,6 @@ class CategoriasController extends AppController
      */
     public function listagemEntradas(string $categoria_id)
     {
-        // desabilitando o cache por segurança.
-        $this->response = $this->response->withDisabledCache();
-
         $entradas = $this->Categorias->Entradas
             ->find('all')
             ->where(['categoria_id' => $categoria_id])
@@ -71,7 +68,7 @@ class CategoriasController extends AppController
                 $this->Categorias->reordenar();
                 return $this->redirect(['action' => 'edit', $categoria->id]);
             }
-            $this->Flash->error(__('Erro ao salvar'));
+            $this->Flash->error(null, ['params' => ['mensagens' => $categoria->getErrors()]]);
         }
         $this->set(compact('categoria'));
     }

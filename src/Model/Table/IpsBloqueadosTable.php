@@ -7,7 +7,7 @@ use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
-
+use App\Model\Custom\ValidatorKaw;
 /**
  * IpsBloqueados Model
  *
@@ -44,20 +44,22 @@ class IpsBloqueadosTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+        $this->_validatorClass = ValidatorKaw::class;
     }
 
     /**
      * Default validation rules.
      *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
+     * @param \App\Model\Custom\ValidatorKaw $validator Validator instance.
+     * @return \App\Model\Custom\ValidatorKaw
      */
     public function validationDefault(Validator $validator): Validator
     {
         $validator
             ->ip('ip', 'O IP informado é inválido')
             ->requirePresence('ip', 'create', 'O IP precisa ser informado')
-            ->notEmptyString('ip', 'O IP precisa ser informado');
+            ->notEmptyString('ip', 'O IP precisa ser informado')
+            ->checkXSS('ip');
 
         return $validator;
     }

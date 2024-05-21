@@ -28,11 +28,11 @@
   <div class="row">
       <div class="col-sm-5">
           <label for="username">Nome do Usuário</label>
-          <input type="text" class="form-control inputs" id="username" name="username" autocomplete="nickname" maxlength="50" value="<?=$user->username?>" required>
+          <input type="text" class="form-control inputs" id="username" name="username" autocomplete="nickname" maxlength="50" value="<?=h($user->username)?>" required>
       </div>
       <div class="col-sm-5">
           <label for="email">E-mail (login e rec. de senha)</label>
-          <input type="email" class="form-control inputs" id="email" name="email" autocomplete="email" value="<?=$user->email?>" maxlength="100" required>
+          <input type="email" class="form-control inputs" id="email" name="email" autocomplete="email" value="<?=h($user->email)?>" maxlength="100" required>
       </div>
   </div>
   <br>
