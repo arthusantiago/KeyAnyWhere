@@ -6,6 +6,7 @@ namespace App\Model\Table;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use App\Model\Custom\ValidatorKaw;
 
 /**
  * Users Model
@@ -49,13 +50,14 @@ class UsersTable extends Table
         $this->hasMany('Entradas', [
             'foreignKey' => 'user_id',
         ]);
+        $this->_validatorClass = ValidatorKaw::class;
     }
 
     /**
      * Default validation rules.
      *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
+     * @param \App\Model\Custom\ValidatorKaw $validator Validator instance.
+     * @return \App\Model\Custom\ValidatorKaw
      */
     public function validationDefault(Validator $validator): Validator
     {
@@ -67,13 +69,15 @@ class UsersTable extends Table
             ->scalar('username')
             ->maxLength('username', 50, 'O nome do usuário pode ter no máximo 50 caracteres')
             ->requirePresence('username')
-            ->notEmptyString('username', 'O nome do usuário precisa ser preenchido');
+            ->notEmptyString('username', 'O nome do usuário precisa ser preenchido')
+            ->checkXSS('username');
 
         $validator
             ->email('email', false, 'O e-mail não está em um formato válido.')
             ->maxLength('email', 100, 'O e-mail do usuário pode ter no máximo 100 caracteres')
             ->requirePresence('email')
-            ->notEmptyString('email', 'O e-mail precisa ser preenchido');
+            ->notEmptyString('email', 'O e-mail precisa ser preenchido')
+            ->checkXSS('email');
 
         $validator
             ->scalar('password')
@@ -81,6 +85,7 @@ class UsersTable extends Table
             ->maxLength('password', 255, 'A senha pode ter no máximo 255 caracteres')
             ->requirePresence('password', 'create', 'A senha precisa ser preenchida')
             ->notEmptyString('password', 'A senha precisa ser preenchida', 'create')
+            ->checkXSS('password')
             ->add(
                 'password',
                 'requiMinPassword', [
