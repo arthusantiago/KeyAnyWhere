@@ -42,12 +42,19 @@ if(isset($params['mensagens']) && is_array($params['mensagens']))
 //se a variável '$message' for nula é atribuído a ela um texto padrão.
 if (empty($message))
 {
-    $message = "Aconteceu um erro, tente novamente.";
+    $message = 'Ocorreu um erro: ';
 }
 ?>
 
 <div class="alert alert-danger" role="alert" id="alert-do-sistema">
-    <span>&#10060;</span> <?=$message?>
+    <div class="row">
+        <div class="col-sm"><?=$message?></div>
+        <div class="col-sm text-end">
+            <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
     <ul>
         <?php foreach($mensagensErro AS $mensagem):?>
             <li><?=h($mensagem)?></li>
