@@ -263,6 +263,7 @@ function estaComprometida(event, inputName)
 			strClass = strClass.replace(/is-invalid/g, "");
 		}
 		input.setAttribute('class', strClass);
+		input.style.backgroundImage = 'none';
 	})
 	.catch(function (error) {
 		alert('Ocorreu um erro \n\n' + error.message);
