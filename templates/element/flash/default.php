@@ -20,4 +20,7 @@
             <?php endforeach;?>
         </ul>
     <?php endif;?>
+    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+        <i class="bi bi-x-lg"></i>
+    </button>
 </div>

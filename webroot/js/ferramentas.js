@@ -30,13 +30,3 @@ document
 	.forEach(function (currentValue, currentIndex, listObj) {
 		currentValue.addEventListener("click", exibirConteudoInput);
 	});
-
-
-/* Function que fecha os alerts abertos */
-setTimeout(
-    function() {
-        let alert = bootstrap.Alert.getOrCreateInstance(document.getElementById('alert-do-sistema'));
-        alert.close();
-    },
-    6000
-);

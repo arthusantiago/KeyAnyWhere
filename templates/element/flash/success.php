@@ -10,7 +10,7 @@
    */
 ?>
 <div class="alert alert-success" role="alert" id="alert-do-sistema">
-    <span>&#128079;</span> <?=$message?>
+    <?=$message?>
     <?php if(isset($params['mensagens']) && is_array($params['mensagens'])):?>
         <ul>
             <?php foreach($params['mensagens'] AS $arrayMensagens):?>
@@ -20,4 +20,7 @@
             <?php endforeach;?>
         </ul>
     <?php endif;?>
+    <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+        <i class="bi bi-x-lg"></i>
+    </button>
 </div>

@@ -176,3 +176,7 @@
 	margin-left: 15px;
 	margin-right: 15px;
 }
+
+.form-select {
+	background-image:url("../../img/chevron-down.svg");
+}

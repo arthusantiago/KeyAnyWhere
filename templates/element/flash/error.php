@@ -1,15 +1,16 @@
 <?php
   /**
    * Element para exibição de mensagens de erro ao usuário.
-   * Pode ser passado um array de mensagens dentro da variável $params['mensagens']. Exemplo: 
-   * 
-   * $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $artigos->getErrors()]]);
-   * 
-   * $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => ['Primeiro error', 'Segundo erro']]]);
-   * 
-   * Também pode ser passado no indice $params['entidades'] um array de entidades com erros. Exemplo:
-   * 
-   * $this->Flash->error('Erro ao cadastrar', ['params' => ['entidades' => [ $entidade1, $entidade2 ]]]);
+   * Pode ser passado um array de mensagens dentro da variável $params['mensagens'].
+   *
+   * Exemplo:
+   *    $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $artigos->getErrors()]]);
+   *    $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => ['Primeiro error', 'Segundo erro']]]);
+   *
+   * Também pode ser passado no índice $params['entidades'] um array de entidades com erros.
+   *
+   * Exemplo:
+   *    $this->Flash->error('Erro ao cadastrar', ['params' => ['entidades' => [ $entidade1, $entidade2 ]]]);
    *
    * @param array|null $params Variável padrão do Flash usada para passar dados ao template.
    * @param string $message Variável padrão do Flash contendo o texto que será exibido ao usuário.
@@ -23,7 +24,7 @@ $getErro = function ($msg, $tipoErro) use (&$mensagensErro)
     $mensagensErro[] = $msg;
 };
 
-// Para um array de entidades   
+// Para um array de entidades
 if(isset($params['entidades']) && is_array($params['entidades']))
 {
     foreach($params['entidades'] as $entidade)
@@ -33,7 +34,7 @@ if(isset($params['entidades']) && is_array($params['entidades']))
     }
 }
 
-// Para um array de menssagens simples
+// Para um array de mensagens simples
 if(isset($params['mensagens']) && is_array($params['mensagens']))
 {
     array_walk_recursive($params['mensagens'], $getErro);
@@ -42,15 +43,24 @@ if(isset($params['mensagens']) && is_array($params['mensagens']))
 //se a variável '$message' for nula é atribuído a ela um texto padrão.
 if (empty($message))
 {
-    $message = "Aconteceu um erro, tente novamente.";
+    $message = 'Ocorreu um erro: ';
 }
 ?>
 
 <div class="alert alert-danger" role="alert" id="alert-do-sistema">
-    <span>&#10060;</span> <?=$message?>
-    <ul>
-        <?php foreach($mensagensErro AS $mensagem):?>
-            <li><?=h($mensagem)?></li>
-        <?php endforeach;?>
-    </ul>
+    <div class="row">
+        <div class="col-sm"><?=$message?></div>
+        <div class="col-sm-auto text-end">
+            <button type="button" class="btn" data-bs-dismiss="alert" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+    <?php if($mensagensErro): ?>
+        <ul>
+            <?php foreach($mensagensErro as $mensagem):?>
+                <li><?=h($mensagem)?></li>
+            <?php endforeach;?>
+        </ul>
+    <?php endif; ?>
 </div>
