@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?=$this->Html->css([
     	'minified/bootstrap.min.css',
-    	'minified/kaw.min.css'
+    	'minified/kaw.min.css',
+      'minified/bootstrap-icons.min.css'
     ]);?>
   </head>
   <body>
