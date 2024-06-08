@@ -3,7 +3,6 @@
 namespace Config\Tools;
 
 use Composer\Installer\PackageEvent;
-use Composer\Script\Event;
 /**
  * Trabalha os arquivos que precisam estar corretamente armazenados na pasta webroot/
  *
@@ -55,7 +54,7 @@ class PreparaAssets
     }
 
     /**
-     * Copia os arquivos CSS e JS do pacote instalado/atualizado para devida pasta dentro do webroot/
+     * Copia os arquivos do pacote informado para a devida pasta
      *
      * @access static public
      * @param string $nomePacote
