@@ -55,8 +55,8 @@
         "stan": "phpstan analyse",
         "test": "phpunit --colors=always",
         "minificar-assets": "Config\\Tools\\Minificador::executar",
-        "post-package-install": "Config\\Tools\\PreparaAssets::executar",
-        "post-package-update":  "Config\\Tools\\PreparaAssets::executar"
+        "post-package-install": "Config\\Tools\\PreparaAssets::postPackageInstall",
+        "post-package-update":  "Config\\Tools\\PreparaAssets::postPackageUpdate"
     },
     "prefer-stable": true,
     "config": {
