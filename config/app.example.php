@@ -434,7 +434,11 @@ return [
      * To use database sessions, load the SQL file located at config/schema/sessions.sql
      */
     'Session' => [
-        'defaults' => 'cake',
+        'defaults' => 'database',
+        'handler' => [
+            'engine' => 'DatabaseSession',
+            'model' => 'Sessions'
+        ],
         'timeout' => 1440,
         'cookie' => '__Secure-KAW',
         'ini' => [
