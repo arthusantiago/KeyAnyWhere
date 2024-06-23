@@ -134,12 +134,12 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 ->setReferrerPolicy(SecurityHeadersMiddleware::STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
                 ->setXssProtection(SecurityHeadersMiddleware::XSS_DISABLED)
                 ->setCrossDomainPolicy(SecurityHeadersMiddleware::NONE)
-                ->setContentSecurityPolicy()
                 ->noSniff()
                 ->noOpen();
 
             if (Configure::read('debug') == false) {
                 $securityHeaders->setXFrameOptions(SecurityHeadersMiddleware::DENY);
+                $securityHeaders->setContentSecurityPolicy();
             }
 
             $middlewareQueue->add($securityHeaders);
