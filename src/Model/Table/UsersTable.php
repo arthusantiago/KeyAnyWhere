@@ -50,6 +50,10 @@ class UsersTable extends Table
         $this->hasMany('Entradas', [
             'foreignKey' => 'user_id',
         ]);
+
+        $this->hasMany('Sessions', [
+            'foreignKey' => 'user_id',
+        ]);
         $this->_validatorClass = ValidatorKaw::class;
     }
 
