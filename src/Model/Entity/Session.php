@@ -37,22 +37,36 @@ class Session extends Entity
         'user' => true,
     ];
 
-    protected function _setData($data)
+    protected function _setData($dadosSessao)
     {
-        if ($data && is_string($data)) {
-            $propriedadeIdUser = '"id";i:';
-            $posicao = stripos($data, $propriedadeIdUser);
-            if ($posicao) {
-                $idUser = substr($data, $posicao + 7, 1);
-                $this->setAutomaticoUserId($idUser);
+        if ($dadosSessao) {
+            $dadosUsuario = $this->obterDadosUsuarioDaSessao($dadosSessao);
+            if ($dadosUsuario) {
+                $dadosUsuario = unserialize($dadosUsuario);
+                $this->user_id = $dadosUsuario['id'];
             }
         }
-
-        return $data;
+        return $dadosSessao;
     }
 
-    protected function setAutomaticoUserId($id)
+    /**
+     * A partir de uma string que contem a representação de vários objetos,
+     * o método recupera somente as informações do usuário vinculado a sessão.
+     *
+     * @access private
+     * @param string $dadosSessao
+     * @return string Propriedades do usuário vinculado a sessão
+     */
+    private function obterDadosUsuarioDaSessao(string $dadosSessao): string
     {
-        $this->user_id = $id;
+        $entityUser = 'App\Model\Entity\User';
+        $posicaoEntityUser = stripos($dadosSessao, $entityUser);
+
+        if ($posicaoEntityUser) {
+            $posicaoPropsUser = strlen($entityUser) + 24;
+            $iniciarNaPosicao = $posicaoEntityUser + $posicaoPropsUser;
+            return substr($dadosSessao, $iniciarNaPosicao);
+        }
+        return '';
     }
 }

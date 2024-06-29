@@ -325,7 +325,15 @@ class UsersController extends AppController
         $user = $this->Users->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $user = $this->Users->patchEntity($user, array_filter($this->request->getData()));
+            $senhaAlterada = $user->isDirty('password');
             if ($this->Users->save($user)) {
+                if ($senhaAlterada) {
+                    if ($this->finalizarSessao($user->id)) {
+                        $msg = sprintf('Como a senha do usuário <b>%s</b> foi alterada,<br> todas as suas sessões foram encerradas.', $user->username);
+                        $this->Flash->warning(__($msg));
+                    }
+                }
+
                 $this->Flash->success(__('Salvo com sucesso'));
             } else {
                 $this->Flash->error(__('Erro ao salvar.'),  ['params' => ['mensagens' => $user->getErrors()]]);
@@ -369,8 +377,14 @@ class UsersController extends AppController
         if ($this->request->is(['patch', 'post', 'put']))
         {
             $user = $this->Users->patchEntity($user, array_filter($this->request->getData()));
-
+            $senhaAlterada = $user->isDirty('password');
             if ($this->Users->save($user)) {
+                if ($senhaAlterada) {
+                    $this->finalizarSessao($user->id);
+                    $this->Flash->warning(__('Como sua senha foi alterada,<br> você precisa logar novamente.'));
+                    $this->redirect(['action' => 'login']);
+                }
+
                 $this->Flash->success(__('Salvo com sucesso'));
             }else{
                 $this->Flash->error(null, ['params' => ['mensagens' => $user->getErrors()]]);
@@ -453,5 +467,18 @@ class UsersController extends AppController
         $user->tfa_secret = $user->geraSecret2FA();
         $this->Users->save($user);
         return $user;
+    }
+
+    /**
+     * Exclui do banco de dados todas as sessões do usuário informado
+     *
+     * @access private
+     * @param int $idUser
+     * @return boolean
+     */
+    private function finalizarSessao(int $idUser): bool
+    {
+        $qtdDeletado = $this->Users->Sessions->deleteAll(['user_id' => $idUser]);
+        return $qtdDeletado ? true : false ;
     }
 }
