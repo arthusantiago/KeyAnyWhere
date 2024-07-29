@@ -19,6 +19,7 @@ class CreateSessao extends AbstractMigration
             ->addColumn('data', 'binary', ['null' => true, 'default' => null])
             ->addColumn('expires', 'integer', ['null' => true, 'default' => null])
             ->addColumn('user_id', 'integer', ['null' => true, 'default' => null])
+            ->addColumn('user_agent', 'string', ['limit' => 256, 'null' => true, 'default' => null])
             ->addColumn('created', 'datetime', ['null' => false, 'default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('modified', 'datetime', ['null' => false, 'default' => 'CURRENT_TIMESTAMP'])
             ->create();

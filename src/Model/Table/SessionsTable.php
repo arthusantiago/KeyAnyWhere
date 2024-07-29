@@ -70,6 +70,11 @@ class SessionsTable extends Table
             ->integer('user_id')
             ->allowEmptyString('user_id');
 
+        $validator
+            ->scalar('userAgent')
+            ->maxLength('userAgent', 256)
+            ->allowEmptyString('userAgent');
+
         return $validator;
     }
 

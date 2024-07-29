@@ -13,6 +13,8 @@ use App\Model\Table\IpsBloqueadosTable;
 use App\Log\GerenciadorEventos;
 use Authentication\Authenticator\ResultInterface;
 use Cake\Validation\Validator;
+use Cake\Event\EventInterface;
+
 /**
  * Users Controller
  *
@@ -40,9 +42,15 @@ class UsersController extends AppController
         ResultInterface::FAILURE_CREDENTIALS_INVALID,
     ];
 
-    public function beforeFilter(\Cake\Event\EventInterface $event)
+    public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
+
+        if ($this->ipEstaBloqueado()) {
+            $this->viewBuilder()->setLayout('layout_vazio');
+            return $this->render('/IpsBloqueados/ip_bloqueado');
+        }
+
         // desabilitando o cache por segurança.
         $this->response = $this->response->withDisabledCache();
         $this->Authentication->addUnauthenticatedActions(self::ACTIONS_SEM_AUTENTICACAO);
@@ -64,207 +72,6 @@ class UsersController extends AppController
         }
     }
 
-    private function ipEstaBloqueado(): bool
-    {
-        $ipBloqueado = (new IpsBloqueadosTable)
-        ->find()
-        ->where(['ip' => $this->request->clientIp()])
-        ->limit(1)
-        ->toArray();
-
-        return empty($ipBloqueado) ? false : true ;
-    }
-
-    /**
-     * Método que verifica se é preciso executar a configuração inicial do sistema.
-     *
-     * @access	private
-     * @return	mixed
-     */
-    private function executarConfigIncial(): bool
-    {
-        $user = $this->Users
-            ->find()
-            ->orderAsc('id')
-            ->limit(1)
-            ->first();
-
-        $result = false;
-
-        if (empty($user)) {
-            $result = true;
-        }
-
-        if (empty($user) == false && $user->tfa_ativo == false) {
-            $result = true;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Metodo que inicia a Configuração Inicial da ferramenta.
-     * Esse processo deve ser executado ao acessar o KAW pela primeira vez.
-     *
-     * @access	public
-     * @return	void
-     */
-    public function configInicial()
-    {
-        if ($this->executarConfigIncial() == false) {
-            $this->redirect(['controller' => 'Users', 'action' => 'login']);
-        }
-
-        $user = $this->Users
-            ->find()
-            ->orderDesc('id')
-            ->limit(1)
-            ->first();
-
-        if (empty($user) == false && $user->email) {
-            return $this->redirect(['controller' => 'Users', 'action' => 'configInicialTfa']);
-        }
-
-        if ($this->request->is('post')) {
-            $user = $this->Users->newEmptyEntity();
-            $user = $this->Users->patchEntity($user, $this->request->getData());
-            $user->root = true;
-
-            if ($this->Users->save($user)) {
-                $this->Flash->success(__('Usuário criado com sucesso!'));
-                return $this->redirect(['controller' => 'Users', 'action' => 'configInicialTfa']);
-            }else{
-                $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $user->getErrors()]]);
-            }
-        }
-
-        $this->viewBuilder()->setLayout('config_inicial');
-    }
-
-    /**
-     * Metodo que gerencia a configuração do 2FA no processo de Configuração Inicial
-     *
-     * @access	public
-     * @return	void
-     */
-    public function configInicialTfa()
-    {
-        if ($this->executarConfigIncial() == false) {
-            $this->redirect(['controller' => 'Users', 'action' => 'login']);
-        }
-
-        /**
-         * @var	\App\Model\Entity\User
-         */
-        $user = $this->Users
-            ->find()
-            ->orderDesc('id')
-            ->limit(1)
-            ->first();
-
-        if (empty($user)) {
-            return $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
-        }
-
-        if ($this->request->is('post')) {
-            $user = $this->Users->get($this->request->getData('id'));
-            $user->tfa_ativo = $this->request->getData('tfa');
-            if ($this->Users->save($user)) {
-                $this->Flash->success(__('Usuário configurado com sucesso!'));
-                return $this->redirect(['controller' => 'Users', 'action' => 'login']);
-            }else{
-                $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $user->getErrors()]]);
-            }
-        }
-
-        $user->tfa_secret = $user->geraSecret2FA();
-        if ($this->Users->save($user) == false) {
-            $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $user->getErrors()]]);
-        }
-
-        $g2faUrl = (new Google2FA())->getQRCodeUrl(
-            'KeyAnyWhere',
-            $user->email,
-            $user->descripSecret2FA()
-        );
-
-        $render = new ImageRenderer(
-            new RendererStyle(400),
-            new SvgImageBackEnd()
-        );
-
-        $strSvgQrCode = (new Writer($render))->writeString($g2faUrl);
-
-        $this->viewBuilder()->setLayout('config_inicial');
-        $this->set(compact('user', 'strSvgQrCode'));
-    }
-
-    public function login()
-    {
-        $this->request->allowMethod(['get', 'post']);
-        $this->viewBuilder()->setLayout('login');
-
-        if ($this->executarConfigIncial()) {
-            $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
-        }
-
-        if (
-            $this->ipEstaBloqueado() == false
-            && $this->request->is('post')
-        ) {
-            $resultLogin = $this->Authentication->getResult();
-            $tfaValido = false;
-            if ($resultLogin->getData() !== null) {
-                $tfaValido = $resultLogin->getData()->valida2fa($this->request->getData('2fa'));
-            }
-
-            if (
-                $resultLogin->isValid()
-                && $tfaValido
-            ) {
-                return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
-            } else if ($resultLogin->isValid() == false) {
-                $this->Flash->error('Usuário ou senha inválido');
-                if (array_search($resultLogin->getStatus(), $this::CREDENCIAL_LOGIN_INCORRETO) !== false) {
-                    GerenciadorEventos::notificarEvento([
-                        'evento' => 'C1-1',
-                        'request' => $this->request,
-                        'usuario' => [
-                            'dados' => ['e-mail' => $this->request->getData('email')],
-                            'texto' => 'Credenciais utilizadas para logar: '
-                        ]
-                    ]);
-                }
-            } else if ($resultLogin->isValid() && $tfaValido == false) {
-                $this->Flash->error('Segundo Fator de Autenticação incorreto');
-                GerenciadorEventos::notificarEvento([
-                    'evento' => 'C1-2',
-                    'request' => $this->request,
-                    'usuario' => [
-                        'dados' => ['e-mail' => $this->request->getData('email')],
-                        'texto' => 'Credenciais utilizadas para logar: '
-                    ]
-                ]);
-            }
-        }
-
-        if ($this->ipEstaBloqueado()) {
-            $this->Flash->error('Seu IP foi bloqueado por inúmeras tentativas erradas de login');
-        }
-
-        $this->Authentication->logout();
-    }
-
-    public function logout()
-    {
-        $result = $this->Authentication->getResult();
-        // regardless of POST or GET, redirect if user is logged in
-        if ($result->isValid()) {
-            $this->Authentication->logout();
-            return $this->redirect(['controller' => 'Users', 'action' => 'login']);
-        }
-    }
-
     /**
      * Index method
      *
@@ -276,16 +83,13 @@ class UsersController extends AppController
             $this->Users,
             [
                 'limit' => 10,
-                'order' => [
-                    'Users.username' => 'asc'
-                ]
+                'order' => ['Users.username' => 'asc']
             ]
         );
 
         $this->viewBuilder()->setLayout('administrativo');
         $this->set(compact('users'));
     }
-
 
     /**
      * Add method
@@ -328,7 +132,7 @@ class UsersController extends AppController
             $senhaAlterada = $user->isDirty('password');
             if ($this->Users->save($user)) {
                 if ($senhaAlterada) {
-                    if ($this->finalizarSessao($user->id)) {
+                    if ($this->finalizarSessao()) {
                         $msg = sprintf('Como a senha do usuário <b>%s</b> foi alterada,<br> todas as suas sessões foram encerradas.', $user->username);
                         $this->Flash->warning(__($msg));
                     }
@@ -365,6 +169,51 @@ class UsersController extends AppController
     }
 
     /**
+     * Método que executa o processo de login no sistema.
+     *
+     * @access	public
+     * @return \Cake\Http\Response|null|void Renders view
+     */
+    public function login()
+    {
+        $this->request->allowMethod(['get', 'post']);
+        $this->viewBuilder()->setLayout('login');
+
+        if ($this->executarConfigInicial()) {
+            $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
+        }
+
+        if ($this->request->is('post')) {
+            if (
+                $this->validarUsarioSenha()
+                && $this->validarTFA($this->request->getData('2fa'))
+            ){
+                return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
+            }
+
+            $this->Flash->error('Credenciais de acesso incorretas');
+        }
+
+        $this->Authentication->logout();
+    }
+
+    /**
+     * Executa o processo de logout do sistema
+     *
+     * @access	public
+     * @return \Cake\Http\Response|null|void Renders view
+     */
+    public function logout()
+    {
+        $result = $this->Authentication->getResult();
+
+        if ($result->isValid()) {
+            $this->Authentication->logout();
+            return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+        }
+    }
+
+    /**
      * Método Minha Conta
      *
      * @return \Cake\Http\Response|null|void Redireciona na adição bem-sucedida ou renderiza a view caso contrário.
@@ -374,13 +223,13 @@ class UsersController extends AppController
         $userAutenticado = $this->Authentication->getResult()->getData();
         $user = $this->Users->get($userAutenticado->id);
 
-        if ($this->request->is(['patch', 'post', 'put']))
+        if ($this->request->is(['post', 'put']))
         {
             $user = $this->Users->patchEntity($user, array_filter($this->request->getData()));
             $senhaAlterada = $user->isDirty('password');
             if ($this->Users->save($user)) {
                 if ($senhaAlterada) {
-                    $this->finalizarSessao($user->id);
+                    $this->finalizarSessao();
                     $this->Flash->warning(__('Como sua senha foi alterada,<br> você precisa logar novamente.'));
                     $this->redirect(['action' => 'login']);
                 }
@@ -389,13 +238,40 @@ class UsersController extends AppController
             }else{
                 $this->Flash->error(null, ['params' => ['mensagens' => $user->getErrors()]]);
             }
-
-            return $this->redirect(['action' => 'minhaConta']);
         }
+
+        $sessions = $this->Users->Sessions
+            ->find()
+            ->where(['user_id' => $user->id]);
+
         $this->viewBuilder()->setLayout('administrativo');
-        $this->set(compact('user'));
+        $this->set(compact('user','sessions'));
     }
 
+    /**
+     * Exclui do banco de dados todas as sessões do usuário informado
+     *
+     * @access private
+     * @param int $idUser
+     * @return boolean
+     */
+    private function finalizarSessao($modo = 'all'): bool
+    {
+        $user = $this->Authentication->getResult()->getData();
+
+        if ($modo === 'all') {
+            $qtdDeletado = $this->Users->Sessions->deleteAll(['user_id' => $user->id]);
+        }
+
+        return $qtdDeletado ? true : false ;
+    }
+
+    /**
+     * Gera o QRCode do Segundo Fator de Autenticação (Two Factor Authentication)
+     *
+     * @access	public
+     * @return \Cake\Http\Response|null|void 
+     */
     public function geraQrCode2fa()
     {
         $this->request->allowMethod(['post']);
@@ -470,15 +346,198 @@ class UsersController extends AppController
     }
 
     /**
-     * Exclui do banco de dados todas as sessões do usuário informado
+     * Verifica se o IP do host que está tentando acessar está bloqueado.
+     *
+     * @access	private
+     * @return	mixed
+     */
+    private function ipEstaBloqueado(): bool
+    {
+        $ipBloqueado = (new IpsBloqueadosTable)
+            ->find()
+            ->where(['ip' => $this->request->clientIp()])
+            ->limit(1)
+            ->toArray();
+
+        return empty($ipBloqueado) ? false : true;
+    }
+
+    /**
+     * Verifica se o usuário está autenticado. Se ele forneceu o usuário e senha corretos.
      *
      * @access private
-     * @param int $idUser
-     * @return boolean
+     * @return bool
      */
-    private function finalizarSessao(int $idUser): bool
+    private function validarUsarioSenha(): bool
     {
-        $qtdDeletado = $this->Users->Sessions->deleteAll(['user_id' => $idUser]);
-        return $qtdDeletado ? true : false ;
+        $resultLogin = $this->Authentication->getResult();
+        $usuarioSenhaCorreto = $resultLogin->isValid();
+
+        if ($usuarioSenhaCorreto == false) {
+            if (array_search($resultLogin->getStatus(), $this::CREDENCIAL_LOGIN_INCORRETO) !== false) {
+                GerenciadorEventos::notificarEvento([
+                    'evento' => 'C1-1',
+                    'request' => $this->request,
+                    'usuario' => [
+                        'dados' => ['e-mail' => $this->request->getData('email')],
+                        'texto' => 'Credenciais utilizadas para logar: '
+                    ]
+                ]);
+            }
+        }
+
+        return $usuarioSenhaCorreto;
+    }
+
+    /**
+     * Verifica se o código do Segundo Fator de Autenticação (Two Factor Authentication) está correto.
+     *
+     * @access private
+     * @param string $codigoTFA Código de 6 dígitos para verificação
+     * @return bool
+     */
+    private function validarTFA(string $codigoTFA): bool
+    {
+        $tfaValido = $this->Authentication
+            ->getResult()
+            ->getData()
+            ->valida2fa($codigoTFA);
+
+        if ($tfaValido == false) {
+            GerenciadorEventos::notificarEvento([
+                'evento' => 'C1-2',
+                'request' => $this->request,
+                'usuario' => [
+                    'dados' => ['e-mail' => $this->request->getData('email')],
+                    'texto' => 'Credenciais utilizadas para logar: '
+                ]
+            ]);
+        }
+
+        return $tfaValido;
+    }
+
+    /**
+     * Método que verifica se é preciso executar a configuração inicial do sistema.
+     *
+     * @access	private
+     * @return	mixed
+     */
+    private function executarConfigInicial(): bool
+    {
+        $user = $this->Users
+            ->find()
+            ->orderAsc('id')
+            ->limit(1)
+            ->first();
+
+        $result = false;
+
+        if (empty($user)) {
+            $result = true;
+        }
+
+        if (empty($user) == false && $user->tfa_ativo == false) {
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Metodo que inicia a Configuração Inicial da ferramenta.
+     * Esse processo deve ser executado ao acessar o KAW pela primeira vez.
+     *
+     * @access	public
+     * @return	void
+     */
+    public function configInicial()
+    {
+        if ($this->executarConfigInicial() == false) {
+            $this->redirect(['controller' => 'Users', 'action' => 'login']);
+        }
+
+        $user = $this->Users
+            ->find()
+            ->orderDesc('id')
+            ->limit(1)
+            ->first();
+
+        if (empty($user) == false && $user->email) {
+            return $this->redirect(['controller' => 'Users', 'action' => 'configInicialTfa']);
+        }
+
+        if ($this->request->is('post')) {
+            $user = $this->Users->newEmptyEntity();
+            $user = $this->Users->patchEntity($user, $this->request->getData());
+            $user->root = true;
+
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('Usuário criado com sucesso!'));
+                return $this->redirect(['controller' => 'Users', 'action' => 'configInicialTfa']);
+            }else{
+                $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $user->getErrors()]]);
+            }
+        }
+
+        $this->viewBuilder()->setLayout('config_inicial');
+    }
+
+    /**
+     * Metodo que gerencia a configuração do 2FA no processo de Configuração Inicial
+     *
+     * @access	public
+     * @return	void
+     */
+    public function configInicialTfa()
+    {
+        if ($this->executarConfigInicial() == false) {
+            $this->redirect(['controller' => 'Users', 'action' => 'login']);
+        }
+
+        /**
+         * @var	\App\Model\Entity\User
+         */
+        $user = $this->Users
+            ->find()
+            ->orderDesc('id')
+            ->limit(1)
+            ->first();
+
+        if (empty($user)) {
+            return $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
+        }
+
+        if ($this->request->is('post')) {
+            $user = $this->Users->get($this->request->getData('id'));
+            $user->tfa_ativo = $this->request->getData('tfa');
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('Usuário configurado com sucesso!'));
+                return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+            }else{
+                $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $user->getErrors()]]);
+            }
+        }
+
+        $user->tfa_secret = $user->geraSecret2FA();
+        if ($this->Users->save($user) == false) {
+            $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $user->getErrors()]]);
+        }
+
+        $g2faUrl = (new Google2FA())->getQRCodeUrl(
+            'KeyAnyWhere',
+            $user->email,
+            $user->descripSecret2FA()
+        );
+
+        $render = new ImageRenderer(
+            new RendererStyle(400),
+            new SvgImageBackEnd()
+        );
+
+        $strSvgQrCode = (new Writer($render))->writeString($g2faUrl);
+
+        $this->viewBuilder()->setLayout('config_inicial');
+        $this->set(compact('user', 'strSvgQrCode'));
     }
 }
