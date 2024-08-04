@@ -1,5 +1,20 @@
 <div class="row">
   <div class="col-sm-auto">
+    <?= $this->element(
+        'breadcrumb',
+        [
+          'caminho' => [
+            ['Pages', 'index', 'Home'],
+            'Configurações',
+            ['Users', 'index', 'Usuários'],
+            'Minha conta'
+          ]
+        ]
+    );?>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-auto">
     <span class="titulo">Minha Conta</span>
     <?=$user->root?'<span class="badge bg-secondary">Usuário root</span>':'';?>
   </div>
