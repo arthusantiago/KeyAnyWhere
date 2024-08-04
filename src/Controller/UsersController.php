@@ -80,7 +80,7 @@ class UsersController extends AppController
     public function index()
     {
         $users = $this->paginate(
-            $this->Users,
+            $this->Users->find()->where(['root' => false]),
             [
                 'limit' => 10,
                 'order' => ['Users.username' => 'asc']
@@ -132,7 +132,7 @@ class UsersController extends AppController
             $senhaAlterada = $user->isDirty('password');
             if ($this->Users->save($user)) {
                 if ($senhaAlterada) {
-                    if ($this->finalizarSessao()) {
+                    if ($this->finalizarTodasSessoes($user->id)) {
                         $msg = sprintf('Como a senha do usuário <b>%s</b> foi alterada,<br> todas as suas sessões foram encerradas.', $user->username);
                         $this->Flash->warning(__($msg));
                     }
@@ -144,8 +144,13 @@ class UsersController extends AppController
             }
         }
 
+        $sessions = $this->Users->Sessions
+            ->find()
+            ->where(['user_id' => $user->id])
+            ->orderAsc('created');
+
         $this->viewBuilder()->setLayout('administrativo');
-        $this->set(compact('user'));
+        $this->set(compact('user', 'sessions'));
     }
 
     /**
@@ -229,7 +234,7 @@ class UsersController extends AppController
             $senhaAlterada = $user->isDirty('password');
             if ($this->Users->save($user)) {
                 if ($senhaAlterada) {
-                    $this->finalizarSessao();
+                    $this->finalizarTodasSessoes();
                     $this->Flash->warning(__('Como sua senha foi alterada,<br> você precisa logar novamente.'));
                     $this->redirect(['action' => 'login']);
                 }
@@ -242,27 +247,66 @@ class UsersController extends AppController
 
         $sessions = $this->Users->Sessions
             ->find()
-            ->where(['user_id' => $user->id]);
+            ->where(['user_id' => $user->id])
+            ->orderAsc('created');
+
+        foreach ($sessions as $key => $session) {
+            if ($this->request->getSession()->id() == $session->id) {
+                $session->esteDispositivo = true;
+            }
+        }
 
         $this->viewBuilder()->setLayout('administrativo');
         $this->set(compact('user','sessions'));
     }
 
-    /**
-     * Exclui do banco de dados todas as sessões do usuário informado
-     *
-     * @access private
-     * @param int $idUser
-     * @return boolean
-     */
-    private function finalizarSessao($modo = 'all'): bool
-    {
-        $user = $this->Authentication->getResult()->getData();
 
-        if ($modo === 'all') {
-            $qtdDeletado = $this->Users->Sessions->deleteAll(['user_id' => $user->id]);
+    /**
+     * Finaliza a sessão informada
+     *
+     * @access	public
+     * @return	void
+     */
+    public function finalizarSessao()
+    {
+        $this->request->allowMethod('post');
+        $idSession = $this->request->getData('id');
+
+        $validator = new Validator();
+        $validator
+            ->notEmptyString('id', 'O ID da sessão não pode estar vazio')
+            ->uuid('id', 'O ID da session precisa ser do tipo UUIDv4');
+        $erros = $validator->validate(['id' => $idSession]);
+
+        if ($erros) {
+            $this->Flash->error('O ID informado apresenta erro: ', ['params' => ['mensagens' => $erros]]);
+        } else {
+            if ($this->Users->Sessions->deleteAll(['id_secundario' => $idSession])) {
+                $this->Flash->success(__('Sessão finalizada!'));
+            } else {
+                $this->Flash->error(__('A sessão não foi localizada para exclusão'));
+            }
         }
 
+        $this->redirect($this->request->referer());
+    }
+
+    /**
+     * Finaliza todas as sessões de um único usuário
+     *
+     * @access private
+     * @param int $idUser Default: null
+     * @return mixed
+     */
+    private function finalizarTodasSessoes(int $idUser = null): bool
+    {
+        if ($idUser) {
+            $user = $this->Users->get($idUser);
+        } else {
+            $user = $this->Authentication->getResult()->getData();
+        }
+
+        $qtdDeletado = $this->Users->Sessions->deleteAll(['user_id' => $user->id]);
         return $qtdDeletado ? true : false ;
     }
 

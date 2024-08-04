@@ -8,7 +8,8 @@ use Cake\ORM\Entity;
 /**
  * Session Entity
  *
- * @property string $id
+ * @property string $id É o ID da sessão, o mesmo utilizado pelo PHP
+ * @property uuid $id_secundario Usado para manipular o registro em operações no banco de dados
  * @property string|resource|null $data
  * @property int|null $expires
  * @property int|null $user_id
@@ -30,6 +31,7 @@ class Session extends Entity
      * @var array<string, bool>
      */
     protected $_accessible = [
+        'id_secundario' => false,
         'data' => true,
         'expires' => true,
         'user_id' => true,
@@ -50,13 +52,20 @@ class Session extends Entity
     ];
 
     private $sistemasOperacionais = [
-        'windows',
         'linux',
-        'mac',
-        'iphone',
         'android',
-        'mobile'
+        'iphone',
+        'mac',
+        'windows',
+        'mobile',
     ];
+
+    /**
+     * Sinaliza que o objeto estanciado é a representação da sessão corrente onde ele
+     * está sendo manipulado.
+     * @var bool $esteDispositivo
+     */
+    public bool $esteDispositivo = false;
 
     protected function _getNavegador()
     {
