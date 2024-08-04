@@ -20,7 +20,7 @@
   *		'controller' : Controlador
   *		'action' : Metodo do controlador
   *   'id' : ID do registro que será excluído
-  *   'texto' : Texto que exibido dentor do botão
+  *   'texto' : Texto que exibido dentro do botão
 **/
 
 $parametros['texto'] = $parametros['texto'] ?? 'Excluir';
@@ -56,14 +56,14 @@ $idForm = "form-exclusao-{$parametros['id']}";
     <div class="modal-content">
       <div class="modal-body">
         <br>
-        <p>Realmente deseja excluir esse registro?</p>
+        <p>Você tem certeza dessa ação?</p>
         <?= $this->Form->create(null, ['url' => $urlExclusao, 'id' => $idForm]); ?>
           <?= $this->Form->hidden('id', ['value' => $parametros['id']]); ?>
         <?= $this->Form->end(['data-type' => 'hidden']);?>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-secondary botoes" data-bs-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-sm btn-danger botoes" form="<?=$idForm?>">Excluir</button>
+        <button type="submit" class="btn btn-sm btn-danger botoes" form="<?=$idForm?>">Confirmar</button>
       </div>
     </div>
   </div>
