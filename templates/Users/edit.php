@@ -82,3 +82,15 @@
     </div>
   </div>
 </div>
+<hr>
+
+<div class="row">
+  <div class="col-sm-auto">
+    <span class="titulo">Sessões</span>
+  </div>
+</div>
+<br>
+<div class="row">
+<?= $this->element('Users/sessions')?>
+</div>
+<br><br>
