@@ -30,6 +30,7 @@ use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Http\Middleware\HttpsEnforcerMiddleware;
 use Cake\Http\Middleware\SecurityHeadersMiddleware;
 use App\Middleware\SecurityHeadersKawMiddleware;
+use App\Middleware\SessionsKawMiddleware;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
@@ -143,6 +144,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             }
 
             $middlewareQueue->add($securityHeaders);
+            $middlewareQueue->add(new SessionsKawMiddleware($this));
 
         return $middlewareQueue;
     }

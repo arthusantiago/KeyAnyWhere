@@ -73,15 +73,4 @@ class SessionsTableTest extends TestCase
     {
         $this->markTestIncomplete('Not implemented yet.');
     }
-
-    /**
-     * Test afterSave method
-     *
-     * @return void
-     * @uses \App\Model\Table\SessionsTable::afterSave()
-     */
-    public function testAfterSave(): void
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
 }

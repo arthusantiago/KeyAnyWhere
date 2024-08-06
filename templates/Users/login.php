@@ -21,7 +21,7 @@
     </div>
     <div class="mb-3 elementoInterno">
       <label for="2fa" class="form-label text-light" title="Two-Factor Authentication (2FA)">Segundo fator de autenticação</label>
-      <input type="text" class="form-control" id="2fa" name="2fa" minlength="6" title="Two-Factor Authentication (2FA)" required>
+      <input type="number" class="form-control" id="2fa" name="2fa" minlength="6" title="Two-Factor Authentication (2FA)" required>
     </div>
     <div class="mb-3 elementoInterno">
       <a href="#">Esqueci minha senha</a>

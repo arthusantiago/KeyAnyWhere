@@ -19,12 +19,13 @@ class SessionsFixture extends TestFixture
     {
         $this->records = [
             [
-                'id' => 'a73c9ad0-5b34-4203-943e-4063a535e863',
+                'id' => '7a1fd818-c931-45a6-bb53-b01ba613781e',
                 'data' => 'Lorem ipsum dolor sit amet',
                 'expires' => 1,
                 'user_id' => 1,
-                'created' => 1719084055,
-                'modified' => 1719084055,
+                'userAgent' => 'Lorem ipsum dolor sit amet',
+                'created' => 1720745290,
+                'modified' => 1720745290,
             ],
         ];
         parent::init();
