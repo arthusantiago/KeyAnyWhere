@@ -25,7 +25,6 @@
               <?=$this->Html->image("logo-kaw.png");?>
             </a>
           </div>
-          <div class="col-sm text-center text-white" id="timerSessao"></div>
           <div class="col-sm-auto">
             <?=$this->element('Diversos/btnOpcoes')?>
           </div>

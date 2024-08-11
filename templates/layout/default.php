@@ -38,7 +38,6 @@
 						<i class="bi bi-plus-lg icone-opcao"></i>Entrada
 					</a>
 				</div>
-				<div class="col-sm text-center text-white" id="timerSessao"></div>
 				<div class="col-sm-auto ms-auto">
 					<input type="search" class="form-control input-busca" id="buscaEntrada" placeholder="Mínimo 3 caracteres"
 						data-busca-inserir-resultado="ul-busca-geral" data-busca-url="<?=$this->Url->build(['controller'=>'Entradas', 'action'=>'busca'],['fullBase'=>true])?>"
