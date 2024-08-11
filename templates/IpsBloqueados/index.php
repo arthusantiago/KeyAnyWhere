@@ -21,26 +21,27 @@
     </div>
 </div>
 
-<table class="table table-borderless table-striped table-hover">
-    <thead>
-        <tr class="text-center titulo-coluna-tabela">
-            <th><?=$this->Paginator->sort('created', 'Data bloqueio')?></th>
-            <th><?=$this->Paginator->sort('ip', 'IP')?></th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($ipsBloqueados as $ip): ?>
-            <tr class="text-center">
-                <td><?= h($ip->created) ?></td>
-                <td><?=h($ip->ip)?></td>
-                <td>
-                    <?= $this->element('Diversos/btnExcluir', ['parametros' => ['controller' => 'IpsBloqueados', 'id' => $ip->id]])?>
-                </td>
+<div class="table-responsive">
+    <table class="table table-borderless table-striped table-hover">
+        <thead>
+            <tr class="text-center titulo-coluna-tabela">
+                <th><?=$this->Paginator->sort('created', 'Data bloqueio')?></th>
+                <th><?=$this->Paginator->sort('ip', 'IP')?></th>
+                <th>Ações</th>
             </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
-
+        </thead>
+        <tbody>
+            <?php foreach ($ipsBloqueados as $ip): ?>
+                <tr class="text-center">
+                    <td><?= h($ip->created) ?></td>
+                    <td><?=h($ip->ip)?></td>
+                    <td>
+                        <?= $this->element('Diversos/btnExcluir', ['parametros' => ['controller' => 'IpsBloqueados', 'id' => $ip->id]])?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
 <br>
 <?= $this->element('paginacao');?>

@@ -19,7 +19,7 @@
 </div>
 
 <div class="row">
-    <div>
+    <div class="table-responsive">
         <table class="table table-md">
             <tbody>
                 <tr>
@@ -32,7 +32,7 @@
                 </tr>
                 <tr>
                     <th><?='Ip Origem'?></th>
-                    <td><?= h($log->ip_origem) ?></td>
+                    <td><?=h($log->ip_origem) ?></td>
                 </tr>
                 <tr>
                     <th><?='Usuário'?></th>
