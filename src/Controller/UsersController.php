@@ -269,7 +269,7 @@ class UsersController extends AppController
      */
     public function finalizarSessao()
     {
-        $this->request->allowMethod('post');
+        $this->request->allowMethod(['post', 'patch']);
         $idSession = $this->request->getData('id');
 
         $validator = new Validator();
