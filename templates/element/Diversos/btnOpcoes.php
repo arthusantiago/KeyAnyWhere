@@ -19,7 +19,20 @@
                 <i class="bi bi-person icone-opcao"></i>Minha Conta
             </a>
         </li>
-    <?php if ($userLogado->root): ?>
+        <div id="opcoes-para-responsivo">
+            <li><h6 class="dropdown-header">Opções</h6></li>
+            <li>
+                <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Entradas', 'action' => 'add']); ?>">
+                    <i class="bi bi-plus-lg icone-opcao"></i>Nova Entrada
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Categorias', 'action' => 'index']); ?>">
+                    <i class="bi bi-list-ol icone-opcao"></i>Categorias
+                </a>
+            </li>
+        </div>
+        <?php if ($userLogado->root): ?>
         <li><h6 class="dropdown-header">Configurações</h6></li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'index']) ?>">
