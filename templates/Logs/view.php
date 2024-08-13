@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-sm-auto">
+  <div class="col-sm-auto mb-3">
     <?=$this->element(
         'breadcrumb',
         ['caminho' => [
@@ -13,7 +13,7 @@
 </div>
 
 <div class="row">
-    <div class="col-sm-auto">
+    <div class="col-sm-auto mb-3">
         <span class="titulo">Detalhes do log</span>
     </div>
 </div>

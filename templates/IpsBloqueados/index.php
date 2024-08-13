@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-sm-auto">
+  <div class="col-sm-auto mb-3">
     <?=$this->element(
         'breadcrumb',
         ['caminho' => [
@@ -13,10 +13,10 @@
 </div>
 
 <div class="row">
-    <div class="col-sm">
+    <div class="col-sm mb-3">
         <span class="titulo">IPs Bloqueados</span>
     </div>
-    <div class="col-sm text-end">
+    <div class="col-sm mb-3 text-end">
         <?= $this->element('Diversos/btnNovo', ['parametros' => ['controller' => 'IpsBloqueados', 'texto' => 'IP']])?>
     </div>
 </div>

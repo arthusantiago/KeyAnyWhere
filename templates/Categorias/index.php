@@ -1,8 +1,8 @@
 <div class="row">
-    <div class="col-sm">
+    <div class="col-sm mb-3">
         <span class="titulo">Categorias</span>
     </div>
-    <div class="col-sm text-end">
+    <div class="col-sm mb-3 text-end">
         <?= $this->element('Diversos/btnNovo', ['parametros' => ['controller' => 'Categorias', 'texto' => 'Categoria']])?>
     </div>
 </div>

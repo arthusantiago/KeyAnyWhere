@@ -3,12 +3,10 @@
 <?=$this->Html->script('minified/categorias.min.js', ['block' => 'script-first-load']);?>
 
 <div class="row">
-  <div class="col-sm-auto">
+  <div class="col-sm-auto mb-3">
     <span class="titulo">Entrada</span>
   </div>
 </div>
-
-<br/>
 
 <?= $this->Form->create($entrada, ['url' => ['action' => 'edit', $entrada->id]])?>
   <?php $this->Form->secure([
@@ -20,11 +18,11 @@
     'anotacoes'
   ]);?>
   <div class="row">
-    <div class="col-sm">
+    <div class="col-sm mb-3">
       <label for="titulo" class="form-label">Título</label>
       <input type="text" class="form-control inputs" name="titulo" id="titulo" value="<?=h($entrada->tituloDescrip())?>" maxlength="87" required>
     </div>
-    <div class="col-sm">
+    <div class="col-sm mb-3">
       <label for="username" class="form-label">Usuário</label>
       <div class="input-group">
         <input type="password" class="form-control inputs" name="username" id="username" value="<?=h($entrada->usernameDescrip())?>" maxlength="88" required>
@@ -39,9 +37,8 @@
       </div>
     </div>
   </div>
-  <br>
   <div class="row">
-    <div class="col-sm">
+    <div class="col-sm mb-3">
       <label for="password" class="form-label">Senha</label>
       <div class="input-group">
         <input type="password" class="form-control inputs pwd" name="password" id="password" autocomplete="new-password" maxlength="88" 
@@ -65,7 +62,7 @@
         </div>
       </div>
     </div>
-    <div class="col-sm">
+    <div class="col-sm mb-3">
       <label for="link" class="form-label">Link</label>
       <div class="input-group">
         <input type="url" class="form-control inputs" name="link" id="link" value="<?=h($entrada->linkDescrip())?>" maxlength="400" placeholder="http://seuLink.com.br">
@@ -77,9 +74,8 @@
       </div>
     </div>
   </div>
-  <br>
   <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-6 mb-3">
       <label for="categoria_id" class="form-label">Categoria</label>
       <select class="form-select inputs" id="categoria_id" name="categoria_id" required>
         <option value="" disabled selected>Escolha a Categoria</option>
@@ -89,14 +85,12 @@
       </select> 
     </div>
   </div>
-  <br>
   <div class="row">
-    <div class="col-sm">
+    <div class="col-sm mb-3">
       <label for="anotacoes" class="form-label">Anotações</label>
       <textarea class="form-control" id="anotacoes" name="anotacoes" maxlength="1000" rows="4"><?=h($entrada->anotacoesDescrip())?></textarea>
     </div>
   </div>
-  <br>
   <div class="row">
     <div class="col-sm text-end">
       <?= $this->element('Diversos/btnSalvar')?>
