@@ -1,0 +1,27 @@
+@media screen and (max-width: 768px) {
+	#col-btn-categorias,
+    #col-btn-entrada,
+    #col-btn-busca,
+    #div-lateral,
+    #logo-nao-responsivo{
+		display: none;
+	}
+
+    #opcoes-para-responsivo{
+        display: initial;
+    }
+
+    #menu-superior{
+        width: 100%;
+    }
+
+    #logo-responsivo {
+        display: inline-block;
+        width: 48%;
+    }
+
+    #div-btn-opcoes-menu-superior{
+        display: inline-block;
+        width: 50%;
+    }
+}
