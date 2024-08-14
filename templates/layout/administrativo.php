@@ -34,12 +34,11 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row mb-3">
         <div class="col-sm"></div>
         <div class="col-sm"><?= $this->Flash->render()?></div>
         <div class="col-sm"></div>
       </div>
-      <br>
      	<?= $this->fetch('content') ?>
     </div>
 

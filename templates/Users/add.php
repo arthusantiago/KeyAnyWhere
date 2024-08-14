@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col-sm-auto mb-3">
+    <div class="col-sm-auto">
         <?= $this->element(
             'breadcrumb',
             [
