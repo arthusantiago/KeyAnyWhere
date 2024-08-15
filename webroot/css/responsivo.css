@@ -24,4 +24,17 @@
         display: inline-block;
         width: 50%;
     }
+
+    #botaoFlutuante{
+        display: initial;
+        position: fixed;
+        bottom: 5vh;
+        right: 35vw;
+        z-index: 9;
+        box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
+    }
+
+    #botaoFlutuante > ul {
+        box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
+    }
 }

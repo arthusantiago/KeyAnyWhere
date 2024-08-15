@@ -181,6 +181,7 @@
 
 /* Versao responsiva */
 #logo-responsivo,
-#opcoes-para-responsivo{
+#opcoes-para-responsivo,
+#botaoFlutuante{
 	display: none;
 }

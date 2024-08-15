@@ -24,7 +24,7 @@
 			<?= $this->Html->image("logo-kaw.png", ['url' => ['controller' => 'Pages', 'action' => 'home']]); ?>
 		</div>
 		<nav id="menu-lateral">
-			<?= $this->cell('CategoriasMenu') ?>
+			<?= $this->cell('CategoriasMenu::desktop') ?>
 		</nav>
 	</div>
 	<div class="container-fluid">
@@ -66,6 +66,8 @@
 			</div>
 			<?= $this->fetch('content') ?>
 		</div>
+		<?= $this->element('Diversos/btnFlutuante') ?>
+		<br><br><br>
 	</div>
 	<?php
 		echo $this->element('Users/sessaoExpirada');
