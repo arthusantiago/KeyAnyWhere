@@ -4,7 +4,7 @@
 
 <div class="row">
   <div class="col-sm-auto mb-3">
-    <span class="titulo">Entrada</span>
+    <span class="titulo"><?=h($entrada->tituloDescrip())?></span>
   </div>
 </div>
 

@@ -27,14 +27,14 @@ class CategoriasController extends AppController
      */
     public function listagemEntradas(string $categoria_id)
     {
+        $categoria = $this->Categorias->get($categoria_id);
         $entradas = $this->Categorias->Entradas
             ->find('all')
             ->where(['categoria_id' => $categoria_id])
             ->order(['titulo']);
-
         $entradas = $this->paginate($entradas, ['limit' => 15]);
 
-        $this->set(compact('entradas','categoria_id'));
+        $this->set(compact('entradas','categoria'));
     }
 
     /**

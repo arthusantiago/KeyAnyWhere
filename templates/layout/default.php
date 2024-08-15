@@ -30,25 +30,16 @@
 	<div class="container-fluid">
 		<div id="menu-superior">
 			<div class="row align-items-center" id="row-menu-superior">
-				<div class="col-sm-auto" id="col-btn-categorias">
-					<a class="btn btn-outline-light botoes" role="button" href="<?= $this->Url->build(['controller' => 'Categorias', 'action' => 'index']); ?>" title="Listagem categorias">
-						<i class="bi bi-list-ol icone-opcao"></i>Categorias
-					</a>
-				</div>
-				<div class="col-sm-auto" id="col-btn-entrada">
-					<a class="btn btn-outline-light botoes" role="button" href="<?= $this->Url->build(['controller' => 'Entradas', 'action' => 'add']); ?>" title="Nova entrada">
-						<i class="bi bi-plus-lg icone-opcao"></i>Entrada
-					</a>
-				</div>
-				<div class="col-sm-auto ms-auto" id="col-btn-busca">
-					<input type="search" class="form-control input-busca" id="buscaEntrada" placeholder="Mínimo 3 caracteres"
+				<div class="col-sm"></div>
+				<div class="col-sm-3" id="col-btn-busca">
+					<input type="search" class="form-control input-busca" id="buscaEntrada" placeholder="Buscar uma entrada"
 						data-busca-inserir-resultado="ul-busca-geral" data-busca-url="<?= $this->Url->build(['controller' => 'Entradas', 'action' => 'busca'], ['fullBase' => true]) ?>"
 						data-busca-config='{"qtdCaracMin": 3}'>
 					<div class="div-resultado-busca">
 						<ul class="ul-busca" id="ul-busca-geral"></ul>
 					</div>
 				</div>
-				<div class="col-sm-auto">
+				<div class="col-sm">
 					<div id="logo-responsivo">
 						<?= $this->Html->image("../favicon.ico", ['url' => ['controller' => 'Pages', 'action' => 'home']]); ?>
 					</div>
