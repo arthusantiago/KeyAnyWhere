@@ -16,19 +16,21 @@
         <thead>
             <tr class="text-center titulo-coluna-tabela">
                 <th>Titulo</th>
-                <th>URL</th>
                 <th>Opções</th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($entradas as $entrada): ?>
                 <tr class="text-center">
-                    <td><?= h($entrada->tituloDescrip()) ?></td>
-                    <td>
-                        <a href="<?=h($entrada->linkDescrip())?>" target="_blank" class="text-decoration-none" title="<?=h($entrada->linkDescrip())?>">
-                            <?=h($entrada->linkEncurtado(50))?>
-                        </a>
-                    </td>
+                    <?php if(empty($entrada->linkDescrip())): ?>
+                        <td><?=h($entrada->tituloDescrip())?></td>
+                    <?php else: ?>
+                        <td>
+                            <a href="<?=h($entrada->linkDescrip())?>" target="_blank" class="text-decoration-none">
+                                <?=h($entrada->tituloDescrip())?>
+                            </a>
+                        </td>
+                    <?php endif; ?>
                     <td>
                         <button type="button" class="btn btn-sm btn-outline-secondary botoes btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user">
                             <i class="bi bi-person-fill icone-opcao" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user"></i>Usuário
