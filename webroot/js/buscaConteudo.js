@@ -50,9 +50,14 @@ var factoryRequest = async function (url, parametros)
  */
 async function buscaUserPass(event)
 {
+	let button = event.target;
+	if (button.tagName == 'I') {
+		button = button.parentElement;
+	}
+
 	let body = {
-		'type' : event.target.getAttribute('data-clipboard-tipo'),
-		'id' : event.target.getAttribute('data-clipboard-entrada-id')
+		'type' : button.getAttribute('data-clipboard-tipo'),
+		'id' : button.getAttribute('data-clipboard-entrada-id')
 	};
 	let urlParaBusca = window.location.origin + '/entradas/clipboard/';
 
@@ -66,7 +71,7 @@ async function buscaUserPass(event)
 	.then(function(dadoRetornado){
 		navigator.clipboard.writeText(dadoRetornado.data);
 		let tooltip = new bootstrap.Tooltip(
-			event.target,
+			button,
 			{
 				'trigger': 'manual',
 				'title': body.type == 'user' ? 'Usuário copiado' : 'Senha copiada',

@@ -7,7 +7,7 @@
         <span class="titulo"><?=h($categoria->nomeDescrip())?></span>
     </div>
     <div class="col-sm mb-3 text-end">
-        <?= $this->element('Diversos/btnNovo', ['parametros' => ['controller' => 'entradas', 'texto' => 'Entrada']])?>
+        <?=$this->element('Diversos/btnNovo', ['parametros' => ['controller' => 'entradas', 'texto' => 'Entrada']])?>
     </div>
 </div>
 
@@ -22,7 +22,7 @@
         <tbody>
             <?php foreach ($entradas as $entrada): ?>
                 <tr class="text-center">
-                    <?php if(empty($entrada->linkDescrip())): ?>
+                    <?php if (empty($entrada->linkDescrip())): ?>
                         <td><?=h($entrada->tituloDescrip())?></td>
                     <?php else: ?>
                         <td>
@@ -32,16 +32,25 @@
                         </td>
                     <?php endif; ?>
                     <td>
-                        <button type="button" class="btn btn-sm btn-outline-secondary botoes btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user">
-                            <i class="bi bi-person-fill icone-opcao" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user"></i>Usuário
-                        </button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary botoes btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password">
-                            <i class="bi bi-key-fill icone-opcao" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password"></i>Senha
-                        </button>
-                        <a class="btn btn-sm btn-outline-secondary botoes" role="button"  href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'edit', $entrada->id])?>" title="Editar entrada">
-                            <i class="bi bi-pencil-fill icone-opcao"></i>Editar
-                        </a>
-                        <?= $this->element('Diversos/btnExcluir', ['parametros' => ['controller' => 'Entradas', 'id' => $entrada->id, 'texto' => '']])?>
+                        <div class="btn-group btn-group-sm botoes" role="group">
+                            <button type="button" class="btn btn-outline-secondary btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user">
+                                <i class="bi bi-person-fill icone-opcao"></i>Usuário
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary  btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password">
+                                <i class="bi bi-key-fill icone-opcao"></i>Senha
+                            </button>
+                            <div class="btn-group" role="group">
+                                <button id="btnGroupDrop" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"></button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'edit', $entrada->id])?>">
+                                            <i class="bi bi-pencil-fill icone-opcao"></i>Editar
+                                        </a>
+                                    </li>
+                                    <li><?=$this->element('Diversos/btnExcluir', ['idRegistro' => $entrada->id])?></li>
+                                </ul>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -49,4 +58,5 @@
     </table>
 </div>
 <br>
-<?= $this->element('paginacao');?>
+<?=$this->element('paginacao');?>
+<?=$this->element('Diversos/modalExcluir', ['parametros' => ['controller' => 'Entradas']])?>

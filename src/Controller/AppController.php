@@ -48,8 +48,9 @@ class AppController extends Controller
 
         $userLogado = $this->Authentication->getResult()->getData();
         $sessionTimeout = Configure::read('Session.timeout');
+        $csrfToken =  $this->request->getAttribute('csrfToken');
 
-        $this->set(compact('userLogado', 'sessionTimeout'));
+        $this->set(compact('userLogado', 'sessionTimeout', 'csrfToken'));
     }
 
 

@@ -6,7 +6,7 @@
 	<?= $this->Html->meta('icon', 'favicon.ico') ?>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="sessionTimeout" id="sessionTimeout" content="<?= $sessionTimeout ?>">
-	<?= $this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken')); ?>
+	<?=$this->Html->meta('csrfToken', $csrfToken);?>
 	<?php
 	echo $this->Html->css([
 		'minified/bootstrap.min.css',
