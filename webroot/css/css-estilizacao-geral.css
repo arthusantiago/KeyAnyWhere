@@ -89,6 +89,10 @@
 	border-bottom-width:1px;
 }
 
+.table-responsive {
+	min-height: 180px;
+}
+
 /* Alerts */
 #alert-do-sistema{
 	position: absolute;
