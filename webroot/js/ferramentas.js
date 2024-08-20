@@ -71,6 +71,8 @@ function limparModalExcluir(event) {
 		.querySelector('#idExclusao')
 		.setAttribute('value', '');
 }
-document
-	.querySelector("#btnCancelarModalExcluir")
-	.addEventListener("click", limparModalExcluir);
+if (document.querySelector("#btnCancelarModalExcluir")) {
+	document
+		.querySelector("#btnCancelarModalExcluir")
+		.addEventListener("click", limparModalExcluir);
+}
