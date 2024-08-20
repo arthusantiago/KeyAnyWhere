@@ -19,12 +19,9 @@
                     <td><?= h($session->modified) ?></td>
                     <td><?= $session->esteDispositivo ? '<span class="badge bg-secondary">Este dispositivo</span>' : '' ?></td>
                     <td>
-                        <?php if (!$session->esteDispositivo) {
-                            echo $this->element(
-                                'Diversos/btnExcluir',
-                                ['parametros' => ['texto' => 'Finalizar', 'controller' => 'Users', 'action' => 'finalizarSessao', 'id' => $session->id_secundario]]
-                            );
-                        } ?>
+                    <?php if (!$session->esteDispositivo) {
+                        echo $this->element('Diversos/btnExcluir', ['idRegistro' => $session->id_secundario, 'texto' => 'Finalizar', 'tipo' => 'button']);
+                    } ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

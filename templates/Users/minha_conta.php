@@ -69,3 +69,4 @@
 <?= $this->element('Users/sessions')?>
 </div>
 <br><br>
+<?=$this->element('Diversos/modalExcluir', ['parametros' => ['controller' => 'Users', 'action' => 'finalizarSessao']])?>
