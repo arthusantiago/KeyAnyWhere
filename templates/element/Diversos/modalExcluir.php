@@ -2,7 +2,7 @@
 use Cake\Core\Exception\CakeException;
 
 /**
-  * Modal da confirmação da exclusão.
+  * Modal da confirmação da exclusão. O modal faz um POST para o backend com o ID para exclusão
   *
   * Exemplo de chamada:
   *    <?= $this->element('Diversos/modalExcluir', ['parametros' => ['controller' => 'Categoria', 'action' => 'apagar']])?>
@@ -27,8 +27,8 @@ $url = $this->Url->build([
         <br>
         <p>Você tem certeza dessa ação?</p>
         <?= $this->Form->create(null, ['url' => $url, 'id' => 'formModalExcluirRegistro']); ?>
-          <input type="hidden" name="_csrfToken" autocomplete="off" value="<?=$csrfToken?>">
           <input type="hidden" id="idExclusao" name="id" value="">
+          <input type="hidden" name="_csrfToken" autocomplete="off" value="<?=$csrfToken?>">
         <?= $this->Form->end(['data-type' => 'hidden']);?>
       </div>
       <div class="modal-footer">
