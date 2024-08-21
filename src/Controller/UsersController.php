@@ -54,7 +54,7 @@ class UsersController extends AppController
         // desabilitando o cache por segurança.
         $this->response = $this->response->withDisabledCache();
         $this->Authentication->addUnauthenticatedActions(self::ACTIONS_SEM_AUTENTICACAO);
-        $this->FormProtection->setConfig('unlockedActions', ['geraQrCode2fa', 'finalizarSessao']);
+        $this->FormProtection->setConfig('unlockedActions', ['geraQrCode2fa', 'finalizarSessao', 'delete']);
 
         $caminho = array_values(array_filter(explode('/', $this->request->getPath())));
         if (count($caminho) == 1) {
@@ -156,13 +156,13 @@ class UsersController extends AppController
     /**
      * Delete method
      *
-     * @param string|null $id User id.
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete()
     {
         $this->request->allowMethod(['post', 'delete']);
+        $id = $this->request->getData('id');
         $user = $this->Users->get($id);
         if ($this->Users->delete($user)) {
             $this->Flash->success(__('Excluído com sucesso'));
