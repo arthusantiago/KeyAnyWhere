@@ -13,7 +13,6 @@
         'minified/bootstrap-icons.min.css',
         'minified/kaw.min.css'
       ]);
-      echo $this->Html->css('responsivo.css', ['media' => 'screen and (max-width: 768px)']);
       echo $this->fetch('css');
     ?>
   </head>
