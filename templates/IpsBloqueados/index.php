@@ -33,11 +33,9 @@
         <tbody>
             <?php foreach ($ipsBloqueados as $ip): ?>
                 <tr class="text-center">
-                    <td><?= h($ip->created) ?></td>
+                    <td><?=h($ip->created)?></td>
                     <td><?=h($ip->ip)?></td>
-                    <td>
-                        <?= $this->element('Diversos/btnExcluir', ['parametros' => ['controller' => 'IpsBloqueados', 'id' => $ip->id]])?>
-                    </td>
+                    <td><?=$this->element('Diversos/btnExcluir', ['idRegistro' => $ip->id, 'tipo' => 'button'])?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
@@ -45,3 +43,4 @@
 </div>
 <br>
 <?= $this->element('paginacao');?>
+<?=$this->element('Diversos/modalExcluir', ['parametros' => ['controller' => 'IpsBloqueados']])?>
