@@ -28,8 +28,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btn-aplica-senha">Aplicar senha</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-primary botoes" data-bs-dismiss="modal" id="btn-aplica-senha">Aplicar senha</button>
+        <button type="button" class="btn btn-secondary botoes" data-bs-dismiss="modal">Fechar</button>
       </div>
     </div>
   </div>
