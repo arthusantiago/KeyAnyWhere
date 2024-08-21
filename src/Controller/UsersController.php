@@ -54,7 +54,7 @@ class UsersController extends AppController
         // desabilitando o cache por segurança.
         $this->response = $this->response->withDisabledCache();
         $this->Authentication->addUnauthenticatedActions(self::ACTIONS_SEM_AUTENTICACAO);
-        $this->FormProtection->setConfig('unlockedActions', ['geraQrCode2fa']);
+        $this->FormProtection->setConfig('unlockedActions', ['geraQrCode2fa', 'finalizarSessao']);
 
         $caminho = array_values(array_filter(explode('/', $this->request->getPath())));
         if (count($caminho) == 1) {
