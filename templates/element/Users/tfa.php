@@ -13,14 +13,14 @@
         </div>
         <div class="row">
           <div class="col-sm text-center">
-            <button type="button" class="btn btn-outline-secondary btn-gerar-qrcode" data-qrcode-user-id="<?=$user->id?>" data-qrcode-novo="1">
+            <button type="button" class="btn btn-outline-secondary btn-gerar-qrcode botoes" data-qrcode-user-id="<?=$user->id?>" data-qrcode-novo="1">
               Gerar novo QrCode
             </button>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-secondary botoes" data-bs-dismiss="modal">Fechar</button>
       </div>
     </div>
   </div>
