@@ -17,10 +17,12 @@
         <tbody>
             <?php foreach ($query as $categoria): ?>
                 <tr class="text-center">
-                    <td><?= h($categoria->nomeDescrip()) ?></td>
+                    <td><?=h($categoria->nomeDescrip())?></td>
                     <td>
-                        <?=$this->element('Diversos/btnEditar', ['parametros' => ['controller' => 'Categorias', 'id' => $categoria->id]])?>
-                        <?= $this->element('Diversos/btnExcluir', ['parametros' => ['controller' => 'Categorias', 'id' => $categoria->id]])?>
+                        <div class="btn-group btn-group-sm botoes" role="group">
+                            <?=$this->element('Diversos/btnEditar', ['parametros' => ['controller' => 'Categorias', 'id' => $categoria->id]])?>
+                            <?=$this->element('Diversos/btnExcluir', ['idRegistro' => $categoria->id, 'tipo' => 'button'])?>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -29,3 +31,4 @@
 </div>
 <br>
 <?= $this->element('paginacao');?>
+<?=$this->element('Diversos/modalExcluir', ['parametros' => ['controller' => 'Categorias']])?>
