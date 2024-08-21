@@ -1,4 +1,16 @@
 <div class="row">
+  <div class="col-sm-auto">
+    <?= $this->element(
+      'breadcrumb',
+      ['caminho' => [
+        ['Categorias', 'index', 'Categorias'],
+        'Editando'
+      ]]
+    ); ?>
+  </div>
+</div>
+
+<div class="row">
 	<div class="col-sm-auto mb-3">
 		<span class="titulo">Categoria <?= h($categoria->nomeDescrip()) ?></span>
 	</div>
