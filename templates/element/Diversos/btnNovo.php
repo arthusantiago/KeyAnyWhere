@@ -82,5 +82,5 @@ if (isset($parametros['texto']) == true && empty($parametros['texto']) == false)
 	role="button"
   <?=$atributoHTML?>
 >
-	<i class="bi bi-plus-lg icone-opcao"></i><?=$texto?>
+	<i class="bi bi-plus-lg"></i><?=$texto?>
 </a>

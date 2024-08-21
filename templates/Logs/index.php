@@ -45,7 +45,7 @@
                             </a>
                         <?php endif; ?>
                         <a class="btn btn-sm btn-outline-secondary botoes" role="button"  href="<?=$this->Url->build(['controller' => 'Logs', 'action' => 'view', $log->id])?>" title="Detalhes">
-                            <i class="bi bi-eye-fill icone-opcao"></i>Detalhes
+                            <i class="bi bi-eye-fill"></i>Detalhes
                         </a>
                     </td>
                 </tr>

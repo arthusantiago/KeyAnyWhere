@@ -22,10 +22,6 @@
 	box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
 }
 
-.icone-opcao{
-	margin-right: 3px;
-}
-
 .inputs{
 	box-shadow: 0px 1px 2px rgba(0,0,0,0.2);
 }
@@ -91,6 +87,14 @@
 
 .table-responsive {
 	min-height: 180px;
+}
+
+a > i, button > i {
+	margin-right: 4px;
+}
+
+a {
+	align-content: center;
 }
 
 /* Alerts */

@@ -11,7 +11,8 @@
       echo $this->Html->css([
       	'minified/bootstrap.min.css',
         'minified/bootstrap-icons.min.css',
-      	'minified/kaw.min.css',
+        'css-estilizacao-geral.css'
+        //'minified/kaw.min.css'
       ]);
       echo $this->Html->css('responsivo.css', ['media' => 'screen and (max-width: 768px)']);
       echo $this->fetch('css');

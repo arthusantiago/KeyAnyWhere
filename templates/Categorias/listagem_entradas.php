@@ -34,17 +34,17 @@
                     <td>
                         <div class="btn-group btn-group-sm botoes" role="group">
                             <button type="button" class="btn btn-outline-secondary btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user">
-                                <i class="bi bi-person-fill icone-opcao"></i>Usuário
+                                <i class="bi bi-person-fill"></i>Usuário
                             </button>
                             <button type="button" class="btn btn-outline-secondary  btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password">
-                                <i class="bi bi-key-fill icone-opcao"></i>Senha
+                                <i class="bi bi-key-fill"></i>Senha
                             </button>
                             <div class="btn-group" role="group">
                                 <button id="btnGroupDrop" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"></button>
                                 <ul class="dropdown-menu">
                                     <li>
                                         <a class="dropdown-item" href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'edit', $entrada->id])?>">
-                                            <i class="bi bi-pencil-fill icone-opcao"></i>Editar
+                                            <i class="bi bi-pencil-fill"></i>Editar
                                         </a>
                                     </li>
                                     <li><?=$this->element('Diversos/btnExcluir', ['idRegistro' => $entrada->id])?></li>

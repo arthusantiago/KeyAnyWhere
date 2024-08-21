@@ -11,41 +11,41 @@
     <ul class="dropdown-menu">
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Pages', 'action' => 'home']) ?>">
-                <i class="bi bi-house icone-opcao"></i>Home
+                <i class="bi bi-house"></i>Home
             </a>
         </li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'minhaConta']) ?>">
-                <i class="bi bi-person icone-opcao"></i>Minha Conta
+                <i class="bi bi-person"></i>Minha Conta
             </a>
         </li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Categorias', 'action' => 'index']); ?>">
-                <i class="bi bi-list-ol icone-opcao"></i>Categorias
+                <i class="bi bi-list-ol"></i>Categorias
             </a>
         </li>
         <?php if ($userLogado->root): ?>
         <li><h6 class="dropdown-header">Configurações</h6></li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'index']) ?>">
-                <i class="bi bi-people icone-opcao"></i>Usuários
+                <i class="bi bi-people"></i>Usuários
             </a>
         </li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Logs', 'action' => 'index']) ?>">
-                <i class="bi bi-journal-text icone-opcao"></i>Logs
+                <i class="bi bi-journal-text"></i>Logs
             </a>
         </li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'IpsBloqueados', 'action' => 'index']) ?>">
-                <i class="bi bi-shield-x icone-opcao"></i>IPs Bloqueados
+                <i class="bi bi-shield-x"></i>IPs Bloqueados
             </a>
         </li>
     <?php endif; ?>
         <li><hr class="dropdown-divider"></li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'logout']) ?>">
-                <i class="bi bi-box-arrow-right icone-opcao"></i>Sair
+                <i class="bi bi-box-arrow-right"></i>Sair
             </a>
         </li>
     </ul>
