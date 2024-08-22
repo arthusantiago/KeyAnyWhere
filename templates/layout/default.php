@@ -4,9 +4,9 @@
 	<title>KeyAnyWhere</title>
 	<?= $this->Html->charset() ?>
 	<?= $this->Html->meta('icon', 'favicon.ico') ?>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="sessionTimeout" id="sessionTimeout" content="<?= $sessionTimeout ?>">
 	<?=$this->Html->meta('csrfToken', $csrfToken);?>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="sessionTimeout" id="sessionTimeout" content="<?=$sessionTimeout?>">
 	<?php
 	echo $this->Html->css([
 		'minified/bootstrap.min.css',
