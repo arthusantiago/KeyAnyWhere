@@ -50,6 +50,7 @@
 .categorias > a {
     color: white;
 	padding-left: unset;
+	width: 100%;
 }
 
 .categorias > a:hover {
