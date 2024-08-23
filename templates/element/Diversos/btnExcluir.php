@@ -34,7 +34,7 @@ switch ($tipo) {
     break;
 
   case 'button':
-    $atributosHtmlBotao = 'class="btn btn-sm btn-outline-danger botoes btnExcluir" role="button"';
+    $atributosHtmlBotao = 'class="btn btn-sm btn-outline-danger btnExcluir" role="button"';
     break;
 }
 ?>
