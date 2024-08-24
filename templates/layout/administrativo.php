@@ -14,6 +14,7 @@
         'minified/kaw.min.css'
       ]);
       echo $this->fetch('css');
+      echo $this->fetch('script-first-load');
     ?>
   </head>
   <body>
@@ -21,11 +22,11 @@
       <div id="menu-administrativo">
         <div class="row">
           <div class="col-sm" id="logo-nao-responsivo">
-            <?=$this->Html->image("logo-kaw.png", ['url' => ['controller' => 'Pages', 'action' => 'home']]);?>
+            <?=$this->Html->image('logo-kaw.png', ['url' => ['controller' => 'Pages', 'action' => 'home']]);?>
           </div>
           <div class="col-sm-auto my-1">
             <div id="logo-responsivo">
-              <?=$this->Html->image("../favicon.ico", ['url' => ['controller' => 'Pages', 'action' => 'home']]);?>
+              <?=$this->Html->image('../favicon.ico', ['url' => ['controller' => 'Pages', 'action' => 'home']]);?>
             </div>
             <div class="text-end" id="div-btn-opcoes-menu-superior">
               <?=$this->element('Diversos/btnOpcoes')?>
@@ -35,19 +36,19 @@
       </div>
       <div class="row mb-3">
         <div class="col-sm"></div>
-        <div class="col-sm"><?= $this->Flash->render()?></div>
+        <div class="col-sm"><?=$this->Flash->render()?></div>
         <div class="col-sm"></div>
       </div>
-     	<?= $this->fetch('content') ?>
+     	<?=$this->fetch('content')?>
     </div>
-    <?=$this->element('buscaModal')?>
     <?php
+      echo $this->element('buscaModal');
       echo $this->element('Users/sessaoExpirada');
       echo $this->Html->script('minified/popper.min.js');
       echo $this->Html->script('minified/bootstrap.min.js');
       echo $this->Html->script('minified/easytimer.min.js');
-      echo $this->Html->script('minified/buscaConteudo.min.js');
       echo $this->Html->script('minified/ferramentas.min.js');
+      echo $this->Html->script('minified/buscaConteudo.min.js');
     ?>
   </body>
 </html>

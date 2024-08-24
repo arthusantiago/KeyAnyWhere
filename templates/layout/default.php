@@ -20,10 +20,10 @@
 <body>
 	<div id="div-lateral">
 		<div id="logo-kaw">
-			<?= $this->Html->image("logo-kaw.png", ['url' => ['controller' => 'Pages', 'action' => 'home']]); ?>
+			<?=$this->Html->image('logo-kaw.png', ['url' => ['controller' => 'Pages', 'action' => 'home']]);?>
 		</div>
 		<nav id="menu-lateral">
-			<?= $this->cell('CategoriasMenu::desktop') ?>
+			<?=$this->cell('CategoriasMenu::desktop')?>
 		</nav>
 	</div>
 	<div class="container-fluid">
@@ -38,10 +38,10 @@
 				</div>
 				<div class="col-sm">
 					<div id="logo-responsivo">
-						<?= $this->Html->image("../favicon.ico", ['url' => ['controller' => 'Pages', 'action' => 'home']]); ?>
+						<?=$this->Html->image('../favicon.ico', ['url' => ['controller' => 'Pages', 'action' => 'home']])?>
 					</div>
 					<div class="text-end" id="div-btn-opcoes-menu-superior">
-						<?= $this->element('Diversos/btnOpcoes') ?>
+						<?=$this->element('Diversos/btnOpcoes')?>
 					</div>
 				</div>
 			</div>
@@ -49,22 +49,22 @@
 		<div id="corpo-conteudo">
 			<div class="row">
 				<div class="col-sm"></div>
-				<div class="col-sm"><?= $this->Flash->render() ?></div>
+				<div class="col-sm"><?=$this->Flash->render()?></div>
 				<div class="col-sm"></div>
 			</div>
-			<?= $this->fetch('content') ?>
+			<?=$this->fetch('content')?>
 		</div>
 		<?=$this->element('Diversos/btnFlutuante')?>
 		<br><br><br>
 	</div>
-	<?=$this->element('buscaModal')?>
 	<?php
+		echo $this->element('buscaModal');
 		echo $this->element('Users/sessaoExpirada');
 		echo $this->Html->script('minified/popper.min.js');
 		echo $this->Html->script('minified/bootstrap.min.js');
 		echo $this->Html->script('minified/easytimer.min.js');
-		echo $this->Html->script('minified/buscaConteudo.min.js');
 		echo $this->Html->script('minified/ferramentas.min.js');
+		echo $this->Html->script('minified/buscaConteudo.min.js');
 		echo $this->fetch('script-last-load');
 	?>
 </body>
