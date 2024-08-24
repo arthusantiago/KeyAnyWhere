@@ -363,7 +363,7 @@ class UsersController extends AppController
         );
 
         $render = new ImageRenderer(
-            new RendererStyle(400),
+            new RendererStyle(300),
             new SvgImageBackEnd()
         );
 
