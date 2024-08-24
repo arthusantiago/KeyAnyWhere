@@ -31,9 +31,7 @@
 			<div class="row align-items-center" id="row-menu-superior">
 				<div class="col-sm"></div>
 				<div class="col-sm-3" id="col-btn-busca">
-					<input type="search" class="form-control input-busca" id="buscaEntrada" placeholder="Buscar uma entrada"
-						data-busca-inserir-resultado="ul-busca-geral" data-busca-url="<?= $this->Url->build(['controller' => 'Entradas', 'action' => 'busca'], ['fullBase' => true]) ?>"
-						data-busca-config='{"qtdCaracMin": 3}'>
+					<?=$this->element('buscaInput', ['inserirResultadoBusca' => 'ul-busca-geral'])?>
 					<div class="div-resultado-busca">
 						<ul class="ul-busca" id="ul-busca-geral"></ul>
 					</div>
@@ -56,9 +54,10 @@
 			</div>
 			<?= $this->fetch('content') ?>
 		</div>
-		<?= $this->element('Diversos/btnFlutuante') ?>
+		<?=$this->element('Diversos/btnFlutuante')?>
 		<br><br><br>
 	</div>
+	<?=$this->element('buscaModal')?>
 	<?php
 		echo $this->element('Users/sessaoExpirada');
 		echo $this->Html->script('minified/popper.min.js');

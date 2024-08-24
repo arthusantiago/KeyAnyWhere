@@ -94,16 +94,11 @@ document
 
 
 /**
- * Busca generica que envia ao servidor o JSON e espera receber um HTML de retorno.
- *
- * A função ira acessar três atributos no elemento HTML que acionou o manipulador:
+ * Busca genérica que envia ao servidor o JSON e espera receber um HTML de retorno.
+ * Atributos esperados no elemento HTML que acionou o manipulador:
  * 'data-busca-inserir-resultado' : ID do elemento HTML onde será inserido o html de retorno do servidor
  * 'data-busca-url' : URL para onde será disparada a request
- * 'data-busca-config' : Configurações adicionais para a execução da request.
- * 		'qtdCaracMin' (Obrigatório) Quantidade mínima de caracteres que o usuário precisa inserir no campo.
- * 		'tempoEspera' (Opcional) Tempo que a função deve esperar para executar a request pro servidor.
- *				  Informar em milissegundos. O padrão é 2000 ms (2 segundos)
- *		'paramAdicional' : Você pode adicionar a requisição algum dado desejado em formato de JSON.
+ *
  * @param Event event Evento que está acionando a function (manipulado)
  */
 let paraExecutar;
@@ -112,19 +107,21 @@ function buscaGenerica(event)
 	let inputOrigemBusca = event.target;
 	let destinoHtmlRetorno = inputOrigemBusca.getAttribute('data-busca-inserir-resultado');
 	let urlParaBusca = inputOrigemBusca.getAttribute('data-busca-url');
-	let config = JSON.parse(inputOrigemBusca.getAttribute('data-busca-config'));
+	let config = {
+		'quantMinCaracter': 3,
+		'tempoEspera': 2000 //milissegundos
+	};
 
-	if(inputOrigemBusca.value.length >= config.qtdCaracMin)
+	if(inputOrigemBusca.value.length >= config.quantMinCaracter)
 	{
 		clearTimeout(paraExecutar);
 
 		let chamadaAoServidor = function()
 		{
-			if (inputOrigemBusca.value.length >= config.qtdCaracMin) 
+			if (inputOrigemBusca.value.length >= config.quantMinCaracter)
 			{
 				let dadosParaRequest = JSON.stringify({
 					stringBusca: inputOrigemBusca.value,
-					paramAdicional: config.paramAdicional
 				});
 
 				factoryRequest(
@@ -149,21 +146,18 @@ function buscaGenerica(event)
 			}
 		};
 
-		if(config.tempoEspera){
-			paraExecutar = setTimeout(chamadaAoServidor, config.tempoEspera);
-		}else{
-			paraExecutar = setTimeout(chamadaAoServidor, 2000);
-		}
+		paraExecutar = setTimeout(chamadaAoServidor, config.tempoEspera);
 		document.getElementById(destinoHtmlRetorno).innerHTML = "<li><a>Buscando...</a></li>";
-
 	} else {
-		document.getElementById(destinoHtmlRetorno).innerHTML = "<li><a>Digite no mínimo " + config.qtdCaracMin + " caracteres.</a></li>";
+		document.getElementById(destinoHtmlRetorno).innerHTML = "<li><a>Digite no mínimo " + config.quantMinCaracter + " caracteres</a></li>";
 	}
 }
 /* Aplicando o manipulador de evento no elemento HTML*/
-let element = document.getElementById('buscaEntrada');
-if (element) {
-	element.addEventListener("input", buscaGenerica);
+let inputsBuscas = document.querySelectorAll('.input-busca');
+if (inputsBuscas) {
+	inputsBuscas.forEach(function (currentValue, currentIndex, listObj) {
+		currentValue.addEventListener('input', buscaGenerica);
+	});
 }
 
 
@@ -183,15 +177,17 @@ function removeResultadoBuscaGenerico(event) {
 				}
 			}
 		},
-		500
+		300
 	);
 
 	inputOrigemBusca.value = '';
 }
 /* Aplicando o manipulador de evento no elemento HTML*/
-element = document.getElementById('buscaEntrada');
-if (element) {
-	element.addEventListener("blur", removeResultadoBuscaGenerico);
+let removerResultBusca = document.querySelectorAll('.input-busca');
+if (removerResultBusca) {
+	removerResultBusca.forEach(function (currentValue, currentIndex, listObj) {
+		currentValue.addEventListener('blur', removeResultadoBuscaGenerico);
+	});
 }
 
 

@@ -21,7 +21,7 @@
         width: 50%;
     }
 
-    #botaoFlutuante{
+    #botao-flutuante{
         display: initial;
         position: fixed;
         bottom: 5vh;
@@ -30,7 +30,11 @@
         box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
     }
 
-    #botaoFlutuante > ul {
+    #botao-flutuante > ul {
         box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
+    }
+
+    #btn-menu-opcao-busca{
+        display: initial;
     }
 }

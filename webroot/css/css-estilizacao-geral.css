@@ -189,6 +189,7 @@ a {
 
 /* Versao responsiva */
 #logo-responsivo,
-#botaoFlutuante{
+#botao-flutuante,
+#btn-menu-opcao-busca{
 	display: none;
 }

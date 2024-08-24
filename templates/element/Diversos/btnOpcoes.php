@@ -14,6 +14,11 @@
                 <i class="bi bi-house"></i>Home
             </a>
         </li>
+        <li id="btn-menu-opcao-busca">
+            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalBusca">
+                <i class="bi bi-search"></i>Busca
+            </a>
+        </li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'minhaConta']) ?>">
                 <i class="bi bi-person"></i>Minha Conta
