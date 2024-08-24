@@ -58,6 +58,6 @@ class LogsController extends AppController
             $this->Flash->error(null, ['params' => ['mensagens' => $log->getErrors()]]);
         }
 
-        return $this->redirect($this->referer());
+        return $this->redirect(['action' => 'index']);
     }
 }

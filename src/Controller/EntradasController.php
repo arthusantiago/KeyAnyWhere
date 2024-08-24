@@ -93,7 +93,7 @@ class EntradasController extends AppController
             $this->Flash->error(null, ['params' => ['mensagens' => $entrada->getErrors()]]);
         }
 
-        return $this->redirect($this->request->referer());
+        return $this->redirect(['controller' => 'categorias', 'action' => 'listagemEntradas', $entrada->categoria_id]);
     }
 
     /**

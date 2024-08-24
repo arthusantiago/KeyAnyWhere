@@ -40,7 +40,7 @@
       </div>
      	<?= $this->fetch('content') ?>
     </div>
-
+    <?=$this->element('buscaModal')?>
     <?php
       echo $this->element('Users/sessaoExpirada');
       echo $this->Html->script('minified/popper.min.js');
