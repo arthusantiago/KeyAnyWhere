@@ -17,6 +17,7 @@ class CategoriasController extends AppController
         parent::beforeFilter($event);
         // desabilitando o cache por segurança.
         $this->response = $this->response->withDisabledCache();
+        $this->FormProtection->setConfig('unlockedActions', ['delete']);
     }
 
     /**
@@ -27,14 +28,14 @@ class CategoriasController extends AppController
      */
     public function listagemEntradas(string $categoria_id)
     {
+        $categoria = $this->Categorias->get($categoria_id);
         $entradas = $this->Categorias->Entradas
             ->find('all')
             ->where(['categoria_id' => $categoria_id])
             ->order(['titulo']);
-
         $entradas = $this->paginate($entradas, ['limit' => 15]);
 
-        $this->set(compact('entradas','categoria_id'));
+        $this->set(compact('entradas','categoria'));
     }
 
     /**
@@ -103,13 +104,13 @@ class CategoriasController extends AppController
      * Delete method
      * O delete acontece em cascata: categoria > entrada
      *
-     * @param string|null $id Categoria id.
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id)
+    public function delete()
     {
         $this->request->allowMethod(['post', 'delete']);
+        $id = $this->request->getData('id');
         $categoria = $this->Categorias->get($id);
         if ($this->Categorias->delete($categoria)) {
             $this->Flash->success(__('Excluído com sucesso'));

@@ -18,7 +18,7 @@ class EntradasController extends AppController
         parent::beforeFilter($event);
         // desabilitando o cache por segurança.
         $this->response = $this->response->withDisabledCache();
-        $this->FormProtection->setConfig('unlockedActions', ['busca', 'senhaInsegura', 'clipboard']);
+        $this->FormProtection->setConfig('unlockedActions', ['busca', 'senhaInsegura', 'clipboard', 'delete']);
     }
 
     /**
@@ -83,17 +83,17 @@ class EntradasController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete()
     {
         $this->request->allowMethod(['post', 'delete']);
-        $entrada = $this->Entradas->get($id);
+        $entrada = $this->Entradas->get($this->request->getData('id'));
         if ($this->Entradas->delete($entrada)) {
             $this->Flash->success(__('Excluído com sucesso'));
         } else {
             $this->Flash->error(null, ['params' => ['mensagens' => $entrada->getErrors()]]);
         }
 
-        return $this->redirect($this->request->referer());
+        return $this->redirect(['controller' => 'categorias', 'action' => 'listagemEntradas', $entrada->categoria_id]);
     }
 
     /**

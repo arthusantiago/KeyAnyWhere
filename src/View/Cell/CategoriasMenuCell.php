@@ -28,17 +28,32 @@ class CategoriasMenuCell extends Cell
     }
 
     /**
-     * Default display method.
+     * Recupera as categorias utilizadas no menu da versão de desktop
      *
      * @return void
      */
-    public function display()
+    public function desktop()
     {
-        $categorias = $this->fetchTable('Categorias');
-        $query = $categorias
+        $query = $this->queryCategorias();
+        $this->set(compact('query'));
+    }
+
+    /**
+     * Recupera as categorias utilizadas no menu da versão responsiva do site
+     *
+     * @return void
+     */
+    public function responsivo()
+    {
+        $query = $this->queryCategorias();
+        $this->set(compact('query'));
+    }
+
+    private function queryCategorias()
+    {
+        return $this
+            ->fetchTable('Categorias')
             ->find('all')
             ->order(['posicao']);
-
-        $this->set(compact('query'));
     }
 }

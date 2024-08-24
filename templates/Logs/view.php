@@ -13,13 +13,13 @@
 </div>
 
 <div class="row">
-    <div class="col-sm-auto">
+    <div class="col-sm-auto mb-3">
         <span class="titulo">Detalhes do log</span>
     </div>
 </div>
 
 <div class="row">
-    <div>
+    <div class="table-responsive">
         <table class="table table-md">
             <tbody>
                 <tr>
@@ -32,7 +32,7 @@
                 </tr>
                 <tr>
                     <th><?='Ip Origem'?></th>
-                    <td><?= h($log->ip_origem) ?></td>
+                    <td><?=h($log->ip_origem) ?></td>
                 </tr>
                 <tr>
                     <th><?='Usuário'?></th>

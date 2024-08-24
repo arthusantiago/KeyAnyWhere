@@ -1,12 +1,11 @@
 <br>
 <div class='row'>
-    <div class="col-sm text-center">
+    <div class="col-sm mb-3 text-center">
         <h1>Minha Segurança</h1>
     </div>
 </div>
-<br>
 <div class='row'>
-    <div class="col-sm-4">
+    <div class="col-sm-4 mb-3">
         <h2>Atividades suspeitas</h2>
         <?php if ($logs): ?>
             <ul class="list-group">
@@ -26,7 +25,7 @@
             <p>Aparentemente tranquilo. Continue atento &#128373;&#127997;</p>
         <?php endif; ?>
     </div>
-    <div class="col-sm-auto">
+    <div class="col-sm-auto mb-3">
         <h2>Últimos IPs bloqueados</h2>
         <?php if ($ipsBloqueados): ?>
             <ul class="list-group">

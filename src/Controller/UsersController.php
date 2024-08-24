@@ -54,7 +54,7 @@ class UsersController extends AppController
         // desabilitando o cache por segurança.
         $this->response = $this->response->withDisabledCache();
         $this->Authentication->addUnauthenticatedActions(self::ACTIONS_SEM_AUTENTICACAO);
-        $this->FormProtection->setConfig('unlockedActions', ['geraQrCode2fa']);
+        $this->FormProtection->setConfig('unlockedActions', ['geraQrCode2fa', 'finalizarSessao', 'delete']);
 
         $caminho = array_values(array_filter(explode('/', $this->request->getPath())));
         if (count($caminho) == 1) {
@@ -156,13 +156,13 @@ class UsersController extends AppController
     /**
      * Delete method
      *
-     * @param string|null $id User id.
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete()
     {
         $this->request->allowMethod(['post', 'delete']);
+        $id = $this->request->getData('id');
         $user = $this->Users->get($id);
         if ($this->Users->delete($user)) {
             $this->Flash->success(__('Excluído com sucesso'));
@@ -269,7 +269,7 @@ class UsersController extends AppController
      */
     public function finalizarSessao()
     {
-        $this->request->allowMethod('post');
+        $this->request->allowMethod(['post', 'patch']);
         $idSession = $this->request->getData('id');
 
         $validator = new Validator();
@@ -288,7 +288,7 @@ class UsersController extends AppController
             }
         }
 
-        $this->redirect($this->request->referer());
+        $this->redirect(['action' => 'minhaConta']);
     }
 
     /**
@@ -363,7 +363,7 @@ class UsersController extends AppController
         );
 
         $render = new ImageRenderer(
-            new RendererStyle(400),
+            new RendererStyle(300),
             new SvgImageBackEnd()
         );
 

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Event\EventInterface;
+
 /**
  * IpsBloqueados Controller
  *
@@ -11,6 +13,12 @@ namespace App\Controller;
  */
 class IpsBloqueadosController extends AppController
 {
+    public function beforeFilter(EventInterface $event)
+    {
+        parent::beforeFilter($event);
+        $this->FormProtection->setConfig('unlockedActions', ['delete']);
+    }
+
     /**
      * Index method
      *
@@ -54,13 +62,13 @@ class IpsBloqueadosController extends AppController
     /**
      * Delete method
      *
-     * @param string|null $id Ips Bloqueado id.
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete()
     {
         $this->request->allowMethod(['post', 'delete']);
+        $id = $this->request->getData('id');
         $ipsBloqueado = $this->IpsBloqueados->get($id);
         if ($this->IpsBloqueados->delete($ipsBloqueado)) {
             $this->Flash->success(__('Excluído com sucesso'));

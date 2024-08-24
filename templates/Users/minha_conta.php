@@ -14,33 +14,31 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-sm-auto">
+  <div class="col-sm-auto mb-3">
     <span class="titulo">Minha Conta</span>
     <?=$user->root?'<span class="badge bg-secondary">Usuário root</span>':'';?>
   </div>
 </div>
-<br>
 
 <?= $this->Form->create($user) ?>
   <?php $this->Form->secure(['username', 'email', 'password']); ?>
   <div class="row">
-    <div class="col-sm">
+    <div class="col-sm mb-3">
       <label for="username">Nome do Usuário</label>
       <input type="text" class="form-control inputs" id="username" name="username" value="<?=h($user->username)?>" maxlength="50">
     </div>
-    <div class="col-sm">
+    <div class="col-sm mb-3">
       <label for="email">E-mail (login e rec. de senha)</label>
       <input type="email" class="form-control inputs" id="email" name="email" value="<?=h($user->email)?>" maxlength="100" autocomplete="email">
     </div>
   </div>
-  <br>
   <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-6 mb-3">
       <?= $this->element('inputSenhaUser')?>
     </div>
   </div>
   <div class="row">
-    <div class="col-sm text-end">
+    <div class="col-sm mb-3 text-end">
       <?= $this->element('Diversos/btnSalvar')?>
     </div>
   </div>
@@ -48,13 +46,12 @@
 <hr/>
 
 <div class="row">
-  <div class="col-sm-auto">
+  <div class="col-sm-auto mb-3">
     <span class="titulo">Segurança</span>
   </div>
 </div>
-<br>
 <div class="row">
-  <div class="col-sm-auto">
+  <div class="col-sm-auto mb-3">
     <button type="button" class="btn btn-outline-secondary btn-gerar-qrcode" data-bs-toggle="modal" data-bs-target="#TFAModal" data-qrcode-user-id="<?=$user->id?>">
       Autenticação de Dois Fatores
     </button>
@@ -64,12 +61,12 @@
 <hr/>
 
 <div class="row">
-  <div class="col-sm-auto">
+  <div class="col-sm-auto mb-3">
     <span class="titulo">Sessões</span>
   </div>
 </div>
-<br>
 <div class="row">
 <?= $this->element('Users/sessions')?>
 </div>
 <br><br>
+<?=$this->element('Diversos/modalExcluir', ['parametros' => ['controller' => 'Users', 'action' => 'finalizarSessao']])?>
