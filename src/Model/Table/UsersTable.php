@@ -47,10 +47,6 @@ class UsersTable extends Table
 
         $this->addBehavior('Timestamp');
 
-        $this->hasMany('Entradas', [
-            'foreignKey' => 'user_id',
-        ]);
-
         $this->hasMany('Sessions', [
             'foreignKey' => 'user_id',
         ]);
