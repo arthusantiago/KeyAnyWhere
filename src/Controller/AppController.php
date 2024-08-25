@@ -18,6 +18,8 @@ namespace App\Controller;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Event\EventInterface;
+use App\Model\Table\IpsBloqueadosTable;
 
 /**
  * Application Controller
@@ -53,13 +55,28 @@ class AppController extends Controller
         $this->set(compact('userLogado', 'sessionTimeout', 'csrfToken'));
     }
 
+    public function beforeFilter(EventInterface $event)
+    {
+        if ($this->ipEstaBloqueado()) {
+            $this->viewBuilder()->setLayout('layout_vazio');
+            return $this->render('/IpsBloqueados/ip_bloqueado');
+        }
+    }
 
-    // public function beforeFilter(EventInterface $event)
-    // {
-    //     parent::beforeFilter($event);
+    /**
+     * Verifica se o IP de quem está acessar, foi bloqueado
+     *
+     * @access	private
+     * @return	bool
+     */
+    private function ipEstaBloqueado(): bool
+    {
+        $ipBloqueado = (new IpsBloqueadosTable)
+            ->find()
+            ->where(['ip' => $this->request->clientIp()])
+            ->limit(1)
+            ->toArray();
 
-    //     // permitindo que qualquer um posso fazer requisição para os servidor
-    //     //$this->response  = $this->response->withHeader('Access-Control-Allow-Origin', '*');
-
-    // }
+        return empty($ipBloqueado) ? false : true;
+    }
 }

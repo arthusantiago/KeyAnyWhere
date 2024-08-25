@@ -33,7 +33,7 @@ class CategoriasController extends AppController
             ->find('all')
             ->where(['categoria_id' => $categoria_id])
             ->order(['titulo']);
-        $entradas = $this->paginate($entradas, ['limit' => 15]);
+        $entradas = $this->paginate($entradas, ['limit' => 11]);
 
         $this->set(compact('entradas','categoria'));
     }
@@ -49,7 +49,7 @@ class CategoriasController extends AppController
         ->find('all')
         ->order(['posicao']);
 
-        $query = $this->paginate($query, ['limit' => 15]);
+        $query = $this->paginate($query, ['limit' => 11]);
 
         $this->set(compact('query'));
     }

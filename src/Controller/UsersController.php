@@ -9,7 +9,6 @@ use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use App\Model\Entity\User;
-use App\Model\Table\IpsBloqueadosTable;
 use App\Log\GerenciadorEventos;
 use Authentication\Authenticator\ResultInterface;
 use Cake\Validation\Validator;
@@ -45,11 +44,6 @@ class UsersController extends AppController
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
-
-        if ($this->ipEstaBloqueado()) {
-            $this->viewBuilder()->setLayout('layout_vazio');
-            return $this->render('/IpsBloqueados/ip_bloqueado');
-        }
 
         // desabilitando o cache por segurança.
         $this->response = $this->response->withDisabledCache();
@@ -387,23 +381,6 @@ class UsersController extends AppController
         $user->tfa_secret = $user->geraSecret2FA();
         $this->Users->save($user);
         return $user;
-    }
-
-    /**
-     * Verifica se o IP do host que está tentando acessar está bloqueado.
-     *
-     * @access	private
-     * @return	mixed
-     */
-    private function ipEstaBloqueado(): bool
-    {
-        $ipBloqueado = (new IpsBloqueadosTable)
-            ->find()
-            ->where(['ip' => $this->request->clientIp()])
-            ->limit(1)
-            ->toArray();
-
-        return empty($ipBloqueado) ? false : true;
     }
 
     /**

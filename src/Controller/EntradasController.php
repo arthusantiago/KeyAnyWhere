@@ -31,8 +31,6 @@ class EntradasController extends AppController
         $entrada = $this->Entradas->newEmptyEntity();
         if ($this->request->is('post')) {
             $entrada = $this->Entradas->patchEntity($entrada, $this->request->getData());
-            //setar aqui o ID do usuário logado
-            $entrada->user_id = $this->request->getAttribute('identity')->getIdentifier();
 
             if ($this->Entradas->save($entrada)) {
                 $this->Flash->success(__('Salvo com sucesso'));

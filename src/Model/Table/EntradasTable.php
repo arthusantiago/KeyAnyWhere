@@ -52,10 +52,6 @@ class EntradasTable extends Table
             'foreignKey' => 'categoria_id',
             'joinType' => 'INNER',
         ]);
-        $this->belongsTo('Users', [
-            'foreignKey' => 'user_id',
-            'joinType' => 'INNER',
-        ]);
 
         $this->_validatorClass = ValidatorKaw::class;
     }
@@ -123,7 +119,6 @@ class EntradasTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn('categoria_id', 'Categorias', 'Categoria não encontrada'), ['errorField' => 'categoria_id']);
-        $rules->add($rules->existsIn('user_id', 'Users', 'Usuário não localizado'), ['errorField' => 'user_id']);
 
         return $rules;
     }
