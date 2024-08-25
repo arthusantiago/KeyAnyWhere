@@ -55,7 +55,6 @@
 			<?=$this->fetch('content')?>
 		</div>
 		<?=$this->element('Diversos/btnFlutuante')?>
-		<br><br><br>
 	</div>
 	<?php
 		echo $this->element('buscaModal');
