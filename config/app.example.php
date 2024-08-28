@@ -439,7 +439,7 @@ return [
             'engine' => 'DatabaseSession',
             'model' => 'Sessions'
         ],
-        'timeout' => 1440,
+        'timeout' => 480,
         'cookie' => '__Secure-KAW',
         'ini' => [
             'session.cookie_secure' => true,
