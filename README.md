@@ -5,8 +5,6 @@ Fique tranquilo, os [requisitos mínimos](https://github.com/arthusantiago/KeyAn
 
 Para ter acesso ao ambiente de demonstração, entende a origem e princípios do projeto, acesse nosso site [keyanywhere.com.br](https://keyanywhere.com.br/).
 
-Atualmente a ferramenta está em versão **BETA**.
-
 # Pesquisa de satisfação
 
 Por favor, responda a pesquisa de satisfação, ela é rápida. Vai me ajudar muito a melhorar a ferramenta e no TCC.

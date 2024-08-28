@@ -4,8 +4,8 @@
         <title>KAW - Configuração inicial</title>
         <?= $this->Html->charset() ?>
         <?= $this->Html->meta('icon', 'favicon.ico') ?>
+        <?= $this->Html->meta('csrfToken', $csrfToken); ?>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <?= $this->Html->meta('csrfToken', $this->request->getAttribute('csrfToken')); ?>
         <?php
         echo $this->Html->css([
             'minified/bootstrap.min.css',
@@ -20,7 +20,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm"></div>
-                <div class="col-sm"><?= $this->Flash->render() ?></div>
+                <div class="col-sm"><?=$this->Flash->render()?></div>
                 <div class="col-sm"></div>
             </div>
             <?= $this->fetch('content') ?>
