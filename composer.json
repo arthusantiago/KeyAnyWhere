@@ -1,9 +1,17 @@
 {
-    "name": "cakephp/app",
-    "description": "CakePHP skeleton app",
-    "homepage": "https://cakephp.org",
+    "name": "arthusantiago/keyanywhere",
+    "description": "KeyAnyWhere or KAW, is a simple user and password manager",
+    "homepage": "https://keyanywhere.com.br/",
     "type": "project",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Arthu Santiago",
+            "email": "contato@avds.eti.br",
+            "homepage": "https://avds.eti.br",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "php": ">=7.2",
         "bacon/bacon-qr-code": "^3.0",

@@ -17,6 +17,7 @@
           <ul class="ul-busca" id="ul-busca-responsivo"></ul>
         </div>
         <br>
+      </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-secondary botoes" data-bs-dismiss="modal">Fechar</button>
       </div>
