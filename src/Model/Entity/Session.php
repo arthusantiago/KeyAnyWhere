@@ -68,7 +68,7 @@ class Session extends Entity
     public bool $esteDispositivo = false;
 
     /**
-     * Propriedade virtual'navegador'. Para acessar: $session->navegador
+     * Propriedade virtual 'navegador'. Para acessar: $session->navegador
      *
      * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
      * @access	protected
@@ -81,7 +81,7 @@ class Session extends Entity
     }
 
     /**
-     * Propriedade virtual'sistema_operacional'. Para acessar: $session->sistema_operacional
+     * Propriedade virtual 'sistema_operacional'. Para acessar: $session->sistema_operacional
      *
      * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
      * @access	protected
@@ -116,7 +116,7 @@ class Session extends Entity
      *
      * @access public
      * @param int $maxTimeInactiv Tempo máximo de inatividade
-     * @return bool
+     * @return bool Retorna TRUE quando a sessão é considerada ativa, FALSE caso contrário.
      */
     public function estaAtiva(int $maxTimeInactiv)
     {
