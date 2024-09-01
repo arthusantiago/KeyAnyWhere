@@ -439,9 +439,11 @@ return [
             'engine' => 'DatabaseSession',
             'model' => 'Sessions'
         ],
-        'timeout' => 480,
+        'timeout' => 240,
         'cookie' => '__Secure-KAW',
         'ini' => [
+            'session.sid_length' => 40,
+            'session.sid_bits_per_character' => 6,
             'session.cookie_secure' => true,
             'session.cookie_samesite' => 'Strict',
             'session.cookie_httponly' => true,
