@@ -67,12 +67,26 @@ class Session extends Entity
      */
     public bool $esteDispositivo = false;
 
+    /**
+     * Propriedade virtual'navegador'. Para acessar: $session->navegador
+     *
+     * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
+     * @access	protected
+     * @return	string
+     */
     protected function _getNavegador()
     {
         $navegadorSessao = $this->buscaNaString($this->navegadores, $this->user_agent) ?? 'Desconhecido';
         return ucfirst($navegadorSessao);
     }
 
+    /**
+     * Propriedade virtual'sistema_operacional'. Para acessar: $session->sistema_operacional
+     *
+     * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
+     * @access	protected
+     * @return	string
+     */
     protected function _getSistemaOperacional()
     {
         $sistOperaSessao = $this->buscaNaString($this->sistemasOperacionais, $this->user_agent) ?? 'Desconhecido';
@@ -95,5 +109,19 @@ class Session extends Entity
             }
         }
         return false;
+    }
+
+    /**
+     * Verifica se a sessão excedeu o tempo de inatividade
+     *
+     * @access public
+     * @param int $maxTimeInactiv Tempo máximo de inatividade
+     * @return bool
+     */
+    public function estaAtiva(int $maxTimeInactiv)
+    {
+        // Time Without user Interaction = (Current time - Time of Last Interaction)
+        $twi = time() - $this->expires;
+        return $twi >= $maxTimeInactiv ? false : true ;
     }
 }
