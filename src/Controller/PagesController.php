@@ -47,8 +47,9 @@ class PagesController extends AppController
             ->orderDesc('sessions.created');
 
         $sessoesAtivas = [];
+        $timeout = Configure::read('Session.timeout');
         foreach ($sessoes as $sessao) {
-            if ($sessao->estaAtiva(Configure::read('Session.timeout'))) {
+            if ($sessao->estaAtiva($timeout)) {
                 $sessoesAtivas[] = $sessao;
             }
         }
