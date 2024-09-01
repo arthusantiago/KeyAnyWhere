@@ -5,8 +5,8 @@
     </div>
 </div>
 <div class='row'>
-    <div class="col-sm-4 mb-3">
-        <h2>Atividades suspeitas</h2>
+    <div class="col-sm mb-3">
+        <h3>Atividades suspeitas</h3>
         <?php if ($logs): ?>
             <ul class="list-group">
                 <?php foreach($logs as $log): ?>
@@ -25,8 +25,8 @@
             <p>Aparentemente tranquilo. Continue atento &#128373;&#127997;</p>
         <?php endif; ?>
     </div>
-    <div class="col-sm-auto mb-3">
-        <h2>Últimos IPs bloqueados</h2>
+    <div class="col-sm mb-3">
+        <h3>Últimos IPs bloqueados</h3>
         <?php if ($ipsBloqueados): ?>
             <ul class="list-group">
                 <?php foreach($ipsBloqueados as $ip): ?>
@@ -44,5 +44,13 @@
         <?php else: ?>
             <p>Nenhum IP bloqueado</p>
         <?php endif; ?>
+    </div>
+    <div class="col-sm mb-3">
+        <h3>Sessões ativas</h3>
+        <ul class="list-group">
+        <?php foreach($sessoesAtivas as $sessao): ?>
+            <li class="list-group-item"><?=h($sessao->created . ' - ' . $sessao->user->usernameEncurtado() . ' - ' . $sessao->navegador)?></li>
+        <?php endforeach;?>
+        </ul>
     </div>
 </div>

@@ -18,6 +18,8 @@ namespace App\Controller;
 
 use App\Model\Table\LogsTable;
 use App\Model\Table\IpsBloqueadosTable;
+use App\Model\Table\SessionsTable;
+use Cake\Core\Configure;
 
 /**
  * Static content controller
@@ -38,6 +40,20 @@ class PagesController extends AppController
             ->find('ultimosBloqueados')
             ->toArray();
 
-        $this->set(compact('logs', 'ipsBloqueados'));
+        $sessoes = (new SessionsTable)
+            ->find('all')
+            ->select(['expires', 'created', 'user_agent'])
+            ->contain(['Users' => ['fields' => ['username']]])
+            ->orderDesc('sessions.created');
+
+        $sessoesAtivas = [];
+        $timeout = Configure::read('Session.timeout');
+        foreach ($sessoes as $sessao) {
+            if ($sessao->estaAtiva($timeout)) {
+                $sessoesAtivas[] = $sessao;
+            }
+        }
+
+        $this->set(compact('logs', 'ipsBloqueados', 'sessoesAtivas'));
     }
 }

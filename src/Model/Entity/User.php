@@ -62,6 +62,12 @@ class User extends Entity
         'root'
     ];
 
+    public function usernameEncurtado(int $tamanho = 15): string
+    {
+        $complemento = strlen($this->username) > $tamanho ? '(...)' : '';
+        return substr($this->username, 0, $tamanho) . $complemento;
+    }
+
     /**
      * @param string $password
      * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
