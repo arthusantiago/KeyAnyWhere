@@ -49,6 +49,7 @@
       echo $this->Html->script('minified/easytimer.min.js');
       echo $this->Html->script('minified/ferramentas.min.js');
       echo $this->Html->script('minified/buscaConteudo.min.js');
+      echo $this->fetch('script-last-load');
     ?>
   </body>
 </html>

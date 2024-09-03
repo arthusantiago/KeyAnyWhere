@@ -282,7 +282,7 @@ class UsersController extends AppController
             }
         }
 
-        $this->redirect(['action' => 'minhaConta']);
+        $this->redirect($this->referer(['action' => 'minhaConta']));
     }
 
     /**
