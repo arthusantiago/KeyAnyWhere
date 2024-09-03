@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-br">
     <head>
-        <title>KAW - Configuração inicial</title>
+        <title>KeyAnyWhere - Configuração inicial</title>
         <?= $this->Html->charset() ?>
         <?= $this->Html->meta('icon', 'favicon.ico') ?>
         <?= $this->Html->meta('csrfToken', $csrfToken); ?>
@@ -26,6 +26,7 @@
             <?= $this->fetch('content') ?>
         </div>
         <?php
+            echo $this->Html->script('minified/popper.min.js');
 			echo $this->Html->script('minified/bootstrap.min.js');
 			echo $this->Html->script('minified/ferramentas.min.js');
 			echo $this->fetch('script-last-load');
