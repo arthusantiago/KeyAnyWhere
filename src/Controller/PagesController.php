@@ -49,7 +49,7 @@ class PagesController extends AppController
         $sessoesAtivas = [];
         $timeout = Configure::read('Session.timeout');
         foreach ($sessoes as $sessao) {
-            if ($sessao->estaAtiva($timeout)) {
+            if ($sessao->user && $sessao->estaAtiva($timeout)) {
                 $sessoesAtivas[] = $sessao;
             }
         }
