@@ -20,6 +20,9 @@
         </div>
         <?= $this->fetch('content') ?>
     </div>
-    <?=$this->Html->script('minified/bootstrap.min.js');?>
+    <?php
+      echo $this->Html->script('minified/bootstrap.min.js');
+      echo $this->Html->script('minified/ferramentas.min.js');
+    ?>
   </body>
 </html>

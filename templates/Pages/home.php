@@ -46,11 +46,12 @@
         <?php endif; ?>
     </div>
     <div class="col-sm mb-3">
-        <h3>Sessões ativas</h3>
+        <h3>Usuários ativos</h3>
         <ul class="list-group">
         <?php foreach($sessoesAtivas as $sessao): ?>
-            <li class="list-group-item"><?=h($sessao->created . ' - ' . $sessao->user->usernameEncurtado() . ' - ' . $sessao->navegador)?></li>
+            <li class="list-group-item"><?=h($sessao->created . ' - ' . $sessao->user->usernameEncurtado())?></li>
         <?php endforeach;?>
         </ul>
     </div>
 </div>
+<br><br>
