@@ -200,7 +200,7 @@ function obterQrCode2FA(event)
 {
 	let body = JSON.stringify({
 		idUser: event.target.getAttribute('data-qrcode-user-id'),
-		novoQrCode: event.target.getAttribute('data-qrcode-user-id') ? true : false
+		novoQrCode: event.target.getAttribute('data-qrcode-novo') ? true : false
 	});
 
 	let parametros = 		{

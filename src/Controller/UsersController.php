@@ -335,6 +335,7 @@ class UsersController extends AppController
 
         $user = $this->Authentication->getResult()->getData();
 
+        // Somente o usuário root pode gerar o QrCode para outro usuário.
         if ($request['idUser'] !=  $user->id) {
             if ($user->root) {
                 $user = $this->Users->get($request['idUser']);
