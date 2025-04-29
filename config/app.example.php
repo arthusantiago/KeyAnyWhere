@@ -310,7 +310,14 @@ return [
              * then you MUST use the `flags` config to set your charset encoding.
              * For e.g. `'flags' => [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4']`
              */
-            'flags' => [],
+            'flags' => [
+                /* Ativa a conexão criptografada com o banco de dados
+                 * Documentação auxiliar:
+                 * - https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-SSLMODE
+                 * - https://book.cakephp.org/4/en/orm/database-basics.html#configuration
+                 */
+                'sslmode' => env('DB_DEFAULT_SSLMODE', 'require'),
+            ],
             'cacheMetadata' => true,
             'log' => false,
 
