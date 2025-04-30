@@ -86,8 +86,7 @@ class EntradasTable extends Table
             ->scalar('password')
             ->maxLength('password', 88, 'A senha pode ter no máximo 88 caracteres')
             ->requirePresence('password', 'create', 'A senha precisa ser informada')
-            ->notEmptyString('password', 'A senha não pode estar vazia')
-            ->checkXSS('password');
+            ->notEmptyString('password', 'A senha não pode estar vazia');
 
         $validator
             ->numeric('categoria_id', 'Precisa informar um ID de categoria válido')
