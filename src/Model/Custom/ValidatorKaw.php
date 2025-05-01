@@ -32,13 +32,13 @@ class ValidatorKaw extends Validator
             $temXSS = $antiXss->isXssFound();
 
             if ($temXSS) {
-                /* Descobrindo o recurso (controller/action/id) acessado */
+                /* Descobrindo o recurso acessado (controller/action/id) */
                 $recurso = $context['providers']['table']->getAlias() . '/';
                 $recurso .= $context['newRecord'] ? 'add/' : 'edit/';
                 $recurso .= $context['data']['id'] ?? null;
 
                 /* Mensagem complementar */
-                $texto = ' Houve a tentativa de salvar no campo \'' . $context['field'] . '\' uma string maliciosa.';
+                $texto = ' Houve a tentativa de salvar no campo "' . $context['field'] . '" uma string possivelmente maliciosa.';
 
                 GerenciadorEventos::notificarEvento([
                     'evento' => 'C3-1',

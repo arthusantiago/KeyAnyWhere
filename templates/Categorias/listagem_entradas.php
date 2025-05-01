@@ -57,6 +57,6 @@
         </tbody>
     </table>
 </div>
-<br>
 <?=$this->element('paginacao');?>
 <?=$this->element('Diversos/modalExcluir', ['parametros' => ['controller' => 'Entradas']])?>
+<br><br>

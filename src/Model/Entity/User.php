@@ -96,4 +96,9 @@ class User extends Entity
     {
         return (new Google2FA())->verifyKey($this->descripSecret2FA(), $secret);
     }
+
+    protected function _setEmail(string $email): string
+    {
+        return strtolower($email);
+    }
 }

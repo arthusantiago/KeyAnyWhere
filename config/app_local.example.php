@@ -47,6 +47,7 @@ return [
             'username' => 'postgres',
             'password' => 'postgres',
             'database' => 'kaw',
+            'flags' => [],
             /*
              * If not using the default 'public' schema with the PostgreSQL driver
              * set it here.

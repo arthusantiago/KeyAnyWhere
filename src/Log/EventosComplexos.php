@@ -110,46 +110,6 @@ class EventosComplexos
             ->toArray();
 
         if (count($C1_1) >= 3 || count($C1_2) >= 3) {
-            GerenciadorEventos::notificarEvento([
-                'evento' => 'C1-3',
-                'request' => $eventoOrigemLog->getRequest(),
-                'usuario' => [
-                    'dados' => [
-                        'email'  => $eventoOrigemLog->getRequest()->getData('email'),
-                        'password' => $eventoOrigemLog->getRequest()->getData('password')
-                    ],
-                    'texto' => 'Credenciais utilizadas para logar: '
-                ]
-            ]);
-        }
-    }
-
-    /**
-     * Evento descrito no catálogo src\Log\GerenciadorEventos::$catalogoEventos
-     *
-     * @access	private
-     * @param	Evento	$eventoOrigemLog
-     * @return	void
-     */
-    private function C1_4(Evento $eventoOrigemLog)
-    {
-        $C1_3 = $this->tableLogs
-            ->find()
-            ->where([
-                "evento LIKE 'C1-3'",
-                'created >= ' => $this->frozenTime->i18nFormat('yyyy-MM-dd 00:00:00'),
-                'created <= ' => $this->frozenTime->i18nFormat('yyyy-MM-dd 23:59:59'),
-            ])
-            ->limit(4)
-            ->toArray();
-
-        if (count($C1_3) >= 2) {
-            GerenciadorEventos::notificarEvento([
-                'evento' => 'C1-4',
-                'request' => $eventoOrigemLog->getRequest(),
-                'usuario' => $eventoOrigemLog->getUsuario()
-            ]);
-
             $ipTable = new IpsBloqueadosTable();
             $novoIp = $ipTable->newEmptyEntity();
             $novoIp->ip = $eventoOrigemLog->getIpOrigem();
@@ -159,14 +119,24 @@ class EventosComplexos
                 $erros = $novoIp->getErrors();
                 array_walk_recursive(
                     $erros,
-                    function ($msg, $tipoErro) use (&$mensagensErro)
-                    {
+                    function ($msg, $tipoErro) use (&$mensagensErro) {
                         $mensagensErro[] = $msg;
                     }
                 );
 
-                Log::warning('Erro ao salvar no DB o bloqueio do IP ' . $novoIp->ip . ' | Erros: ' . implode(',', $mensagensErro));
+                Log::error('Erro ao salvar no DB o bloqueio do IP ' . $novoIp->ip . ' | Erros: ' . implode(',', $mensagensErro));
             }
+
+            GerenciadorEventos::notificarEvento([
+                'evento' => 'C1-3',
+                'request' => $eventoOrigemLog->getRequest(),
+                'usuario' => [
+                    'dados' => [
+                        'email'  => $eventoOrigemLog->getRequest()->getData('email'),
+                    ],
+                    'texto' => 'Credenciais utilizadas para logar: '
+                ]
+            ]);
         }
     }
 }

@@ -24,7 +24,7 @@
     #botao-flutuante{
         display: initial;
         position: fixed;
-        bottom: 5vh;
+        bottom: 2vh;
         right: 35vw;
         z-index: 9;
         box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
