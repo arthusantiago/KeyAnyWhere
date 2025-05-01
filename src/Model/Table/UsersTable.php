@@ -85,7 +85,6 @@ class UsersTable extends Table
             ->maxLength('password', 255, 'A senha pode ter no máximo 255 caracteres')
             ->requirePresence('password', 'create', 'A senha precisa ser preenchida')
             ->notEmptyString('password', 'A senha precisa ser preenchida', 'create')
-            ->checkXSS('password')
             ->add(
                 'password',
                 'requiMinPassword', [
