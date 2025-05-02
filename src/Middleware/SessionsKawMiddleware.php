@@ -7,6 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\I18n\FrozenTime;
 
 /**
  * SessionsKawMiddleware adiciona a sessão salva no banco de dados, algumas informações utilizadas no sistema.
@@ -45,7 +46,7 @@ class SessionsKawMiddleware implements MiddlewareInterface
         $this->subject = $subject;
 
         if ($table) {
-            $this->$table = $table;
+            $this->table = $table;
         }
     }
 
@@ -57,6 +58,7 @@ class SessionsKawMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $modelSessions =  $this->getTableLocator()->get($this->table);
         $resultAutenticacao = $this->subject
             ->getAuthenticationService($request)
             ->authenticate($request);
@@ -64,7 +66,6 @@ class SessionsKawMiddleware implements MiddlewareInterface
         if ($resultAutenticacao->isValid())
         {
             $idSession = $request->getSession()->id();
-            $modelSessions =  $this->getTableLocator()->get($this->table);
             $pkField = $modelSessions->getPrimaryKey();
             $sessionDb = $modelSessions
                 ->find()
@@ -73,10 +74,17 @@ class SessionsKawMiddleware implements MiddlewareInterface
 
             if (!$sessionDb->user_id || !$sessionDb->user_agent)
             {
-                $sessionDb->user_id = $resultAutenticacao->getData()->id;
+                $userAutenticado = $resultAutenticacao->getData();
+                $sessionDb->user_id = $userAutenticado->id;
                 $sessionDb->user_agent = $request->getHeaders()['User-Agent'][0];
                 $modelSessions->save($sessionDb);
             }
+        } else {
+            $dataHora = FrozenTime::now();
+            $dataHora = $dataHora->subDays(1);
+            $modelSessions->deleteAll([
+                'created <= ' => $dataHora->i18nFormat('yyyy-MM-dd 01:00:00'),
+            ]);
         }
 
         return $handler->handle($request);
