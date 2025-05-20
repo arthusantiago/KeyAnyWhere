@@ -81,7 +81,7 @@ class SessionsKawMiddleware implements MiddlewareInterface
             }
         } else {
             $dataHora = \Cake\I18n\DateTime::now();
-            $dataHora = $dataHora->subDays(1);
+            $dataHora = $dataHora->subDays(1, 1);
             $modelSessions->deleteAll([
                 'created <= ' => $dataHora->i18nFormat('yyyy-MM-dd 01:00:00'),
             ]);
