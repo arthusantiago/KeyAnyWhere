@@ -20,7 +20,7 @@ class EventosComplexos
 
     function __construct() {
         $this->tableLogs = new LogsTable();
-        $this->frozenTime = FrozenTime::now();
+        $this->frozenTime = \Cake\I18n\DateTime::now();
     }
 
     /**

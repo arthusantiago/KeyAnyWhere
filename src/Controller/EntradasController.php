@@ -55,7 +55,7 @@ class EntradasController extends AppController
      */
     public function edit($id)
     {
-        $entrada = $this->Entradas->get($id, ['contain' => ['Categorias']]);
+        $entrada = $this->Entradas->get($id, contain: ['Categorias']);
         if ($this->request->is(['patch', 'post', 'put']))
         {
             $entrada = $this->Entradas->patchEntity($entrada, $this->request->getData());

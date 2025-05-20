@@ -80,7 +80,7 @@ class SessionsKawMiddleware implements MiddlewareInterface
                 $modelSessions->save($sessionDb);
             }
         } else {
-            $dataHora = FrozenTime::now();
+            $dataHora = \Cake\I18n\DateTime::now();
             $dataHora = $dataHora->subDays(1);
             $modelSessions->deleteAll([
                 'created <= ' => $dataHora->i18nFormat('yyyy-MM-dd 01:00:00'),

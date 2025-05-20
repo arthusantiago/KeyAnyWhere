@@ -88,7 +88,7 @@ class IpsBloqueadosTable extends Table
     {
         $query
             ->select(['ip', 'created'])
-            ->orderDesc('created')
+            ->orderByDesc('created')
             ->limit(7);
 
         return $query;

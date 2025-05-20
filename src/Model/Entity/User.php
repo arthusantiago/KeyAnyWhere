@@ -20,8 +20,8 @@ use PragmaRX\Google2FA\Google2FA;
  * @property string $tfa_ativo
  * @property bool $root Se o usuário e administrador
  * @property int $LENGTH_SECRET_2FA
- * @property \Cake\I18n\FrozenTime $created
- * @property \Cake\I18n\FrozenTime $modified
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\Entrada[] $entradas
  */
@@ -38,7 +38,7 @@ class User extends Entity
      *
      * @var array
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'username' => true,
         'email' => true,
         'password' => true,
@@ -55,7 +55,7 @@ class User extends Entity
      *
      * @var array
      */
-    protected $_hidden = [
+    protected array $_hidden = [
         'password',
         'tfa_secret',
         'tfa_ativo',

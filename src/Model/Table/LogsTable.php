@@ -104,7 +104,7 @@ class LogsTable extends Table
                 'analisado' => false,
                 'nivel_severidade NOT IN (6, 7)'
             ])
-            ->group(['nivel_severidade']);
+            ->groupBy(['nivel_severidade']);
 
         return $query;
     }

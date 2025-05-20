@@ -44,7 +44,7 @@ class PagesController extends AppController
             ->find('all')
             ->select(['expires', 'created', 'user_agent'])
             ->contain(['Users' => ['fields' => ['username']]])
-            ->orderDesc('sessions.created');
+            ->orderByDesc('sessions.created');
 
         $sessoesAtivas = [];
         $timeout = Configure::read('Session.timeout');

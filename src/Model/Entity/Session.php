@@ -14,8 +14,8 @@ use Cake\ORM\Entity;
  * @property int|null $expires
  * @property int|null $user_id
  * @property string|null user_agent
- * @property \Cake\I18n\FrozenTime $created
- * @property \Cake\I18n\FrozenTime $modified
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\User $user
  */
@@ -30,7 +30,7 @@ class Session extends Entity
      *
      * @var array<string, bool>
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'id_secundario' => false,
         'data' => true,
         'expires' => true,

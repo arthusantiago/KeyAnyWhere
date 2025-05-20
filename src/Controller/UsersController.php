@@ -449,7 +449,7 @@ class UsersController extends AppController
     {
         $user = $this->Users
             ->find()
-            ->orderAsc('id')
+            ->orderByAsc('id')
             ->limit(1)
             ->first();
 
@@ -481,7 +481,7 @@ class UsersController extends AppController
 
         $user = $this->Users
             ->find()
-            ->orderDesc('id')
+            ->orderByDesc('id')
             ->limit(1)
             ->first();
 
@@ -522,7 +522,7 @@ class UsersController extends AppController
          */
         $user = $this->Users
             ->find()
-            ->orderDesc('id')
+            ->orderByDesc('id')
             ->limit(1)
             ->first();
 

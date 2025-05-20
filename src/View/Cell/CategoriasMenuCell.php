@@ -16,7 +16,7 @@ class CategoriasMenuCell extends Cell
      *
      * @var array
      */
-    protected $_validCellOptions = [];
+    protected array $_validCellOptions = [];
 
     /**
      * Initialization logic run at the end of object construction.
@@ -54,6 +54,6 @@ class CategoriasMenuCell extends Cell
         return $this
             ->fetchTable('Categorias')
             ->find('all')
-            ->order(['posicao']);
+            ->orderBy(['posicao']);
     }
 }

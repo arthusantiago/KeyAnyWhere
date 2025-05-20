@@ -16,8 +16,8 @@ use App\Log\LogLevelInt;
  * @property string|null $ip_origem
  * @property string|null $usuario
  * @property string $mensagem
- * @property \Cake\I18n\FrozenTime $created
- * @property \Cake\I18n\FrozenTime $modified
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime $modified
  */
 class Log extends Entity
 {
@@ -30,7 +30,7 @@ class Log extends Entity
      *
      * @var array<string, bool>
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'evento' => true,
         'nivel_severidade' => true,
         'recurso' => true,

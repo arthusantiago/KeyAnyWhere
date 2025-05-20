@@ -16,8 +16,8 @@ use Cake\ORM\Entity;
  * @property string|null $link
  * @property string $anotacoes
  * @property int $categoria_id
- * @property \Cake\I18n\FrozenTime $created
- * @property \Cake\I18n\FrozenTime $modified
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\User $user
  * @property \App\Model\Entity\Categoria $categoria
@@ -33,7 +33,7 @@ class Entrada extends Entity
      *
      * @var array
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'titulo' => true,
         'password' => true,
         'username' => true,
@@ -51,7 +51,7 @@ class Entrada extends Entity
      *
      * @var array
      */
-    protected $_hidden = [
+    protected array $_hidden = [
         'password',
     ];
 
