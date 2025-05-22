@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Log;
 
-use Cake\Core\Exception\CakeException;
-use App\Model\Table\LogsTable;
 use App\Model\Table\IpsBloqueadosTable;
-use Cake\I18n\FrozenTime;
+use App\Model\Table\LogsTable;
+use Cake\Core\Exception\CakeException;
+use Cake\I18n\DateTime;
 use Cake\Log\Log;
 
 /**
@@ -18,17 +19,18 @@ class EventosComplexos
     private $tableLogs;
     private $frozenTime;
 
-    function __construct() {
+    function __construct()
+    {
         $this->tableLogs = new LogsTable();
-        $this->frozenTime = \Cake\I18n\DateTime::now();
+        $this->frozenTime = DateTime::now();
     }
 
     /**
      * Recebe a notificação de que um novo log foi salvo.
      *
-     * @access	public
-     * @param	Evento $eventoOrigemLog Evento que foi salvo como log.
-     * @return	void
+     * @access public
+     * @param \App\Log\Evento $eventoOrigemLog Evento que foi salvo como log.
+     * @return void
      */
     public function novoLogSalvo(Evento $eventoOrigemLog): void
     {
@@ -43,9 +45,9 @@ class EventosComplexos
     /**
      * Verifica se o evento que foi salvo é aguardado por outros eventos.
      *
-     * @access	private
-     * @param	string	$idEvento
-     * @return	null|array
+     * @access private
+     * @param string  $idEvento
+     * @return array|null
      */
     private function ehUmEventoGatilho(string $idEvento): ?array
     {
@@ -63,10 +65,10 @@ class EventosComplexos
     /**
      * Executa o método que contém a lógica do evento que aguardava o outro ser disparado.
      *
-     * @access	private
-     * @param	array	$eventos
-     * @param	Evento	$eventoOrigemLog
-     * @return	void
+     * @access private
+     * @param array   $eventos
+     * @param \App\Log\Evento  $eventoOrigemLog
+     * @return void
      */
     private function executaMetodoEspecifico(array $eventos, Evento $eventoOrigemLog): void
     {
@@ -83,9 +85,9 @@ class EventosComplexos
     /**
      * Evento descrito no catálogo src\Log\GerenciadorEventos::$catalogoEventos
      *
-     * @access	private
-     * @param	Evento	$eventoOrigemLog
-     * @return	void
+     * @access private
+     * @param \App\Log\Evento  $eventoOrigemLog
+     * @return void
      */
     private function C1_3(Evento $eventoOrigemLog): void
     {
@@ -119,9 +121,9 @@ class EventosComplexos
                 $erros = $novoIp->getErrors();
                 array_walk_recursive(
                     $erros,
-                    function ($msg, $tipoErro) use (&$mensagensErro) {
+                    function ($msg, $tipoErro) use (&$mensagensErro): void {
                         $mensagensErro[] = $msg;
-                    }
+                    },
                 );
 
                 Log::error('Erro ao salvar no DB o bloqueio do IP ' . $novoIp->ip . ' | Erros: ' . implode(',', $mensagensErro));
@@ -134,8 +136,8 @@ class EventosComplexos
                     'dados' => [
                         'email'  => $eventoOrigemLog->getRequest()->getData('email'),
                     ],
-                    'texto' => 'Credenciais utilizadas para logar: '
-                ]
+                    'texto' => 'Credenciais utilizadas para logar: ',
+                ],
             ]);
         }
     }

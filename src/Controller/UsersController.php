@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use PragmaRX\Google2FA\Google2FA;
-use BaconQrCode\Renderer\ImageRenderer;
+use App\Log\GerenciadorEventos;
+use App\Model\Entity\User;
+use Authentication\Authenticator\ResultInterface;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
-use App\Model\Entity\User;
-use App\Log\GerenciadorEventos;
-use Authentication\Authenticator\ResultInterface;
-use Cake\Validation\Validator;
 use Cake\Event\EventInterface;
+use Cake\Validation\Validator;
+use PragmaRX\Google2FA\Google2FA;
 
 /**
  * Users Controller
@@ -33,7 +33,7 @@ class UsersController extends AppController
     private const ACTIONS_SEM_AUTENTICACAO = [
         'login',
         'configInicial',
-        'configInicialTfa'
+        'configInicialTfa',
     ];
 
     private const CREDENCIAL_LOGIN_INCORRETO = [
@@ -61,6 +61,7 @@ class UsersController extends AppController
             if ($user->root == false) {
                 $this->Flash->error('Você não tem permissão');
                 GerenciadorEventos::notificarEvento(['evento' => 'C2-1', 'request' => $this->request, 'usuario' => $user]);
+
                 return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
             }
         }
@@ -77,8 +78,8 @@ class UsersController extends AppController
             $this->Users->find()->where(['root' => false]),
             [
                 'limit' => 10,
-                'order' => ['Users.username' => 'asc']
-            ]
+                'order' => ['Users.username' => 'asc'],
+            ],
         );
 
         $this->viewBuilder()->setLayout('administrativo');
@@ -103,7 +104,7 @@ class UsersController extends AppController
             }
             $this->Flash->error(
                 __('Erro ao salvar o usuário.'),
-                ['params' => ['mensagens' => $user->getErrors()]]
+                ['params' => ['mensagens' => $user->getErrors()]],
             );
         }
 
@@ -118,7 +119,7 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit(?string $id = null)
     {
         $user = $this->Users->get($id);
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -134,14 +135,14 @@ class UsersController extends AppController
 
                 $this->Flash->success(__('Salvo com sucesso'));
             } else {
-                $this->Flash->error(__('Erro ao salvar.'),  ['params' => ['mensagens' => $user->getErrors()]]);
+                $this->Flash->error(__('Erro ao salvar.'), ['params' => ['mensagens' => $user->getErrors()]]);
             }
         }
 
         $sessions = $this->Users->Sessions
             ->find()
             ->where(['user_id' => $user->id])
-            ->orderAsc('created');
+            ->orderByAsc('created');
 
         $this->viewBuilder()->setLayout('administrativo');
         $this->set(compact('user', 'sessions'));
@@ -170,7 +171,7 @@ class UsersController extends AppController
     /**
      * Método que executa o processo de login no sistema.
      *
-     * @access	public
+     * @access public
      * @return \Cake\Http\Response|null|void Renders view
      */
     public function login()
@@ -186,7 +187,7 @@ class UsersController extends AppController
             if (
                 $this->validarUsarioSenha()
                 && $this->validarTFA($this->request->getData('2fa'))
-            ){
+            ) {
                 return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
             }
 
@@ -199,7 +200,7 @@ class UsersController extends AppController
     /**
      * Executa o processo de logout do sistema
      *
-     * @access	public
+     * @access public
      * @return \Cake\Http\Response|null|void Renders view
      */
     public function logout()
@@ -208,6 +209,7 @@ class UsersController extends AppController
 
         if ($result->isValid()) {
             $this->Authentication->logout();
+
             return $this->redirect(['controller' => 'Users', 'action' => 'login']);
         }
     }
@@ -222,8 +224,7 @@ class UsersController extends AppController
         $userAutenticado = $this->Authentication->getResult()->getData();
         $user = $this->Users->get($userAutenticado->id);
 
-        if ($this->request->is(['post', 'put']))
-        {
+        if ($this->request->is(['post', 'put'])) {
             $user = $this->Users->patchEntity($user, array_filter($this->request->getData()));
             $senhaAlterada = $user->isDirty('password');
             if ($this->Users->save($user)) {
@@ -234,7 +235,7 @@ class UsersController extends AppController
                 }
 
                 $this->Flash->success(__('Salvo com sucesso'));
-            }else{
+            } else {
                 $this->Flash->error(null, ['params' => ['mensagens' => $user->getErrors()]]);
             }
         }
@@ -242,7 +243,7 @@ class UsersController extends AppController
         $sessions = $this->Users->Sessions
             ->find()
             ->where(['user_id' => $user->id])
-            ->orderAsc('created');
+            ->orderByAsc('created');
 
         foreach ($sessions as $key => $session) {
             if ($this->request->getSession()->id() == $session->id) {
@@ -251,15 +252,14 @@ class UsersController extends AppController
         }
 
         $this->viewBuilder()->setLayout('administrativo');
-        $this->set(compact('user','sessions'));
+        $this->set(compact('user', 'sessions'));
     }
-
 
     /**
      * Finaliza a sessão informada
      *
-     * @access	public
-     * @return	void
+     * @access public
+     * @return void
      */
     public function finalizarSessao()
     {
@@ -292,7 +292,7 @@ class UsersController extends AppController
      * @param int $idUser Default: null
      * @return mixed
      */
-    private function finalizarTodasSessoes(int $idUser = null): bool
+    private function finalizarTodasSessoes(?int $idUser = null): bool
     {
         if ($idUser) {
             $user = $this->Users->get($idUser);
@@ -301,14 +301,15 @@ class UsersController extends AppController
         }
 
         $qtdDeletado = $this->Users->Sessions->deleteAll(['user_id' => $user->id]);
-        return $qtdDeletado ? true : false ;
+
+        return $qtdDeletado ? true : false;
     }
 
     /**
      * Gera o QRCode do Segundo Fator de Autenticação (Two Factor Authentication)
      *
-     * @access	public
-     * @return \Cake\Http\Response|null|void 
+     * @access public
+     * @return \Cake\Http\Response|null|void
      */
     public function geraQrCode2fa()
     {
@@ -341,6 +342,7 @@ class UsersController extends AppController
                 $user = $this->Users->get($request['idUser']);
             } else {
                 GerenciadorEventos::notificarEvento(['evento' => 'C2-1', 'request' => $this->request, 'usuario' => $user]);
+
                 return $this->response
                     ->withType('application/json; charset=UTF-8')
                     ->withStatus(401, 'Você não tem permissão');
@@ -354,12 +356,12 @@ class UsersController extends AppController
         $g2faUrl = (new Google2FA())->getQRCodeUrl(
             'KeyAnyWhere',
             $user->email,
-            $user->descripSecret2FA()
+            $user->descripSecret2FA(),
         );
 
         $render = new ImageRenderer(
             new RendererStyle(300),
-            new SvgImageBackEnd()
+            new SvgImageBackEnd(),
         );
 
         $strSvgQrCode = (new Writer($render))->writeString($g2faUrl);
@@ -372,15 +374,16 @@ class UsersController extends AppController
     /**
      * geraNovoSecret2FA.
      *
-     * @access	private
+     * @access private
      * @param int $idUser ID de um usuário especifico.
-     * @return	App\Model\Entity\User
+     * @return \App\Controller\App\Model\Entity\User
      */
     private function geraNovoSecret2FA(int $idUser): User
     {
         $user = $this->Users->get($idUser);
         $user->tfa_secret = $user->geraSecret2FA();
         $this->Users->save($user);
+
         return $user;
     }
 
@@ -402,8 +405,8 @@ class UsersController extends AppController
                     'request' => $this->request,
                     'usuario' => [
                         'dados' => ['e-mail' => $this->request->getData('email')],
-                        'texto' => 'Credenciais utilizadas para logar: '
-                    ]
+                        'texto' => 'Credenciais utilizadas para logar: ',
+                    ],
                 ]);
             }
         }
@@ -431,8 +434,8 @@ class UsersController extends AppController
                 'request' => $this->request,
                 'usuario' => [
                     'dados' => ['e-mail' => $this->request->getData('email')],
-                    'texto' => 'Credenciais utilizadas para logar: '
-                ]
+                    'texto' => 'Credenciais utilizadas para logar: ',
+                ],
             ]);
         }
 
@@ -442,8 +445,8 @@ class UsersController extends AppController
     /**
      * Método que verifica se é preciso executar a configuração inicial do sistema.
      *
-     * @access	private
-     * @return	mixed
+     * @access private
+     * @return mixed
      */
     private function executarConfigInicial(): bool
     {
@@ -470,8 +473,8 @@ class UsersController extends AppController
      * Metodo que inicia a Configuração Inicial da ferramenta.
      * Esse processo deve ser executado ao acessar o KAW pela primeira vez.
      *
-     * @access	public
-     * @return	void
+     * @access public
+     * @return void
      */
     public function configInicial()
     {
@@ -496,8 +499,9 @@ class UsersController extends AppController
 
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Usuário criado com sucesso!'));
+
                 return $this->redirect(['controller' => 'Users', 'action' => 'configInicialTfa']);
-            }else{
+            } else {
                 $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $user->getErrors()]]);
             }
         }
@@ -508,8 +512,8 @@ class UsersController extends AppController
     /**
      * Metodo que gerencia a configuração do 2FA no processo de Configuração Inicial
      *
-     * @access	public
-     * @return	void
+     * @access public
+     * @return void
      */
     public function configInicialTfa()
     {
@@ -518,7 +522,7 @@ class UsersController extends AppController
         }
 
         /**
-         * @var	\App\Model\Entity\User
+         * @var \App\Model\Entity\User
          */
         $user = $this->Users
             ->find()
@@ -535,8 +539,9 @@ class UsersController extends AppController
             $user->tfa_ativo = $this->request->getData('tfa');
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Usuário configurado com sucesso!'));
+
                 return $this->redirect(['controller' => 'Users', 'action' => 'login']);
-            }else{
+            } else {
                 $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $user->getErrors()]]);
             }
         }
@@ -549,12 +554,12 @@ class UsersController extends AppController
         $g2faUrl = (new Google2FA())->getQRCodeUrl(
             'KeyAnyWhere',
             $user->email,
-            $user->descripSecret2FA()
+            $user->descripSecret2FA(),
         );
 
         $render = new ImageRenderer(
             new RendererStyle(400),
-            new SvgImageBackEnd()
+            new SvgImageBackEnd(),
         );
 
         $strSvgQrCode = (new Writer($render))->writeString($g2faUrl);

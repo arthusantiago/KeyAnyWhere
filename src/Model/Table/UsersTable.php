@@ -3,16 +3,15 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Custom\ValidatorKaw;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
-use App\Model\Custom\ValidatorKaw;
 
 /**
  * Users Model
  *
  * @property \App\Model\Table\EntradasTable&\Cake\ORM\Association\HasMany $Entradas
- *
  * @method \App\Model\Entity\User newEmptyEntity()
  * @method \App\Model\Entity\User newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\User[] newEntities(array $data, array $options = [])
@@ -26,7 +25,6 @@ use App\Model\Custom\ValidatorKaw;
  * @method \App\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class UsersTable extends Table
@@ -87,7 +85,8 @@ class UsersTable extends Table
             ->notEmptyString('password', 'A senha precisa ser preenchida', 'create')
             ->add(
                 'password',
-                'requiMinPassword', [
+                'requiMinPassword',
+                [
                 'rule' => function ($senha) {
                     $regexs = [
                         '/[a-z]/i',
@@ -103,8 +102,9 @@ class UsersTable extends Table
 
                     return true;
                 },
-                'message' => 'A senha não atende aos requisitos mínimos de segurança'
-            ]);
+                'message' => 'A senha não atende aos requisitos mínimos de segurança',
+                ],
+            );
 
         return $validator;
     }
@@ -121,27 +121,27 @@ class UsersTable extends Table
         $rules->add(
             $rules->isUnique(
                 ['username'],
-                'Já existe um usuário cadastrado com o mesmo nome de usuário'
+                'Já existe um usuário cadastrado com o mesmo nome de usuário',
             ),
-            ['errorField' => 'username']
+            ['errorField' => 'username'],
         );
         $rules->add(
             $rules->isUnique(
                 ['email'],
-                'Já existe um usuário cadastrado com o mesmo e-mail'
+                'Já existe um usuário cadastrado com o mesmo e-mail',
             ),
-            ['errorField' => 'email']
+            ['errorField' => 'email'],
         );
         $rules->add(
             $rules->isUnique(
                 ['tfa_secret'],
-                'A secret do 2FA coincidiu com outra salva no DB.'
+                'A secret do 2FA coincidiu com outra salva no DB.',
             ),
             'ruleSecret2FAnaoUnica',
             [
                 'errorField' => 'tfa_secret',
-                'message' => 'A secret do 2FA coincidiu com outra. Tente novamente.'
-            ]
+                'message' => 'A secret do 2FA coincidiu com outra. Tente novamente.',
+            ],
         );
 
         return $rules;

@@ -1,9 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Log\Engine;
-use Cake\Log\Engine\BaseLog;
+
 use App\Model\Table\LogsTable;
+use Cake\Log\Engine\BaseLog;
 use Cake\Log\Log;
+use Stringable;
 
 class DatabaseLog extends BaseLog
 {
@@ -12,7 +15,7 @@ class DatabaseLog extends BaseLog
         parent::__construct($config);
     }
 
-    public function log($level, string|\Stringable $message, array $context = [])
+    public function log($level, string|Stringable $message, array $context = []): void
     {
         $log = new LogsTable();
         $novoLog = $log->newEmptyEntity();
@@ -23,14 +26,12 @@ class DatabaseLog extends BaseLog
             $erros = $novoLog->getErrors();
             array_walk_recursive(
                 $erros,
-                function ($msg, $tipoErro) use (&$mensagensErro)
-                {
+                function ($msg, $tipoErro) use (&$mensagensErro): void {
                     $mensagensErro[] = $msg;
-                }
+                },
             );
 
             Log::warning('Erro ao salvar no BD os dados do log: ' . $novoLog . ' | Erros: ' . implode(',', $mensagensErro));
         }
     }
 }
-?>

@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use Cake\Event\EventInterface;
 use Cake\Validation\Validator;
+
 /**
  * Entradas Controller
  *
@@ -34,6 +35,7 @@ class EntradasController extends AppController
 
             if ($this->Entradas->save($entrada)) {
                 $this->Flash->success(__('Salvo com sucesso'));
+
                 return $this->redirect(['action' => 'edit', $entrada->id]);
             }
             $this->Flash->error(null, ['params' => ['mensagens' => $entrada->getErrors()]]);
@@ -41,7 +43,7 @@ class EntradasController extends AppController
 
         $categorias = $this->Entradas->Categorias
         ->find('all')
-        ->order(['posicao']);
+        ->orderBy(['posicao']);
 
         $this->set(compact('entrada', 'categorias'));
     }
@@ -53,23 +55,23 @@ class EntradasController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id)
+    public function edit(?string $id)
     {
         $entrada = $this->Entradas->get($id, contain: ['Categorias']);
-        if ($this->request->is(['patch', 'post', 'put']))
-        {
+        if ($this->request->is(['patch', 'post', 'put'])) {
             $entrada = $this->Entradas->patchEntity($entrada, $this->request->getData());
             if ($this->Entradas->save($entrada)) {
                 $this->Flash->success(__('Salvo com sucesso'));
-            }else{
+            } else {
                 $this->Flash->error(null, ['params' => ['mensagens' => $entrada->getErrors()]]);
             }
+
             return $this->redirect(['action' => 'edit', $entrada->id]);
         }
 
         $categorias = $this->Entradas->Categorias
             ->find('all')
-            ->order(['posicao']);
+            ->orderBy(['posicao']);
 
         $this->set(compact('entrada', 'categorias'));
     }
@@ -113,7 +115,7 @@ class EntradasController extends AppController
             ->integer('id', 'O ID precisa ser um inteiro')
             ->requirePresence('type', true, 'O type precisa ser informado')
             ->notEmptyString('type', 'O type não pode estar vazio')
-            ->maxLength('type', 8,'O type pode ter no maximo 8 caracteres')
+            ->maxLength('type', 8, 'O type pode ter no maximo 8 caracteres')
             ->inList('type', ['password', 'user'], 'O valor de type não é permitido');
 
         $erros = $validator->validate($request);
@@ -129,7 +131,7 @@ class EntradasController extends AppController
 
         if ($request['type'] == 'password') {
             $response['data'] = $entrada->passwordDescrip();
-        } else if ($request['type'] == 'user'){
+        } elseif ($request['type'] == 'user') {
             $response['data'] = $entrada->usernameDescrip();
         }
 
@@ -140,7 +142,6 @@ class EntradasController extends AppController
 
     /**
      * Busca por entrada.
-     *
      */
     public function busca()
     {
@@ -167,7 +168,7 @@ class EntradasController extends AppController
             ->select(['id','titulo']);
 
         $resultado = [];
-        foreach($query as $entrada){
+        foreach ($query as $entrada) {
             if (str_contains(strtolower($entrada->tituloDescrip()), $request['stringBusca'])) {
                 $resultado[] = $entrada;
             }
@@ -186,7 +187,7 @@ class EntradasController extends AppController
      * Espera uma request com o header: 'Content-Type': 'application/json'
      * Espera uma request com JSON no formato: {"password":"senha-para-verificacao"}
      *
-     * @access	public
+     * @access public
      * @return \Cake\Http\Response
      */
     public function senhaInsegura()

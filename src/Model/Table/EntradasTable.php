@@ -3,17 +3,16 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Custom\ValidatorKaw;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
-use App\Model\Custom\ValidatorKaw;
 
 /**
  * Entradas Model
  *
  * @property \App\Model\Table\CategoriasTable&\Cake\ORM\Association\BelongsTo $Categorias
  * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
- *
  * @method \App\Model\Entity\Entrada newEmptyEntity()
  * @method \App\Model\Entity\Entrada newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\Entrada[] newEntities(array $data, array $options = [])
@@ -27,7 +26,6 @@ use App\Model\Custom\ValidatorKaw;
  * @method \App\Model\Entity\Entrada[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\Entrada[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\Entrada[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class EntradasTable extends Table

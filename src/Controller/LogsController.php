@@ -22,8 +22,8 @@ class LogsController extends AppController
             $this->Logs,
             [
                 'order' => ['created' => 'desc'],
-                'limit' => 15
-            ]
+                'limit' => 15,
+            ],
         );
 
         $this->viewBuilder()->setLayout('administrativo');
@@ -37,7 +37,7 @@ class LogsController extends AppController
      * @return \Cake\Http\Response|null|void Renders view
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function view(?string $id = null)
     {
         $log = $this->Logs->get($id);
 
@@ -54,7 +54,7 @@ class LogsController extends AppController
 
         if ($this->Logs->save($log)) {
             $this->Flash->success(__('Salvo com sucesso'));
-        }else{
+        } else {
             $this->Flash->error(null, ['params' => ['mensagens' => $log->getErrors()]]);
         }
 

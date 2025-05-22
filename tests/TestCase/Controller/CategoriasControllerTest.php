@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\CategoriasController;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -23,7 +22,7 @@ class CategoriasControllerTest extends TestCase
      */
     protected array $fixtures = [
         'app.Categorias',
-        'app.Entradas'
+        'app.Entradas',
     ];
 
     /**

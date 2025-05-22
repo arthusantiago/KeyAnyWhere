@@ -3,11 +3,12 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Custom\ValidatorKaw;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
-use App\Model\Custom\ValidatorKaw;
+
 /**
  * IpsBloqueados Model
  *
@@ -24,7 +25,6 @@ use App\Model\Custom\ValidatorKaw;
  * @method \App\Model\Entity\IpsBloqueado[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\IpsBloqueado[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\IpsBloqueado[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class IpsBloqueadosTable extends Table
@@ -76,9 +76,9 @@ class IpsBloqueadosTable extends Table
         $rules->add(
             $rules->isUnique(
                 ['ip'],
-                'O IP já está cadastrado'
+                'O IP já está cadastrado',
             ),
-            ['errorField' => 'ip']
+            ['errorField' => 'ip'],
         );
 
         return $rules;

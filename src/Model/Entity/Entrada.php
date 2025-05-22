@@ -43,7 +43,7 @@ class Entrada extends Entity
         'created' => true,
         'modified' => true,
         'user' => true,
-        'categoria' => true
+        'categoria' => true,
     ];
 
     /**
@@ -75,8 +75,8 @@ class Entrada extends Entity
     /**
      * Retorna a senha descriptografada
      *
-     * @access	public
-     * @return	string
+     * @access public
+     * @return string
      */
     public function passwordDescrip(): string
     {
@@ -98,8 +98,8 @@ class Entrada extends Entity
     /**
      * Retorna o usuario descriptografado
      *
-     * @access	public
-     * @return	string
+     * @access public
+     * @return string
      */
     public function usernameDescrip(): string
     {
@@ -121,8 +121,8 @@ class Entrada extends Entity
     /**
      * Retorna o titulo descriptografado
      *
-     * @access	public
-     * @return	string
+     * @access public
+     * @return string
      */
     public function tituloDescrip(): string
     {
@@ -144,8 +144,8 @@ class Entrada extends Entity
     /**
      * Retorna o link descriptografado
      *
-     * @access	public
-     * @return	string
+     * @access public
+     * @return string
      */
     public function linkDescrip(): string
     {
@@ -167,8 +167,8 @@ class Entrada extends Entity
     /**
      * Retorna as anotações descriptografadas
      *
-     * @access	public
-     * @return	string
+     * @access public
+     * @return string
      */
     public function anotacoesDescrip(): string
     {

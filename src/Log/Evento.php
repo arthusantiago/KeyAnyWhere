@@ -1,8 +1,8 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Log;
 
-use App\Log\LogLevelInt;
 use App\Model\Entity\User;
 use Cake\Http\ServerRequest;
 
@@ -18,6 +18,7 @@ use Cake\Http\ServerRequest;
  * 2. A classe src/Log/GerenciadorEventos fica responsável por receber as informações, criar o evento e tranforma-lo em um log.
  *
  * Para a classificar a severidade do log, é utilizado o conceito de progressão no nível do Syslog.
+ *
  * @see https://en.wikipedia.org/wiki/Syslog#Severity_level
  * @global
  */
@@ -29,9 +30,9 @@ class Evento
     private $mensagem;
 
     /**
-     * @var	\Cake\Http\ServerRequest
+     * @var \Cake\Http\ServerRequest
      */
-    private $request;
+    private ServerRequest $request;
     private $recurso;
     private $ipOrigem;
     private $usuario = 'Sem informações de usuário';
@@ -49,19 +50,19 @@ class Evento
      *      'mensagem' => '', // Um texto adicional a mensagem default do evento.
      * ]
      *
-     * @param	string $idEvento Exemplo: C2-3
-     * @param   string|int $nivelSeveridade Ler documentação App\Log\LogLevelInt
-     * @param   string $mensagem
-     * @param	array $complemento Informações complementares
-     * @param   array $eventoGatilho = []
+     * @param string $idEvento Exemplo: C2-3
+     * @param string|int $nivelSeveridade Ler documentação App\Log\LogLevelInt
+     * @param string $mensagem
+     * @param array $complemento Informações complementares
+     * @param array $eventoGatilho = []
      */
     function __construct(
         string $idEvento,
         string|int $nivelSeveridade,
         string $mensagem,
         array $complemento = [],
-        array $eventoGatilho = []
-    ){
+        array $eventoGatilho = [],
+    ) {
         $this->setId($idEvento);
         $this->setMensagem($mensagem, $complemento);
         $this->setNivelSeveridade($nivelSeveridade);
@@ -87,9 +88,9 @@ class Evento
     /**
      * Seta o ID do evento, exemplo: C2-3
      *
-     * @access	public
-     * @param	string	$id
-     * @return	void
+     * @access public
+     * @param string  $id
+     * @return void
      */
     public function setId(string $id): void
     {
@@ -104,16 +105,16 @@ class Evento
     /**
      * Atribui o Nivel de severidade em formato numerico e textual.
      *
-     * @access	public
-     * @param	string|int	$nivelSeveridade Exemplo: 0 ou 'EMERGENCY'
-     * @return	void
+     * @access public
+     * @param string|int  $nivelSeveridade Exemplo: 0 ou 'EMERGENCY'
+     * @return void
      */
-    public function setNivelSeveridade($nivelSeveridade): void
+    public function setNivelSeveridade(string|int $nivelSeveridade): void
     {
         if (is_int($nivelSeveridade)) {
             $this->nivelSeveridadeString = LogLevelInt::toString($nivelSeveridade);
             $this->nivelSeveridade = $nivelSeveridade;
-        } else if (is_string($nivelSeveridade)) {
+        } elseif (is_string($nivelSeveridade)) {
             $this->nivelSeveridade = LogLevelInt::toNumeric($nivelSeveridade);
             $this->nivelSeveridadeString = strtolower($nivelSeveridade);
         }
@@ -122,9 +123,9 @@ class Evento
     /**
      * Retorna o nivel de severidade do evento conforme o tipo escolhido.
      *
-     * @access	public
-     * @param	integer	$tipo	1 > numeric, 2 > string
-     * @return	mixed
+     * @access public
+     * @param int $tipo   1 > numeric, 2 > string
+     * @return mixed
      */
     public function getNivelSeveridade(int $tipo = 1): mixed
     {
@@ -146,10 +147,10 @@ class Evento
     /**
      * Seta o texto da mensagem que descreve o evento ocorrido.
      *
-     * @access	public
-     * @param	string  $mensagem
-     * @param	array   $complemento
-     * @return	void
+     * @access public
+     * @param string  $mensagem
+     * @param array   $complemento
+     * @return void
      */
     public function setMensagem(string $mensagem, array $complemento = []): void
     {
@@ -167,9 +168,9 @@ class Evento
     /**
      * Seta a request e as outras informações importantes;
      *
-     * @access	public
-     * @param	Cake\Http\ServerRequest	$request
-     * @return	void
+     * @access public
+     * @param \App\Log\Cake\Http\ServerRequest $request
+     * @return void
      */
     public function setRequest(ServerRequest $request): void
     {
@@ -186,9 +187,9 @@ class Evento
     /**
      * Seta o recurso que foi acessado, exemplo: categorias/edit/2
      *
-     * @access	public
-     * @param	string	$recurso
-     * @return	void
+     * @access public
+     * @param string  $recurso
+     * @return void
      */
     public function setRecurso(string $recurso): void
     {
@@ -230,9 +231,9 @@ class Evento
      *      'usuario' =>  App\Model\Entity\User
      * ]);
      *
-     * @access	public
-     * @param	string|array|User	$user
-     * @return	void
+     * @access public
+     * @param \App\Model\Entity\User|array|string $user
+     * @return void
      */
     public function setUsuario(string|array|User $user): void
     {
@@ -240,8 +241,7 @@ class Evento
             $this->usuario = 'ID: ' . $user->id . ' | usuario: ' . $user->username . ' | e-mail:' . $user->email;
         }
 
-        if (is_array($user))
-        {
+        if (is_array($user)) {
             $dados = '';
             foreach ($user['dados'] as $key => $value) {
                 if (is_int($key)) {
@@ -276,9 +276,9 @@ class Evento
     /**
      * Verifica se o evento informado é um Evento Gatilho aguardado.
      *
-     * @access	public
-     * @param	string	$idEvento
-     * @return	mixed
+     * @access public
+     * @param string  $idEvento
+     * @return mixed
      */
     public function aguardaPeloEvento(string $idEvento): bool
     {

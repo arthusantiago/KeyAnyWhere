@@ -1,12 +1,11 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use App\Criptografia\Criptografia;
 use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Cake\ORM\Entity;
-use App\Criptografia\Criptografia;
 use PragmaRX\Google2FA\Google2FA;
 
 /**
@@ -27,7 +26,7 @@ use PragmaRX\Google2FA\Google2FA;
  */
 class User extends Entity
 {
-    const LENGTH_SECRET_2FA = 32;
+    public const LENGTH_SECRET_2FA = 32;
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -59,12 +58,13 @@ class User extends Entity
         'password',
         'tfa_secret',
         'tfa_ativo',
-        'root'
+        'root',
     ];
 
     public function usernameEncurtado(int $tamanho = 15): string
     {
         $complemento = strlen($this->username) > $tamanho ? '(...)' : '';
+
         return substr($this->username, 0, $tamanho) . $complemento;
     }
 
@@ -89,7 +89,7 @@ class User extends Entity
 
     public function geraSecret2FA()
     {
-        return (new Google2FA)->generateSecretKey(User::LENGTH_SECRET_2FA);
+        return (new Google2FA())->generateSecretKey(User::LENGTH_SECRET_2FA);
     }
 
     public function valida2fa(string $secret): bool

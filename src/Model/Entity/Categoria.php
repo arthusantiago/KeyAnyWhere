@@ -32,7 +32,7 @@ class Categoria extends Entity
         'created' => true,
         'modified' => true,
         'entradas' => true,
-        'posicao' => true
+        'posicao' => true,
     ];
 
     /**
@@ -49,9 +49,10 @@ class Categoria extends Entity
 
     /**
      * Retorna o nome descriptografado
-     *p
-     * @access	public
-     * @return	string
+     * p
+     *
+     * @access public
+     * @return string
      */
     public function nomeDescrip(): string
     {
@@ -62,8 +63,7 @@ class Categoria extends Entity
     {
         $nomeDescrip = $this->nomeDescrip();
 
-        if (strlen($nomeDescrip) > $tamanho)
-        {
+        if (strlen($nomeDescrip) > $tamanho) {
             $nomeDescrip = substr($nomeDescrip, 0, $tamanho) . ' ...';
         }
 

@@ -9,7 +9,7 @@ use Cake\ORM\Entity;
  * Session Entity
  *
  * @property string $id É o ID da sessão, o mesmo utilizado pelo PHP
- * @property uuid $id_secundario Usado para manipular o registro em operações no banco de dados
+ * @property \App\Model\Entity\uuid $id_secundario Usado para manipular o registro em operações no banco de dados
  * @property string|resource|null $data
  * @property int|null $expires
  * @property int|null $user_id
@@ -63,6 +63,7 @@ class Session extends Entity
     /**
      * Sinaliza que o objeto estanciado é a representação da sessão corrente onde ele
      * está sendo manipulado.
+     *
      * @var bool $esteDispositivo
      */
     public bool $esteDispositivo = false;
@@ -71,12 +72,13 @@ class Session extends Entity
      * Propriedade virtual 'navegador'. Para acessar: $session->navegador
      *
      * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
-     * @access	protected
-     * @return	string
+     * @access protected
+     * @return string
      */
-    protected function _getNavegador()
+    protected function _getNavegador(): string
     {
         $navegadorSessao = $this->buscaNaString($this->navegadores, $this->user_agent) ?? 'Desconhecido';
+
         return ucfirst($navegadorSessao);
     }
 
@@ -84,12 +86,13 @@ class Session extends Entity
      * Propriedade virtual 'sistema_operacional'. Para acessar: $session->sistema_operacional
      *
      * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
-     * @access	protected
-     * @return	string
+     * @access protected
+     * @return string
      */
-    protected function _getSistemaOperacional()
+    protected function _getSistemaOperacional(): string
     {
         $sistOperaSessao = $this->buscaNaString($this->sistemasOperacionais, $this->user_agent) ?? 'Desconhecido';
+
         return ucfirst($sistOperaSessao);
     }
 
@@ -99,7 +102,7 @@ class Session extends Entity
      * @access protected
      * @param array $itensProcurados Conjunto de itens que serão procurados na string
      * @param string $string Que ira sofrer a busca.
-     * @return string|boolean Retorna o primeiro registro encontrado. Se nada for encontrado retorna false
+     * @return string|bool Retorna o primeiro registro encontrado. Se nada for encontrado retorna false
      */
     protected function buscaNaString(array $itensProcurados, string $string): string|bool
     {
@@ -108,6 +111,7 @@ class Session extends Entity
                 return $item;
             }
         }
+
         return false;
     }
 
@@ -118,10 +122,11 @@ class Session extends Entity
      * @param int $maxTimeInactiv Tempo máximo de inatividade
      * @return bool Retorna TRUE quando a sessão é considerada ativa, FALSE caso contrário.
      */
-    public function estaAtiva(int $maxTimeInactiv)
+    public function estaAtiva(int $maxTimeInactiv): bool
     {
         // Time Without user Interaction = (Current time - Time of Last Interaction)
         $twi = time() - $this->expires;
-        return $twi >= $maxTimeInactiv ? false : true ;
+
+        return $twi >= $maxTimeInactiv ? false : true;
     }
 }

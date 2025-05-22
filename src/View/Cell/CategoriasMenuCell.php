@@ -32,7 +32,7 @@ class CategoriasMenuCell extends Cell
      *
      * @return void
      */
-    public function desktop()
+    public function desktop(): void
     {
         $query = $this->queryCategorias();
         $this->set(compact('query'));
@@ -43,7 +43,7 @@ class CategoriasMenuCell extends Cell
      *
      * @return void
      */
-    public function responsivo()
+    public function responsivo(): void
     {
         $query = $this->queryCategorias();
         $this->set(compact('query'));

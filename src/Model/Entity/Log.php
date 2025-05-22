@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
-use Cake\ORM\Entity;
 use App\Log\LogLevelInt;
+use Cake\ORM\Entity;
 
 /**
  * Log Entity
@@ -54,6 +54,7 @@ class Log extends Entity
         } else {
             $txt = $this->mensagem;
         }
+
         return $txt;
     }
 }

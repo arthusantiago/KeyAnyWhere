@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace App\Controller;
 
+use App\Model\Table\IpsBloqueadosTable;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
-use App\Model\Table\IpsBloqueadosTable;
 
 /**
  * Application Controller
@@ -45,7 +45,6 @@ class AppController extends Controller
         parent::initialize();
         $this->loadComponent('Flash');
         $this->loadComponent('Authentication.Authentication');
-        $this->loadComponent('RequestHandler');
         $this->loadComponent('FormProtection');
 
         $userLogado = $this->Authentication->getResult()->getData();
@@ -59,6 +58,7 @@ class AppController extends Controller
     {
         if ($this->ipEstaBloqueado()) {
             $this->viewBuilder()->setLayout('layout_vazio');
+
             return $this->render('/IpsBloqueados/ip_bloqueado');
         }
     }
@@ -66,12 +66,12 @@ class AppController extends Controller
     /**
      * Verifica se o IP de quem está acessar, foi bloqueado
      *
-     * @access	private
-     * @return	bool
+     * @access private
+     * @return bool
      */
     private function ipEstaBloqueado(): bool
     {
-        $ipBloqueado = (new IpsBloqueadosTable)
+        $ipBloqueado = (new IpsBloqueadosTable())
             ->find()
             ->where(['ip' => $this->request->clientIp()])
             ->limit(1)

@@ -16,6 +16,12 @@ declare(strict_types=1);
  */
 namespace App;
 
+use App\Middleware\SecurityHeadersKawMiddleware;
+use App\Middleware\SessionsKawMiddleware;
+use Authentication\AuthenticationService;
+use Authentication\AuthenticationServiceInterface;
+use Authentication\AuthenticationServiceProviderInterface;
+use Authentication\Middleware\AuthenticationMiddleware;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Datasource\FactoryLocator;
@@ -23,18 +29,12 @@ use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
 use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\Middleware\CsrfProtectionMiddleware;
+use Cake\Http\Middleware\HttpsEnforcerMiddleware;
+use Cake\Http\Middleware\SecurityHeadersMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\ORM\Locator\TableLocator;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
-use Cake\Http\Middleware\HttpsEnforcerMiddleware;
-use Cake\Http\Middleware\SecurityHeadersMiddleware;
-use App\Middleware\SecurityHeadersKawMiddleware;
-use App\Middleware\SessionsKawMiddleware;
-use Authentication\AuthenticationService;
-use Authentication\AuthenticationServiceInterface;
-use Authentication\AuthenticationServiceProviderInterface;
-use Authentication\Middleware\AuthenticationMiddleware;
 use Cake\Routing\Router;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -43,6 +43,8 @@ use Psr\Http\Message\ServerRequestInterface;
  *
  * This defines the bootstrapping logic and middleware layers you
  * want to use in your application.
+ *
+ * @extends \Cake\Http\BaseApplication<\App\Application>
  */
 class Application extends BaseApplication implements AuthenticationServiceProviderInterface
 {
@@ -61,7 +63,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         } else {
             FactoryLocator::add(
                 'Table',
-                (new TableLocator())->allowFallbackClass(false)
+                (new TableLocator())->allowFallbackClass(false),
             );
         }
 
@@ -74,7 +76,6 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         }
 
         // Load more plugins here
-        $this->addPlugin('Migrations');
     }
 
     /**
@@ -88,7 +89,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         $middlewareQueue
             // Catch any exceptions in the lower layers,
             // and make an error page/response
-            ->add(new ErrorHandlerMiddleware(Configure::read('Error')))
+            ->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this))
 
             // Handle plugin/theme assets like CakePHP normally does.
             ->add(new AssetMiddleware([
@@ -97,10 +98,8 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
             // Add routing middleware.
             // If you have a large number of routes connected, turning on routes
-            // caching in production could improve performance. For that when
-            // creating the middleware instance specify the cache config name by
-            // using it's second constructor argument:
-            // `new RoutingMiddleware($this, '_cake_routes_')`
+            // caching in production could improve performance.
+            // See https://github.com/CakeDC/cakephp-cached-routing
             ->add(new RoutingMiddleware($this))
 
             // Parse various types of encoded request bodies so that they are
@@ -116,7 +115,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 'cookieName' => '__Secure-csrfToken',
                 'httponly' => true,
                 'secure' => true,
-                'samesite' => 'Strict'
+                'samesite' => 'Strict',
             ]))
 
             // Forçando HTTPS em todas as conexões;
@@ -127,7 +126,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                     'maxAge' => 31536000,
                     'includeSubDomains' => true,
                     'preload' => true,
-                ]
+                ],
             ]));
 
             $securityHeaders = new SecurityHeadersKawMiddleware();
@@ -138,10 +137,10 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 ->noSniff()
                 ->noOpen();
 
-            if (Configure::read('debug') == false) {
-                $securityHeaders->setXFrameOptions(SecurityHeadersMiddleware::DENY);
-                $securityHeaders->setContentSecurityPolicy();
-            }
+        if (Configure::read('debug') == false) {
+            $securityHeaders->setXFrameOptions(SecurityHeadersMiddleware::DENY);
+            $securityHeaders->setContentSecurityPolicy();
+        }
 
             $middlewareQueue->add($securityHeaders);
             $middlewareQueue->add(new SessionsKawMiddleware($this));
@@ -189,7 +188,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             'fields' => [
                 'username' => 'email',
                 'password' => 'password',
-            ]
+            ],
         ]);
 
         // Load the authenticators, you want session first
