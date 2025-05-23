@@ -49,7 +49,6 @@ class Categoria extends Entity
 
     /**
      * Retorna o nome descriptografado
-     * p
      *
      * @access public
      * @return string
