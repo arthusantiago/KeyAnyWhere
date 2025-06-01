@@ -1,11 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Log;
 
-use Cake\Log\Log;
-use App\Log\Evento;
-use App\Log\EventosComplexos;
 use Cake\Core\Exception\CakeException;
+use Cake\Log\Log;
 
 class GerenciadorEventos
 {
@@ -29,23 +28,23 @@ class GerenciadorEventos
      *
      * @var array $catalogoEventos
      */
-    private static $catalogoEventos = [
+    private static array $catalogoEventos = [
         /*
          * Categoria 1: LOGIN
          * Eventos que acontecerem antes, durante e depois do login no sistema.
          */
         'C1-1' => [
             'nivel_severidade' => 'notice',
-            'mensagem' => 'Durante o login o usuário errou o user ou password.'
+            'mensagem' => 'Durante o login o usuário errou o user ou password.',
         ],
         'C1-2' => [
             'nivel_severidade' => 'notice',
-            'mensagem' => 'Durante o login o usuário errou o 2FA.'
+            'mensagem' => 'Durante o login o usuário errou o 2FA.',
         ],
         'C1-3' => [
             'nivel_severidade' => 'warning',
             'mensagem' => 'Durante o login o usuário erro mais de 3 vezes uma das credenciais de acesso. O seu IP foi bloqueado.',
-            'evento_gatilho' => ['C1-1', 'C1-2']
+            'evento_gatilho' => ['C1-1', 'C1-2'],
         ],
 
         /*
@@ -55,7 +54,7 @@ class GerenciadorEventos
          */
         'C2-1' => [
             'nivel_severidade' => 'warning',
-            'mensagem' => 'O usuário tentou acessar um recurso que somente o root tem permissão.'
+            'mensagem' => 'O usuário tentou acessar um recurso que somente o root tem permissão.',
         ],
 
         /*
@@ -72,11 +71,11 @@ class GerenciadorEventos
     /**
      * Recebe as informações necessárias criar um Evento. Esse evento dará origem a um registro de log.
      *
-     * @access	public static
-     * @param	array $dados
-     * @return	void
+     * @access public static
+     * @param array $dados
+     * @return void
      */
-    public static function notificarEvento(array $dados)
+    public static function notificarEvento(array $dados): void
     {
         $infoBasicas = self::getEvento($dados['evento']);
         $evento = new Evento(
@@ -84,20 +83,20 @@ class GerenciadorEventos
             $infoBasicas['nivel_severidade'],
             $infoBasicas['mensagem'],
             $dados,
-            $infoBasicas['evento_gatilho']
+            $infoBasicas['evento_gatilho'],
         );
 
         if (self::criarLog($evento)) {
-            (new EventosComplexos)->novoLogSalvo($evento);
+            (new EventosComplexos())->novoLogSalvo($evento);
         }
     }
 
     /**
      * Busca o evento informado no catalogo de eventos.
      *
-     * @access	public static
-     * @param	string	$idEvento Exemplo: 'C1-2'
-     * @return	array Retorna as informações básicas do evento solicitado.
+     * @access public static
+     * @param string  $idEvento Exemplo: 'C1-2'
+     * @return array Retorna as informações básicas do evento solicitado.
      */
     public static function getEvento(string $idEvento): array
     {
@@ -120,8 +119,8 @@ class GerenciadorEventos
     /**
      * Retorna todos os eventos do catalogo
      *
-     * @access	public static
-     * @return	App\Log\Evento[]
+     * @access public static
+     * @return array<\App\Log\App\Log\Evento>
      */
     public static function getEventos(): array
     {
@@ -135,7 +134,7 @@ class GerenciadorEventos
                 $infoBasicas['nivel_severidade'],
                 $infoBasicas['mensagem'],
                 [],
-                $infoBasicas['evento_gatilho']
+                $infoBasicas['evento_gatilho'],
             );
         }
 
@@ -146,8 +145,8 @@ class GerenciadorEventos
      * Retorna o catalogo de eventos já padronizado.
      * Método que garante que o todos os eventos estarão no padrão esperado.
      *
-     * @access	public static
-     * @return	array
+     * @access public static
+     * @return array
      */
     public static function getCatalogoEventos(): array
     {
@@ -172,9 +171,9 @@ class GerenciadorEventos
      * Recebe o evento e utiliza as informações para criar o log. O log está sendo salvo no BD.
      * Ler o arquivo kaw/config/app.php['Log']['database'] e /kaw/src/Log/Engine/DatabaseLog.php
      *
-     * @access	private static
-     * @param	App\Log\Evento	$evento
-     * @return	bool Sucesso ou falha no processo de salvar o log.
+     * @access private static
+     * @param \App\Log\App\Log\Evento  $evento
+     * @return bool Sucesso ou falha no processo de salvar o log.
      */
     private static function criarLog(Evento $evento): bool
     {
@@ -183,8 +182,8 @@ class GerenciadorEventos
             $evento->getMensagem(),
             [
                 'scope' => ['atividades'],
-                'dados' => $evento
-            ]
+                'dados' => $evento,
+            ],
         );
     }
 }

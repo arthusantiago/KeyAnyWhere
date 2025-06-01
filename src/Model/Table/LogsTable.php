@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Table;
-use Cake\ORM\Query;
-use Cake\Validation\Validator;
 use App\Model\Custom\ValidatorKaw;
+use Cake\ORM\Query;
+use Cake\ORM\Table;
+use Cake\Validation\Validator;
+
 /**
  * Logs Model
  *
@@ -23,7 +24,6 @@ use App\Model\Custom\ValidatorKaw;
  * @method \App\Model\Entity\Log[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\Log[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\Log[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class LogsTable extends Table
@@ -98,13 +98,13 @@ class LogsTable extends Table
         $query
             ->select([
                 'nivel_severidade',
-                'quantidade' => $query->func()->count('nivel_severidade')
+                'quantidade' => $query->func()->count('nivel_severidade'),
             ])
             ->where([
                 'analisado' => false,
-                'nivel_severidade NOT IN (6, 7)'
+                'nivel_severidade NOT IN (6, 7)',
             ])
-            ->group(['nivel_severidade']);
+            ->groupBy(['nivel_severidade']);
 
         return $query;
     }

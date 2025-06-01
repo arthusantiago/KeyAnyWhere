@@ -23,7 +23,7 @@ class EntradasTableTest extends TestCase
      *
      * @var array
      */
-    protected $fixtures = [
+    protected array $fixtures = [
         'app.Entradas',
         'app.Categorias',
         'app.Users',

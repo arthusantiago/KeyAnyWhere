@@ -15,7 +15,7 @@ return [
      * Development Mode:
      * true: Errors and warnings shown.
      */
-    'debug' => true,
+    'debug' => filter_var(env('DEBUG', true), FILTER_VALIDATE_BOOLEAN),
 
     /*
      * Security and encryption configuration
@@ -25,7 +25,7 @@ return [
      *   You should treat it as extremely sensitive data.
      */
     'Security' => [
-        'salt' => 'bbd64558436f91ddb556fc2c85b8956b5e93663db4789d28986677521fabbbeb',
+        'salt' => env('SECURITY_SALT', '__SALT__'),
     ],
 
     /*
@@ -52,7 +52,7 @@ return [
              * If not using the default 'public' schema with the PostgreSQL driver
              * set it here.
              */
-            //'schema' => 'public',
+            //'schema' => 'myapp',
 
             /*
              * You can use a DSN string to set the entire configuration
@@ -70,7 +70,7 @@ return [
             'password' => 'secret',
             'database' => 'test_myapp',
             //'schema' => 'myapp',
-            'url' => env('DATABASE_TEST_URL', 'sqlite://127.0.0.1/tests.sqlite'),
+            'url' => env('DATABASE_TEST_URL', 'sqlite://127.0.0.1/tmp/tests.sqlite'),
         ],
     ],
 

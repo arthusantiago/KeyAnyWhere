@@ -30,8 +30,8 @@ class IpsBloqueadosController extends AppController
             $this->IpsBloqueados,
             [
                 'order' => ['created' => 'desc'],
-                'limit' => 15
-            ]
+                'limit' => 15,
+            ],
         );
 
         $this->viewBuilder()->setLayout('administrativo');
@@ -50,6 +50,7 @@ class IpsBloqueadosController extends AppController
             $ipsBloqueado = $this->IpsBloqueados->patchEntity($ipsBloqueado, $this->request->getData());
             if ($this->IpsBloqueados->save($ipsBloqueado)) {
                 $this->Flash->success(__('Salvo com sucesso!'));
+
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(null, ['params' => ['mensagens' => $ipsBloqueado->getErrors()]]);

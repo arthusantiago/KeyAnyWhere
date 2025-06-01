@@ -34,17 +34,22 @@ require CORE_PATH . 'config' . DS . 'bootstrap.php';
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Configure\Engine\PhpConfig;
-use Cake\Database\TypeFactory;
 use Cake\Database\Type\StringType;
+use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
-use Cake\Error\ConsoleErrorHandler;
-use Cake\Error\ErrorHandler;
+use Cake\Error\ErrorTrap;
+use Cake\Error\ExceptionTrap;
 use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
 use Cake\Routing\Router;
 use Cake\Utility\Security;
+
+/**
+ * Load global functions.
+ */
+require CAKE . 'functions.php';
 
 /*
  * See https://github.com/josegonzalez/php-dotenv for API details.
@@ -59,10 +64,9 @@ use Cake\Utility\Security;
  * If you use .env files, be careful to not commit them to source control to avoid
  * security risks. See https://github.com/josegonzalez/php-dotenv#general-security-information
  * for more information for recommended practices.
-*/
-
-/*
- * As informações contidas no arquivo .env serão carregadas se:
+ *
+ *
+ * As informações contidas no arquivo config/.env serão carregadas se:
  * - A variável de ambiente APP_NAME não deve existir
  * - O arquivo .env deve existir
  *
@@ -113,7 +117,7 @@ if (Configure::read('debug')) {
 
 /*
  * Set the default server timezone. Using UTC makes time calculations / conversions easier.
- * Check http://php.net/manual/en/timezones.php for list of valid timezone strings.
+ * Check https://php.net/manual/en/timezones.php for list of valid timezone strings.
  */
 date_default_timezone_set(Configure::read('App.defaultTimezone'));
 
@@ -131,17 +135,13 @@ ini_set('intl.default_locale', Configure::read('App.defaultLocale'));
 /*
  * Register application error and exception handlers.
  */
-$isCli = PHP_SAPI === 'cli';
-if ($isCli) {
-    (new ConsoleErrorHandler(Configure::read('Error')))->register();
-} else {
-    (new ErrorHandler(Configure::read('Error')))->register();
-}
+(new ErrorTrap(Configure::read('Error')))->register();
+(new ExceptionTrap(Configure::read('Error')))->register();
 
 /*
  * Include the CLI bootstrap overrides.
  */
-if ($isCli) {
+if (PHP_SAPI === 'cli') {
     require CONFIG . 'bootstrap_cli.php';
 }
 
@@ -151,8 +151,18 @@ if ($isCli) {
  */
 $fullBaseUrl = Configure::read('App.fullBaseUrl');
 if (!$fullBaseUrl) {
+    /*
+     * When using proxies or load balancers, SSL/TLS connections might
+     * get terminated before reaching the server. If you trust the proxy,
+     * you can enable `$trustProxy` to rely on the `X-Forwarded-Proto`
+     * header to determine whether to generate URLs using `https`.
+     *
+     * See also https://book.cakephp.org/4/en/controllers/request-response.html#trusting-proxy-headers
+     */
+    $trustProxy = false;
+
     $s = null;
-    if (env('HTTPS')) {
+    if (env('HTTPS') || ($trustProxy && env('HTTP_X_FORWARDED_PROTO') === 'https')) {
         $s = 's';
     }
 
@@ -213,9 +223,6 @@ ServerRequest::addDetector('tablet', function ($request) {
 // \Cake\Database\TypeFactory::build('timestamptimezone')
 //    ->useLocaleParser();
 
-// There is no time-specific type in Cake
-TypeFactory::map('time', StringType::class);
-
 /*
  * Custom Inflector rules, can be set to correctly pluralize or singularize
  * table, model, controller names or whatever other string is passed to the
@@ -224,3 +231,9 @@ TypeFactory::map('time', StringType::class);
 //Inflector::rules('plural', ['/^(inflect)or$/i' => '\1ables']);
 //Inflector::rules('irregular', ['red' => 'redlings']);
 //Inflector::rules('uninflected', ['dontinflectme']);
+
+// set a custom date and time format
+// see https://book.cakephp.org/4/en/core-libraries/time.html#setting-the-default-locale-and-format-string
+// and https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax
+//\Cake\I18n\FrozenDate::setToStringFormat('dd.MM.yyyy');
+//\Cake\I18n\FrozenTime::setToStringFormat('dd.MM.yyyy HH:mm');

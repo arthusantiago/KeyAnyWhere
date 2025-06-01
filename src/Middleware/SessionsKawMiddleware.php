@@ -1,13 +1,15 @@
 <?php
+declare(strict_types=1);
+
 namespace App\Middleware;
 
 use Authentication\AuthenticationServiceProviderInterface;
+use Cake\I18n\DateTime;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\I18n\FrozenTime;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * SessionsKawMiddleware adiciona a sessão salva no banco de dados, algumas informações utilizadas no sistema.
@@ -26,14 +28,14 @@ class SessionsKawMiddleware implements MiddlewareInterface
      *
      * @var \Authentication\AuthenticationServiceProviderInterface $subject
      */
-    private $subject = null;
+    private ?AuthenticationServiceProviderInterface $subject = null;
 
     /**
      * Tabela do banco de dados que armazena as sessões
      *
      * @var string $table
      */
-    private $table = 'sessions';
+    private string $table = 'sessions';
 
     /**
      * Constructor
@@ -51,7 +53,6 @@ class SessionsKawMiddleware implements MiddlewareInterface
     }
 
     /**
-     *
      * @param \Cake\Http\ServerRequest $request The request.
      * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
      * @return \Cake\Http\ServerRequest A response.
@@ -63,8 +64,7 @@ class SessionsKawMiddleware implements MiddlewareInterface
             ->getAuthenticationService($request)
             ->authenticate($request);
 
-        if ($resultAutenticacao->isValid())
-        {
+        if ($resultAutenticacao->isValid()) {
             $idSession = $request->getSession()->id();
             $pkField = $modelSessions->getPrimaryKey();
             $sessionDb = $modelSessions
@@ -72,16 +72,15 @@ class SessionsKawMiddleware implements MiddlewareInterface
                 ->where([$pkField => $idSession])
                 ->first();
 
-            if (!$sessionDb->user_id || !$sessionDb->user_agent)
-            {
+            if (!$sessionDb->user_id || !$sessionDb->user_agent) {
                 $userAutenticado = $resultAutenticacao->getData();
                 $sessionDb->user_id = $userAutenticado->id;
                 $sessionDb->user_agent = $request->getHeaders()['User-Agent'][0];
                 $modelSessions->save($sessionDb);
             }
         } else {
-            $dataHora = FrozenTime::now();
-            $dataHora = $dataHora->subDays(1);
+            $dataHora = DateTime::now();
+            $dataHora = $dataHora->subDays(1, 1);
             $modelSessions->deleteAll([
                 'created <= ' => $dataHora->i18nFormat('yyyy-MM-dd 01:00:00'),
             ]);

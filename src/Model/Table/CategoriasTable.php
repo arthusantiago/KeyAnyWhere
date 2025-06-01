@@ -3,15 +3,14 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
-use Cake\ORM\Table;
 use App\Model\Custom\ValidatorKaw;
+use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
  * Categorias Model
  *
  * @property \App\Model\Table\EntradasTable&\Cake\ORM\Association\HasMany $Entradas
- *
  * @method \App\Model\Entity\Categoria newEmptyEntity()
  * @method \App\Model\Entity\Categoria newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\Categoria[] newEntities(array $data, array $options = [])
@@ -25,7 +24,6 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\Categoria[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\Categoria[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\Categoria[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class CategoriasTable extends Table
@@ -79,10 +77,10 @@ class CategoriasTable extends Table
      * Reordena as categorias no BD.
      * Por padrão as categorias são ordenadas alfabeticamente.
      *
-     * @access	public
-     * @return	void
+     * @access public
+     * @return void
      */
-    public function reordenar()
+    public function reordenar(): void
     {
         $categorias = $this
             ->find('all')

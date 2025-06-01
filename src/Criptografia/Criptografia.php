@@ -7,7 +7,6 @@ use Throwable;
 
 /**
  * Responsável por todo o processo de criptografia de descriptografia
- *
  */
 class Criptografia
 {
@@ -17,7 +16,7 @@ class Criptografia
         $encrypted = sodium_crypto_secretbox(
             $textoPuro,
             $nonce,
-            sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
+            sodium_hex2bin(env('KEY_CRIPTOGRAFIC')),
         );
 
         sodium_memzero($textoPuro);
@@ -34,7 +33,7 @@ class Criptografia
             $nonce = substr($decoded, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
             $ciphertext = substr($decoded, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES, null);
             sodium_memzero($decoded);
-        } catch (\Throwable $ex) {
+        } catch (Throwable $ex) {
             return 'Erro ao obter as informações para descriptografar: ' . $ex->getMessage();
         }
 
@@ -42,7 +41,7 @@ class Criptografia
             $return = sodium_crypto_secretbox_open(
                 $ciphertext,
                 $nonce,
-                sodium_hex2bin(env('KEY_CRIPTOGRAFIC'))
+                sodium_hex2bin(env('KEY_CRIPTOGRAFIC')),
             );
 
             sodium_memzero($ciphertext);

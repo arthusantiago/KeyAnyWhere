@@ -3,7 +3,6 @@
 use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
-use Cake\Error\ExceptionRenderer;
 use Cake\Log\Engine\FileLog;
 use Cake\Mailer\Transport\MailTransport;
 
@@ -17,7 +16,7 @@ return [
      * Development Mode:
      * true: Errors and warnings shown.
      */
-    'debug' => false,
+    'debug' => filter_var(env('DEBUG', false), FILTER_VALIDATE_BOOLEAN),
 
     /*
      * Configure basic information about the application.
@@ -49,7 +48,7 @@ return [
      */
     'App' => [
         'namespace' => 'App',
-        'encoding' => 'UTF-8',
+        'encoding' => env('APP_ENCODING', 'UTF-8'),
         'defaultLocale' => env('APP_DEFAULT_LOCALE', 'pt_BR'),
         'defaultTimezone' => env('APP_DEFAULT_TIMEZONE', 'America/Campo_Grande'),
         'base' => false,
@@ -108,7 +107,7 @@ return [
          * Duration will be set to '+2 minutes' in bootstrap.php when debug = true
          * If you set 'className' => 'Null' core cache will be disabled.
          */
-        '_cake_core_' => [
+        '_cake_translations_' => [
             'className' => FileEngine::class,
             'prefix' => 'myapp_cake_core_',
             'path' => CACHE . 'persistent' . DS,
@@ -131,20 +130,6 @@ return [
             'duration' => '+1 years',
             'url' => env('CACHE_CAKEMODEL_URL', null),
         ],
-
-        /*
-         * Configure the cache for routes. The cached routes collection is built the
-         * first time the routes are processed through `config/routes.php`.
-         * Duration will be set to '+2 seconds' in bootstrap.php when debug = true
-         */
-        '_cake_routes_' => [
-            'className' => FileEngine::class,
-            'prefix' => 'myapp_cake_routes_',
-            'path' => CACHE,
-            'serialize' => true,
-            'duration' => '+1 years',
-            'url' => env('CACHE_CAKEROUTES_URL', null),
-        ],
     ],
 
     /*
@@ -164,16 +149,21 @@ return [
      * - `trace` - boolean - Whether or not backtraces should be included in
      *   logged errors/exceptions.
      * - `log` - boolean - Whether or not you want exceptions logged.
-     * - `exceptionRenderer` - string - The class responsible for rendering
-     *   uncaught exceptions. If you choose a custom class you should place
-     *   the file for that class in src/Error. This class needs to implement a
-     *   render method.
+     * - `exceptionRenderer` - string - The class responsible for rendering uncaught exceptions.
+     *   The chosen class will be used for for both CLI and web environments. If you want different
+     *   classes used in CLI and web environments you'll need to write that conditional logic as well.
+     *   The conventional location for custom renderers is in `src/Error`. Your exception renderer needs to
+     *   implement the `render()` method and return either a string or Http\Response.
+     *   `errorRenderer` - string - The class responsible for rendering PHP errors. The selected
+     *   class will be used for both web and CLI contexts. If you want different classes for each environment
+     *   you'll need to write that conditional logic as well. Error renderers need to
+     *   to implement the `Cake\Error\ErrorRendererInterface`.
      * - `skipLog` - array - List of exceptions to skip for logging. Exceptions that
      *   extend one of the listed exceptions will also be skipped for logging.
      *   E.g.:
      *   `'skipLog' => ['Cake\Http\Exception\NotFoundException', 'Cake\Http\Exception\UnauthorizedException']`
-     * - `extraFatalErrorMemory` - int - The number of megabytes to increase
-     *   the memory limit by when a fatal error is encountered. This allows
+     * - `extraFatalErrorMemory` - int - The number of megabytes to increase the memory limit by
+     *   when a fatal error is encountered. This allows
      *   breathing room to complete logging or error handling.
      * - `ignoredDeprecationPaths` - array - A list of glob compatible file paths that deprecations
      *   should be ignored in. Use this to ignore deprecations for plugins or parts of
@@ -181,13 +171,10 @@ return [
      */
     'Error' => [
         'errorLevel' => E_ALL,
-        'exceptionRenderer' => ExceptionRenderer::class,
         'skipLog' => [],
         'log' => true,
         'trace' => true,
-        'ignoredDeprecationPaths' => [
-            'config/*'
-        ],
+        'ignoredDeprecationPaths' => [],
     ],
 
     /*
@@ -339,8 +326,6 @@ return [
              * which is the recommended value in production environments
              */
             //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
-
-            'url' => env('DATABASE_URL'),
         ],
 
         /*
@@ -375,7 +360,7 @@ return [
             'path' => LOGS,
             'file' => 'debug',
             'url' => env('LOG_DEBUG_URL', null),
-            'scopes' => false,
+            'scopes' => null,
             'levels' => ['notice', 'info', 'debug'],
         ],
         'error' => [
@@ -383,7 +368,7 @@ return [
             'path' => LOGS,
             'file' => 'error',
             'url' => env('LOG_ERROR_URL', null),
-            'scopes' => false,
+            'scopes' => null,
             'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
         ],
         // To enable this dedicated query log, you need set your datasource's log flag to true
@@ -392,10 +377,10 @@ return [
             'path' => LOGS,
             'file' => 'queries',
             'url' => env('LOG_QUERIES_URL', null),
-            'scopes' => ['queriesLog'],
+            'scopes' => ['cake.database.queries'],
         ],
         'database' => [
-            'className' => 'Database',
+            'className' => FileLog::class,
             'levels' => [],
             'scopes' => ['atividades'],
         ]
@@ -425,7 +410,7 @@ return [
      *    array with at least the `engine` key, being the name of the Session engine
      *    class to use for managing the session. CakePHP bundles the `CacheSession`
      *    and `DatabaseSession` engines.
-     * - `ini` - An associative array of additional ini values to set.
+     * - `ini` - An associative array of additional 'session.*` ini values to set.
      *
      * The built-in `defaults` options are:
      *
@@ -434,7 +419,7 @@ return [
      * - 'database' - Uses CakePHP's database sessions.
      * - 'cache' - Use the Cache class to save sessions.
      *
-     * To define a custom session handler, save it at src/Network/Session/<name>.php.
+     * To define a custom session handler, save it at src/Http/Session/<name>.php.
      * Make sure the class implements PHP's `SessionHandlerInterface` and set
      * Session.handler to <name>
      *

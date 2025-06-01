@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Event\EventInterface;
+
 /**
  * Categorias Controller
  *
@@ -32,10 +33,10 @@ class CategoriasController extends AppController
         $entradas = $this->Categorias->Entradas
             ->find('all')
             ->where(['categoria_id' => $categoria_id])
-            ->order(['titulo']);
+            ->orderBy(['titulo']);
         $entradas = $this->paginate($entradas, ['limit' => 11]);
 
-        $this->set(compact('entradas','categoria'));
+        $this->set(compact('entradas', 'categoria'));
     }
 
     /**
@@ -47,7 +48,7 @@ class CategoriasController extends AppController
     {
         $query = $this->Categorias
         ->find('all')
-        ->order(['posicao']);
+        ->orderBy(['posicao']);
 
         $query = $this->paginate($query, ['limit' => 11]);
 
@@ -67,6 +68,7 @@ class CategoriasController extends AppController
             if ($this->Categorias->save($categoria)) {
                 $this->Flash->success(__('Salvo com sucesso'));
                 $this->Categorias->reordenar();
+
                 return $this->redirect(['action' => 'edit', $categoria->id]);
             }
             $this->Flash->error(null, ['params' => ['mensagens' => $categoria->getErrors()]]);
@@ -81,7 +83,7 @@ class CategoriasController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function edit($id)
+    public function edit(string $id)
     {
         $categoria = $this->Categorias->get($id);
 
@@ -90,7 +92,7 @@ class CategoriasController extends AppController
             if ($this->Categorias->save($categoria)) {
                 $this->Flash->success(__('Salvo com sucesso'));
                 $this->Categorias->reordenar();
-            }else{
+            } else {
                 $this->Flash->error(null, ['params' => ['mensagens' => $categoria->getErrors()]]);
             }
 

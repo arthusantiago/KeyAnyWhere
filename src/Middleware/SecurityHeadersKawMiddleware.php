@@ -8,7 +8,7 @@ use Cake\Http\Middleware\SecurityHeadersMiddleware;
 /**
  * Utilizando a estrutuda do SecurityHeadersMiddleware para ampliar as configurações de segurança.
  *
- * @see	https://book.cakephp.org/4/en/security/security-headers.html
+ * @see https://book.cakephp.org/4/en/security/security-headers.html
  * @global
  */
 class SecurityHeadersKawMiddleware extends SecurityHeadersMiddleware
@@ -19,9 +19,9 @@ class SecurityHeadersKawMiddleware extends SecurityHeadersMiddleware
      * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
      * @access public
      * @param string $policy
-     * @return	SecurityHeadersKawMiddleware $this
+     * @return \App\Middleware\SecurityHeadersKawMiddleware $this
      */
-    public function setContentSecurityPolicy(string $policy = '')
+    public function setContentSecurityPolicy(string $policy = ''): SecurityHeadersKawMiddleware
     {
         if (empty($policy)) {
             $policy = 'default-src https: \'self\'; img-src \'self\'; script-src \'self\'; style-src \'self\'; object-src \'none\'';

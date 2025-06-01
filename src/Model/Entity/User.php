@@ -1,12 +1,11 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use App\Criptografia\Criptografia;
 use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Cake\ORM\Entity;
-use App\Criptografia\Criptografia;
 use PragmaRX\Google2FA\Google2FA;
 
 /**
@@ -20,14 +19,14 @@ use PragmaRX\Google2FA\Google2FA;
  * @property string $tfa_ativo
  * @property bool $root Se o usuário e administrador
  * @property int $LENGTH_SECRET_2FA
- * @property \Cake\I18n\FrozenTime $created
- * @property \Cake\I18n\FrozenTime $modified
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\Entrada[] $entradas
  */
 class User extends Entity
 {
-    const LENGTH_SECRET_2FA = 32;
+    public const LENGTH_SECRET_2FA = 32;
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -38,7 +37,7 @@ class User extends Entity
      *
      * @var array
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'username' => true,
         'email' => true,
         'password' => true,
@@ -55,16 +54,17 @@ class User extends Entity
      *
      * @var array
      */
-    protected $_hidden = [
+    protected array $_hidden = [
         'password',
         'tfa_secret',
         'tfa_ativo',
-        'root'
+        'root',
     ];
 
     public function usernameEncurtado(int $tamanho = 15): string
     {
         $complemento = strlen($this->username) > $tamanho ? '(...)' : '';
+
         return substr($this->username, 0, $tamanho) . $complemento;
     }
 
@@ -89,7 +89,7 @@ class User extends Entity
 
     public function geraSecret2FA()
     {
-        return (new Google2FA)->generateSecretKey(User::LENGTH_SECRET_2FA);
+        return (new Google2FA())->generateSecretKey(User::LENGTH_SECRET_2FA);
     }
 
     public function valida2fa(string $secret): bool

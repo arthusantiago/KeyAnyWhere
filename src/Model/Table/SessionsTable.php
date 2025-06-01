@@ -11,7 +11,6 @@ use Cake\Validation\Validator;
  * Sessions Model
  *
  * @property \App\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
- *
  * @method \App\Model\Entity\Session newEmptyEntity()
  * @method \App\Model\Entity\Session newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\Session[] newEntities(array $data, array $options = [])
@@ -25,7 +24,6 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\Session[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\Session[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\Session[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class SessionsTable extends Table

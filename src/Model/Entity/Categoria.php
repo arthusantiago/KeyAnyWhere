@@ -11,8 +11,8 @@ use Cake\ORM\Entity;
  *
  * @property int $id
  * @property string $nome
- * @property \Cake\I18n\FrozenTime $created
- * @property \Cake\I18n\FrozenTime $modified
+ * @property \Cake\I18n\DateTime $created
+ * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\Entrada[] $entradas
  */
@@ -27,12 +27,12 @@ class Categoria extends Entity
      *
      * @var array
      */
-    protected $_accessible = [
+    protected array $_accessible = [
         'nome' => true,
         'created' => true,
         'modified' => true,
         'entradas' => true,
-        'posicao' => true
+        'posicao' => true,
     ];
 
     /**
@@ -49,9 +49,9 @@ class Categoria extends Entity
 
     /**
      * Retorna o nome descriptografado
-     *p
-     * @access	public
-     * @return	string
+     *
+     * @access public
+     * @return string
      */
     public function nomeDescrip(): string
     {
@@ -62,8 +62,7 @@ class Categoria extends Entity
     {
         $nomeDescrip = $this->nomeDescrip();
 
-        if (strlen($nomeDescrip) > $tamanho)
-        {
+        if (strlen($nomeDescrip) > $tamanho) {
             $nomeDescrip = substr($nomeDescrip, 0, $tamanho) . ' ...';
         }
 

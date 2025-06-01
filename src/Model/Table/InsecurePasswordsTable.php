@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Custom\ValidatorKaw;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
-use App\Model\Custom\ValidatorKaw;
+
 /**
  * InsecurePasswords Model
  *
@@ -23,7 +24,6 @@ use App\Model\Custom\ValidatorKaw;
  * @method \App\Model\Entity\InsecurePassword[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \App\Model\Entity\InsecurePassword[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \App\Model\Entity\InsecurePassword[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- *
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
 class InsecurePasswordsTable extends Table
@@ -76,9 +76,9 @@ class InsecurePasswordsTable extends Table
         $rules->add(
             $rules->isUnique(
                 ['password'],
-                'Esta senha já está cadastrada'
+                'Esta senha já está cadastrada',
             ),
-            ['errorField' => 'password']
+            ['errorField' => 'password'],
         );
 
         return $rules;
