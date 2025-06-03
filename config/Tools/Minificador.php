@@ -12,7 +12,6 @@ class Minificador {
 
     private static $pathCssOrigem = '/webroot/css/';
     private static $pathCssMinified = '/webroot/css/minified/';
-    private static $fileNameCssMinified = 'kaw.min.css';
 
     static public function executar(Event $event)
     {
@@ -21,7 +20,6 @@ class Minificador {
         self::minificarCSS(
             $raizProjeto . self::$pathCssOrigem,
             $raizProjeto . self::$pathCssMinified,
-            self::$fileNameCssMinified
         );
 
         self::minificarJS(
@@ -31,31 +29,29 @@ class Minificador {
     }
 
     /**
-     * Executa a minificação dos arquivos .css, unificando todos em um só.
+     * Executa a minificação dos arquivos .css .
+     * Para cada arquivo, é criado um novo com o conteúdo minificado, com mesmo nome mas com extensão diferente.
      *
      * @access	static public
      * @param	string	$pathCssOrigem Pasta que contem os arquivos que serão minificados
      * @param	string	$pathCssMinified Pasta que armazena os arquivos que já foram minificados
-     * @param	string	$fileNameCssMinified Nome do arquivo que será criando contendo todo o css minificado
      * @return	void
      */
-    static public function minificarCSS(string $pathCssOrigem, string $pathCssMinified, string $fileNameCssMinified): void
+    static public function minificarCSS(string $pathCssOrigem, string $pathCssMinified): void
     {
-        $minCSS = new MinifyCSS();
-        self::excluiArquivo($pathCssMinified . $fileNameCssMinified);
         $filesCss = self::somenteArquivos($pathCssOrigem, 'css');
+        self::excluiArquivoComMesmoNome($filesCss, $pathCssMinified);
 
         foreach ($filesCss as $cssItem) {
-            $cssFile = $pathCssOrigem . $cssItem;
-            $minCSS->add($cssFile);
+            (new MinifyCSS())
+                ->add($pathCssOrigem . $cssItem)
+                ->minify($pathCssMinified . strstr($cssItem, '.', true) . '.min.css' );
         }
-
-        $minCSS->minify($pathCssMinified . $fileNameCssMinified);
     }
 
     /**
      * Executa a minificação dos arquivos .js.
-     * Para cada arquivo é criado um novo, com o conteúdo minificado e com o mesmo nome, mas com extensão diferente.
+     * Para cada arquivo, é criado um novo com o conteúdo minificado, com mesmo nome mas com extensão diferente.
      *
      * @access	static public
      * @param	string	$pathJsOrigem Pasta que armazena os arquivos que serão minificados
