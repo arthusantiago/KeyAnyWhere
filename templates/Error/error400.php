@@ -5,12 +5,12 @@
  * @var string $message
  * @var string $url
  */
-use Cake\Core\Configure;
+use App\Application;
 use Cake\Error\Debugger;
 
 $this->layout = 'error';
 
-if (Configure::read('debug')) :
+if (Application::isTheExecutionEnvironment(self::DESENVOLVIMENTO)) :
     $this->layout = 'dev_error';
 
     $this->assign('title', $message);

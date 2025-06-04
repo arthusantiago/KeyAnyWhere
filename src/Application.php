@@ -150,24 +150,24 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             ];
             $middlewareQueue->add(new CsrfProtectionMiddleware($csrfProtecConfig));
 
-            // Forçando HTTPS em todas as conexões;
-            $middlewareQueue->add(new HttpsEnforcerMiddleware([
-                'headers' => ['X-Https-Upgrade' => 1],
-                'hsts' => [
-                    // 31536000 = 60 * 60 * 24 * 365
-                    'maxAge' => 31536000,
-                    'includeSubDomains' => true,
-                    'preload' => true,
-                ],
-            ]));
+        // Forçando HTTPS em todas as conexões;
+        $middlewareQueue->add(new HttpsEnforcerMiddleware([
+            'headers' => ['X-Https-Upgrade' => 1],
+            'hsts' => [
+                // 31536000 = 60 * 60 * 24 * 365
+                'maxAge' => 31536000,
+                'includeSubDomains' => true,
+                'preload' => true,
+            ],
+        ]));
 
-            $securityHeaders = new SecurityHeadersKawMiddleware();
-            $securityHeaders
-                ->setReferrerPolicy(SecurityHeadersMiddleware::STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
-                ->setXssProtection(SecurityHeadersMiddleware::XSS_DISABLED)
-                ->setCrossDomainPolicy(SecurityHeadersMiddleware::NONE)
-                ->noSniff()
-                ->noOpen();
+        $securityHeaders = new SecurityHeadersKawMiddleware();
+        $securityHeaders
+            ->setReferrerPolicy(SecurityHeadersMiddleware::STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
+            ->setXssProtection(SecurityHeadersMiddleware::XSS_DISABLED)
+            ->setCrossDomainPolicy(SecurityHeadersMiddleware::NONE)
+            ->noSniff()
+            ->noOpen();
 
         if (self::isTheExecutionEnvironment()) {
             $securityHeaders->setXFrameOptions(SecurityHeadersMiddleware::DENY);
