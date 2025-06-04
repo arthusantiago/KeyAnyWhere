@@ -8,10 +8,10 @@ use MatthiasMullie\Minify\JS as MinifyJS;
 
 class Minificador {
     private static $pathJsOrigem = '/webroot/js/';
-    private static $pathJsMinified = '/webroot/js/minified/';
+    private static $pathJsMinified = '/webroot/js/' . ARQ_MINIFICADOS;
 
     private static $pathCssOrigem = '/webroot/css/';
-    private static $pathCssMinified = '/webroot/css/minified/';
+    private static $pathCssMinified = '/webroot/css/' . ARQ_MINIFICADOS;
 
     static public function executar(Event $event)
     {

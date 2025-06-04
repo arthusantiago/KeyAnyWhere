@@ -48,6 +48,37 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class Application extends BaseApplication implements AuthenticationServiceProviderInterface
 {
+    public const DESENVOLVIMENTO = 0;
+    public const PRODUCAO = 1;
+    public const SANDBOX = 2;
+    public const TESTE = 3;
+
+    /**
+     * Analisa em qual ambiente (desenvolvimento/producao/teste e etc) a aplicação está executando.
+     * O comportamento padrão é comparar o ambiente perguntado via parametro com o ambiente de execução corrente,
+     * e responder se é igual ou não.
+     * Se for informado $isEnvironment === false, será retornado o ambiente corrente.
+     *
+     * @access public static
+     * @param bool $isEnvironment Default: self::PRODUCAO
+     * @return int|bool
+     */
+    public static function isTheExecutionEnvironment(int|bool $isEnvironment = self::PRODUCAO)
+    {
+        // ambiente default
+        $ambienteCorrente = self::PRODUCAO;
+
+        if (Configure::read('debug')) {
+            $ambienteCorrente = self::DESENVOLVIMENTO;
+        }
+        /* Adicionar aqui mais validações de ambiente */
+
+        if ($isEnvironment === false) {
+            return $ambienteCorrente;
+        }
+
+        return $ambienteCorrente === $isEnvironment;
+    }
     /**
      * Load all the application configuration and bootstrap logic.
      *
@@ -71,7 +102,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
          * Only try to load DebugKit in development mode
          * Debug Kit should not be installed on a production system
          */
-        if (Configure::read('debug')) {
+        if (self::isTheExecutionEnvironment(self::DESENVOLVIMENTO)) {
             $this->addPlugin('DebugKit');
         }
 
@@ -112,7 +143,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/4/en/controllers/middleware.html#cross-site-request-forgery-csrf-middleware
             $csrfProtecConfig = [
-                'cookieName' => Configure::read('debug') ? 'Secure-csrfToken' : '__Secure-csrfToken',
+                'cookieName' => self::isTheExecutionEnvironment(self::DESENVOLVIMENTO) ? 'Secure-csrfToken' : '__Secure-csrfToken',
                 'httponly' => true,
                 'secure' => true,
                 'samesite' => 'Strict',
@@ -138,7 +169,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 ->noSniff()
                 ->noOpen();
 
-        if (Configure::read('debug') == false) {
+        if (self::isTheExecutionEnvironment()) {
             $securityHeaders->setXFrameOptions(SecurityHeadersMiddleware::DENY);
             $securityHeaders->setContentSecurityPolicy();
         }
