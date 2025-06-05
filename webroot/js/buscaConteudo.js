@@ -43,57 +43,6 @@ var factoryRequest = async function (url, parametros)
 }
 
 /**
- * Função responsável por buscar as informações de user/senha e escrever na área de transferencia.
- * Também exibe o tooltip da copia.
- *
- * @param Event event Evento que está acionando a function (manipulado)
- */
-async function buscaUserPass(event)
-{
-	let button = event.target;
-	if (button.tagName == 'I') {
-		button = button.parentElement;
-	}
-
-	let body = {
-		'type' : button.getAttribute('data-clipboard-tipo'),
-		'id' : button.getAttribute('data-clipboard-entrada-id')
-	};
-	let urlParaBusca = window.location.origin + '/entradas/clipboard/';
-
-	factoryRequest(urlParaBusca, {'body' : JSON.stringify(body)})
-	.then((response) => {
-		if (!response.ok) {
-			throw new Error(response.status + ' - '+ response.statusText);
-		}
-		return  response.json();
-	})
-	.then(function(dadoRetornado){
-		navigator.clipboard.writeText(dadoRetornado.data);
-		let tooltip = new bootstrap.Tooltip(
-			button,
-			{
-				'trigger': 'manual',
-				'title': body.type == 'user' ? 'Usuário copiado' : 'Senha copiada',
-			}
-		);
-		tooltip.show();
-		setInterval(() => {tooltip.hide()}, 2000);
-	})
-	.catch(function(error){
-		let msgErro = 'Ocorreu um erro \n\n' + error.message;
-		alert(msgErro);
-	});
-}
-/* Aplicando o manipulador de evento no elemento HTML*/
-document
-	.querySelectorAll(".btn-clipboard")
-	.forEach(function (currentValue, currentIndex, listObj) {
-		currentValue.addEventListener("click", buscaUserPass);
-	});
-
-
-/**
  * Busca genérica que envia ao servidor o JSON e espera receber um HTML de retorno.
  * Atributos esperados no elemento HTML que acionou o manipulador:
  * 'data-busca-inserir-resultado' : ID do elemento HTML onde será inserido o html de retorno do servidor
@@ -275,4 +224,79 @@ document
 	.querySelectorAll(".pwd")
 	.forEach(function (currentValue, currentIndex, listObj) {
 		currentValue.addEventListener("change", estaComprometida);
+	});
+
+/**
+ * Função responsável por buscar as informações de user/senha e escrever na área de transferencia.
+ * Também exibe o tooltip da copia.
+ *
+ * @param Event event Evento que está acionando a function (manipulado)
+ */
+async function buscaUserPass(event) {
+    let button = event.target;
+    if (button.tagName == 'I') {
+        button = button.parentElement;
+    }
+
+    let body = {
+        'type': button.getAttribute('data-clipboard-tipo'),
+        'id': button.getAttribute('data-clipboard-entrada-id')
+    };
+
+    let urlParaBusca = window.location.origin + '/entradas/clipboard/';
+
+    try {
+        // Verificando se clipboard está disponivel no navegador
+        if (navigator.clipboard && navigator.clipboard.writeText)
+		{
+			// Passando a Promise diretamente ao clipboard para manter o contexto do user gesture
+			// isso para executar em dispositivos da Apple
+            await navigator.clipboard.writeText(
+                await factoryRequest(urlParaBusca, {'body': JSON.stringify(body)})
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(response.status + ' - ' + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(function(dadoRetornado) {
+                        let tooltip = new bootstrap.Tooltip(
+                            button,
+                            {
+                                'trigger': 'manual',
+                                'title': body.type == 'user' ? 'Usuário copiado' : 'Senha copiada',
+                            }
+                        );
+                        tooltip.show();
+
+                        setTimeout(() => {
+                            tooltip.hide();
+                            setTimeout(() => {tooltip.dispose();}, 300);
+                        }, 2000);
+
+                        // Retorna o dado para o clipboard
+                        return dadoRetornado.data;
+                    })
+            );
+        } else {
+			alert(
+				'Funcionalidade não suportada'
+				+ '\n\nSeu navegador não permite cópia automática para área de transferência.'
+				+ '\n\nSolução: navegue até a entrada desejada e copie o conteúdo usando Ctrl+C.'
+			);
+        }
+    } catch (error) {
+		console.error(error);
+		alert(
+			'Erro ao copiar para área de transferência.'
+			+ '\n\nSolução: navegue até a entrada desejada e copie o conteúdo usando Ctrl+C.'
+			+ '\n\nDetalhes técnicos: ' + error.message
+		);
+    }
+}
+/* Aplicando o manipulador de evento no elemento HTML*/
+document
+	.querySelectorAll(".btn-clipboard")
+	.forEach(function (currentValue, currentIndex, listObj) {
+		currentValue.addEventListener("click", buscaUserPass);
 	});
