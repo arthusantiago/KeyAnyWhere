@@ -92,3 +92,9 @@ define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'vendor' . DS . 'cakephp' . DS . 'c
  */
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . 'src' . DS);
+
+/**
+ * Pasta que deve ficar localizada dentro de  webroot/(css ou js)/
+ * Onde deve ser armazenado os arquivos minificados.
+ */
+define('ARQ_MINIFICADOS', 'minified' . DS);

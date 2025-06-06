@@ -91,4 +91,9 @@ return [
             'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
         ],
     ],
+
+    'Session' => [
+        /* Modificando o nome do cookie para permitir execução no Google Chrome, no localhost. */
+        'cookie' => 'Secure-KAW',
+    ],
 ];
