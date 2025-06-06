@@ -1,10 +1,13 @@
 <?php
+declare(strict_types=1);
 
 namespace Config\Tools;
 
 use Composer\Script\Event;
 use MatthiasMullie\Minify\CSS as MinifyCSS;
 use MatthiasMullie\Minify\JS as MinifyJS;
+
+require __DIR__ . DIRECTORY_SEPARATOR . '../paths.php';
 
 class Minificador {
     private static $pathJsOrigem = '/webroot/js/';

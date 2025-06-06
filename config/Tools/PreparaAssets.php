@@ -1,8 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Config\Tools;
 
 use Composer\Installer\PackageEvent;
+
+require __DIR__ . DIRECTORY_SEPARATOR . '../paths.php';
 /**
  * Trabalha os arquivos que precisam estar corretamente armazenados na pasta webroot/
  *
