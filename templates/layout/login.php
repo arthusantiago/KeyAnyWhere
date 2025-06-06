@@ -8,8 +8,8 @@
     <?php
       echo $this->Html->css('minified/bootstrap-icons.min.css', ['checarAmbiente' => false]);
       echo $this->Html->css('minified/bootstrap.min.css', ['checarAmbiente' => false]);
-      echo $this->Html->css('responsivo.css');
       echo $this->Html->css('geral.css');
+      echo $this->Html->css('responsivo.css');
     ?>
   </head>
   <body>
