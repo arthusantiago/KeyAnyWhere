@@ -232,7 +232,7 @@ document
  *
  * @param Event event Evento que está acionando a function (manipulado)
  */
-async function buscaUserPass(event) {
+let buscaUserPass = async function (event) {
     let button = event.target;
     if (button.tagName == 'I') {
         button = button.parentElement;
