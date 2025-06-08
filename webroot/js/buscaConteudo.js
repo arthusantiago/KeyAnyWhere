@@ -31,7 +31,7 @@ var factoryRequest = async function (url, parametros)
 
 	parametros.headers['X-CSRF-Token'] = document.getElementsByName('csrfToken').item([]).getAttribute('content');
 
-	return await fetch (
+	return fetch (
 		url,
 		{
 			'method': parametros['method'] ?? 'POST',
@@ -227,12 +227,12 @@ document
 	});
 
 /**
- * Função responsável por buscar as informações de user/senha e escrever na área de transferencia.
- * Também exibe o tooltip da copia.
+ * Function responsible for searching for user/password information and writing it to the clipboard.
+ * Also displays the copy tooltip.
  *
- * @param Event event Evento que está acionando a function (manipulado)
+ * @param Event that is triggering the function (handled)
  */
-let buscaUserPass = async function (event) {
+let findUserPass = async function (event) {
     let button = event.target;
     if (button.tagName == 'I') {
         button = button.parentElement;
@@ -249,35 +249,44 @@ let buscaUserPass = async function (event) {
         // Verificando se clipboard está disponivel no navegador
         if (navigator.clipboard && navigator.clipboard.writeText)
 		{
-			// Passando a Promise diretamente ao clipboard para manter o contexto do user gesture
-			// isso para executar em dispositivos da Apple
-            await navigator.clipboard.writeText(
-                await factoryRequest(urlParaBusca, {'body': JSON.stringify(body)})
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(response.status + ' - ' + response.statusText);
-                        }
-                        return response.json();
-                    })
-                    .then(function(dadoRetornado) {
-                        let tooltip = new bootstrap.Tooltip(
-                            button,
-                            {
-                                'trigger': 'manual',
-                                'title': body.type == 'user' ? 'Usuário copiado' : 'Senha copiada',
-                            }
-                        );
-                        tooltip.show();
+			const buscaDados = new Promise(async (resolve, reject) => {
+				try {
+					const response = await factoryRequest(urlParaBusca, {'body': JSON.stringify(body)});
 
-                        setTimeout(() => {
-                            tooltip.hide();
-                            setTimeout(() => {tooltip.dispose();}, 300);
-                        }, 2000);
+					if (!response.ok) {
+						throw new Error(`${response.status} - ${response.statusText}`);
+					}
 
-                        // Retorna o dado para o clipboard
-                        return dadoRetornado.data;
-                    })
-            );
+					const dadoRetornado = await response.json();
+					const text = dadoRetornado.data;
+
+					if (!text) {
+						throw new Error('Dados não encontrados na resposta');
+					}
+
+					resolve(text);
+				} catch (error) {
+					reject(error);
+				}
+			});
+
+			const clipboardItem = new ClipboardItem({'text/plain': buscaDados});
+			await navigator.clipboard.write([clipboardItem]);
+
+			let tooltip = new bootstrap.Tooltip(
+				button,
+				{
+					'trigger': 'manual',
+					'title': body.type == 'user' ? 'Usuário copiado' : 'Senha copiada',
+				}
+			);
+			tooltip.show();
+
+			setTimeout(() => {
+				tooltip.hide();
+				setTimeout(() => {tooltip.dispose();}, 300);
+			}, 2000);
+
         } else {
 			alert(
 				'Funcionalidade não suportada'
@@ -298,5 +307,5 @@ let buscaUserPass = async function (event) {
 document
 	.querySelectorAll(".btn-clipboard")
 	.forEach(function (currentValue, currentIndex, listObj) {
-		currentValue.addEventListener("click", buscaUserPass);
+		currentValue.addEventListener("click", findUserPass);
 	});
