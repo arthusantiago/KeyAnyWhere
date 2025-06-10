@@ -38,6 +38,11 @@
         <div class="col-sm"><?=$this->Flash->render()?></div>
         <div class="col-sm"></div>
       </div>
+      <div class="row">
+				<div class="col-sm"></div>
+				<div class="col-sm"><h6 class="text-white bg-danger text-center">DEMONSTRACAO</h6></div>
+				<div class="col-sm"></div>
+			</div>
      	<?=$this->fetch('content')?>
     </div>
     <?php

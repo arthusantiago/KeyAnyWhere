@@ -159,11 +159,11 @@ class UsersController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $id = $this->request->getData('id');
         $user = $this->Users->get($id);
-        if ($this->Users->delete($user)) {
+/*         if ($this->Users->delete($user)) {
             $this->Flash->success(__('Excluído com sucesso'));
         } else {
             $this->Flash->error(null, ['params' => ['mensagens' => $user->getErrors()]]);
-        }
+        } */
 
         return $this->redirect(['action' => 'index']);
     }
@@ -186,7 +186,7 @@ class UsersController extends AppController
         if ($this->request->is('post')) {
             if (
                 $this->validarUsarioSenha()
-                && $this->validarTFA($this->request->getData('2fa'))
+                //&& $this->validarTFA($this->request->getData('2fa'))
             ) {
                 return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
             }
@@ -224,7 +224,8 @@ class UsersController extends AppController
         $userAutenticado = $this->Authentication->getResult()->getData();
         $user = $this->Users->get($userAutenticado->id);
 
-        if ($this->request->is(['post', 'put'])) {
+        //if ($this->request->is(['post', 'put'])) {
+        if (false) {
             $user = $this->Users->patchEntity($user, array_filter($this->request->getData()));
             $senhaAlterada = $user->isDirty('password');
             if ($this->Users->save($user)) {
