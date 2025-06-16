@@ -2,14 +2,15 @@
 <html lang="pt-br">
   <head>
     <title>KeyAnyWhere</title>
-	<?= $this->Html->charset() ?>
-	<?= $this->Html->meta('icon', 'favicon.ico') ?>
+	  <?= $this->Html->charset() ?>
+	  <?= $this->Html->meta('icon', 'favicon.ico') ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <?=$this->Html->css([
-    	'minified/bootstrap.min.css',
-    	'minified/kaw.min.css',
-      'minified/bootstrap-icons.min.css'
-    ]);?>
+    <?php
+      echo $this->Html->css('minified/bootstrap-icons.min.css', ['checarAmbiente' => false]);
+      echo $this->Html->css('minified/bootstrap.min.css', ['checarAmbiente' => false]);
+      echo $this->Html->css('geral.css');
+      echo $this->Html->css('responsivo.css');
+    ?>
   </head>
   <body>
 	<div class="container">
@@ -21,8 +22,8 @@
         <?= $this->fetch('content') ?>
     </div>
     <?php
-      echo $this->Html->script('minified/bootstrap.min.js');
-      echo $this->Html->script('minified/ferramentas.min.js');
+      echo $this->Html->script('minified/bootstrap.min.js', ['checarAmbiente' => false]);
+      echo $this->Html->script('minified/ferramentas.min.js', ['checarAmbiente' => false]);
     ?>
   </body>
 </html>

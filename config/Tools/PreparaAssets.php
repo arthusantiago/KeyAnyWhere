@@ -1,8 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Config\Tools;
 
 use Composer\Installer\PackageEvent;
+
+require __DIR__ . DIRECTORY_SEPARATOR . '../paths.php';
 /**
  * Trabalha os arquivos que precisam estar corretamente armazenados na pasta webroot/
  *
@@ -12,12 +15,12 @@ class PreparaAssets
 {
     /* Boostrap Icons */
     private static $cssOrigemBootstrapIcons = 'vendor/twbs/bootstrap-icons/font/bootstrap-icons.min.css';
-    private static $cssDestinoBootstrapIcons = 'webroot/css/minified/bootstrap-icons.min.css';
+    private static $cssDestinoBootstrapIcons = 'webroot/css/' . ARQ_MINIFICADOS . 'bootstrap-icons.min.css';
 
     /* Boostrap */
     private static $vendorBootstrap = 'vendor/twbs/bootstrap/dist/';
-    private static $pathDestinoJS = 'webroot/js/minified/';
-    private static $pathDestinoCSS = 'webroot/css/minified/';
+    private static $pathDestinoJS = 'webroot/js/' . ARQ_MINIFICADOS;
+    private static $pathDestinoCSS = 'webroot/css/' . ARQ_MINIFICADOS;
     private static $fileDestinoBootstrapCSS = [
         'bootstrap.min.css',
         'bootstrap.min.css.map'
