@@ -14,17 +14,18 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\Log newEmptyEntity()
  * @method \App\Model\Entity\Log newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\Log[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\Log get($primaryKey, $options = [])
- * @method \App\Model\Entity\Log findOrCreate($search, ?callable $callback = null, $options = [])
+ * @method \App\Model\Entity\Log get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \App\Model\Entity\Log findOrCreate(\Cake\ORM\Query\SelectQuery|callable|array $search, ?callable $callback = null, array $options = [])
  * @method \App\Model\Entity\Log patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \App\Model\Entity\Log[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \App\Model\Entity\Log|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Log saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Log[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\Log[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\Log[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\Log[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method \App\Model\Entity\Log|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \App\Model\Entity\Log saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \App\Model\Entity\Log[]|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Log>|false saveMany(iterable $entities, array $options = [])
+ * @method \App\Model\Entity\Log[]|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Log> saveManyOrFail(iterable $entities, array $options = [])
+ * @method \App\Model\Entity\Log[]|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Log>|false deleteMany(iterable $entities, array $options = [])
+ * @method \App\Model\Entity\Log[]|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Log> deleteManyOrFail(iterable $entities, array $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ * @extends \Cake\ORM\Table<array{Timestamp: \Cake\ORM\Behavior\TimestampBehavior}>
  */
 class LogsTable extends Table
 {

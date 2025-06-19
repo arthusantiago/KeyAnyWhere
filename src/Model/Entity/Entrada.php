@@ -66,6 +66,7 @@ class Entrada extends Entity
      * @access protected
      * @param string $textoPuro
      * @return string
+     * @see \App\Model\Entity\Entrada::$password
      */
     protected function _setPassword(string $textoPuro): string
     {
@@ -89,6 +90,7 @@ class Entrada extends Entity
      * @access protected
      * @param string $textoPuro
      * @return string
+     * @see \App\Model\Entity\Entrada::$username
      */
     protected function _setUsername(string $textoPuro): string
     {
@@ -112,6 +114,7 @@ class Entrada extends Entity
      * @access protected
      * @param string $textoPuro
      * @return string
+     * @see \App\Model\Entity\Entrada::$titulo
      */
     protected function _setTitulo(string $textoPuro): string
     {
@@ -135,6 +138,7 @@ class Entrada extends Entity
      * @access protected
      * @param string $textoPuro
      * @return string
+     * @see \App\Model\Entity\Entrada::$link
      */
     protected function _setLink(string $textoPuro): string
     {
@@ -158,6 +162,7 @@ class Entrada extends Entity
      * @access protected
      * @param string $textoPuro
      * @return string
+     * @see \App\Model\Entity\Entrada::$anotacoes
      */
     protected function _setAnotacoes(string $textoPuro): string
     {

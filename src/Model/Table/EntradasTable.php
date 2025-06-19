@@ -16,17 +16,18 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\Entrada newEmptyEntity()
  * @method \App\Model\Entity\Entrada newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\Entrada[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\Entrada get($primaryKey, $options = [])
- * @method \App\Model\Entity\Entrada findOrCreate($search, ?callable $callback = null, $options = [])
+ * @method \App\Model\Entity\Entrada get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \App\Model\Entity\Entrada findOrCreate(\Cake\ORM\Query\SelectQuery|callable|array $search, ?callable $callback = null, array $options = [])
  * @method \App\Model\Entity\Entrada patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \App\Model\Entity\Entrada[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \App\Model\Entity\Entrada|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Entrada saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Entrada[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\Entrada[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\Entrada[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\Entrada[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method \App\Model\Entity\Entrada|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \App\Model\Entity\Entrada saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \App\Model\Entity\Entrada[]|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Entrada>|false saveMany(iterable $entities, array $options = [])
+ * @method \App\Model\Entity\Entrada[]|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Entrada> saveManyOrFail(iterable $entities, array $options = [])
+ * @method \App\Model\Entity\Entrada[]|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Entrada>|false deleteMany(iterable $entities, array $options = [])
+ * @method \App\Model\Entity\Entrada[]|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\Entrada> deleteManyOrFail(iterable $entities, array $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ * @extends \Cake\ORM\Table<array{Timestamp: \Cake\ORM\Behavior\TimestampBehavior}>
  */
 class EntradasTable extends Table
 {

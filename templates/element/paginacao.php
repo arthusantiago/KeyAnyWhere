@@ -1,3 +1,8 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ */
+?>
 <nav>
     <ul class="pagination justify-content-center">
         <?=$this->Paginator->first('Primeira')?>

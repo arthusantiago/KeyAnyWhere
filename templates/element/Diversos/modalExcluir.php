@@ -1,4 +1,9 @@
 <?php
+/**
+ * @var \App\View\AppView $this
+ * @var string $csrfToken
+ * @var array $parametros
+ */
 use Cake\Core\Exception\CakeException;
 
 /**

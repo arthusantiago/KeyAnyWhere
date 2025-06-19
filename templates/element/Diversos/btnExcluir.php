@@ -1,4 +1,9 @@
 <?php
+/**
+ * @var \App\View\AppView $this
+ * @var string $idRegistro
+ * @var \App\Model\Entity\Entrada $entrada
+ */
 use Cake\Core\Exception\CakeException;
 
 /**

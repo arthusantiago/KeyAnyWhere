@@ -14,17 +14,18 @@ use Cake\Validation\Validator;
  * @method \App\Model\Entity\InsecurePassword newEmptyEntity()
  * @method \App\Model\Entity\InsecurePassword newEntity(array $data, array $options = [])
  * @method \App\Model\Entity\InsecurePassword[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\InsecurePassword get($primaryKey, $options = [])
- * @method \App\Model\Entity\InsecurePassword findOrCreate($search, ?callable $callback = null, $options = [])
+ * @method \App\Model\Entity\InsecurePassword get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \App\Model\Entity\InsecurePassword findOrCreate(\Cake\ORM\Query\SelectQuery|callable|array $search, ?callable $callback = null, array $options = [])
  * @method \App\Model\Entity\InsecurePassword patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \App\Model\Entity\InsecurePassword[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \App\Model\Entity\InsecurePassword|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\InsecurePassword saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\InsecurePassword[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\InsecurePassword[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \App\Model\Entity\InsecurePassword[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \App\Model\Entity\InsecurePassword[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method \App\Model\Entity\InsecurePassword|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \App\Model\Entity\InsecurePassword saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \App\Model\Entity\InsecurePassword[]|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\InsecurePassword>|false saveMany(iterable $entities, array $options = [])
+ * @method \App\Model\Entity\InsecurePassword[]|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\InsecurePassword> saveManyOrFail(iterable $entities, array $options = [])
+ * @method \App\Model\Entity\InsecurePassword[]|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\InsecurePassword>|false deleteMany(iterable $entities, array $options = [])
+ * @method \App\Model\Entity\InsecurePassword[]|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\InsecurePassword> deleteManyOrFail(iterable $entities, array $options = [])
  * @mixin \Cake\ORM\Behavior\TimestampBehavior
+ * @extends \Cake\ORM\Table<array{Timestamp: \Cake\ORM\Behavior\TimestampBehavior}>
  */
 class InsecurePasswordsTable extends Table
 {

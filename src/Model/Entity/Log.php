@@ -18,6 +18,7 @@ use Cake\ORM\Entity;
  * @property string $mensagem
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
+ * @property bool $analisado
  */
 class Log extends Entity
 {

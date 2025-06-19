@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var mixed $query
+ */
+?>
 <ul class="nav flex-column">
 <?php foreach ($query as $categoria):?>
 	<li class="nav-item categorias" data-categoriaId="<?=$categoria->id?>">

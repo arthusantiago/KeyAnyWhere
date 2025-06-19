@@ -13,6 +13,9 @@
   * 	'texto' : Texto localizado dentro do botão
   *   'atributo' : Contendo um array chave/valor dos atributos que devem ser inseridos no elemento HTML
   * 	Exemplo: <?= $this->element('Diversos/btnSalvar', [ 'parametros' => ['atributo' => ['style' => 'background-color: red']]])?>
+ *
+ * @var \App\View\AppView $this
+ * @var array $parametros
 **/ 
 
 // Gerando a string dos atributos

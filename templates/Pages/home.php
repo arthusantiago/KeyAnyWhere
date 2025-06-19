@@ -1,3 +1,11 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var mixed $ipsBloqueados
+ * @var mixed $logs
+ * @var mixed $sessoesAtivas
+ */
+?>
 <br>
 <div class='row'>
     <div class="col-sm mb-3 text-center">

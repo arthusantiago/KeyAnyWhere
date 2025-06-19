@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var \App\Model\Entity\IpsBloqueado $ipsBloqueado
+ */
+?>
 <div class="row">
   <div class="col-sm-auto">
     <?= $this->element(

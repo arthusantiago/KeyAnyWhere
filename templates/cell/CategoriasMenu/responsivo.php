@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var mixed $query
+ */
+?>
 <?php foreach ($query as $categoria): ?>
 <li>
     <a class="dropdown-item" href="<?=$this->Url->build(['controller' => 'Categorias', 'action' => 'listagemEntradas', $categoria->id]);?>">
