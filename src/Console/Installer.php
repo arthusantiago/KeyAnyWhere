@@ -20,6 +20,7 @@ if (!defined('STDIN')) {
     define('STDIN', fopen('php://stdin', 'r'));
 }
 
+use App\Application;
 use Cake\Codeception\Console\Installer as CodeceptionInstaller;
 use Cake\Utility\Security;
 use Composer\IO\IOInterface;
@@ -59,11 +60,12 @@ class Installer
 
         $rootDir = dirname(dirname(__DIR__));
 
-        static::createAppLocalConfig($rootDir, $io);
-        static::createWritableDirectories($rootDir, $io);
-
-        static::setFolderPermissions($rootDir, $io);
-        static::setSecuritySalt($rootDir, $io);
+        if (Application::isTheExecutionEnvironment(Application::DESENVOLVIMENTO)) {
+            static::createAppLocalConfig($rootDir, $io);
+            static::createWritableDirectories($rootDir, $io);
+            static::setFolderPermissions($rootDir, $io);
+            static::setSecuritySalt($rootDir, $io);
+        }
 
         if (class_exists(CodeceptionInstaller::class)) {
             CodeceptionInstaller::customizeCodeceptionBinary($event);

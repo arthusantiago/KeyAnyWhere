@@ -68,7 +68,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         // ambiente default
         $ambienteCorrente = self::PRODUCAO;
 
-        if (Configure::read('debug')) {
+        if (Configure::read('debug') || !getenv('SERVER_NAME', true)) {
             $ambienteCorrente = self::DESENVOLVIMENTO;
         }
         /* Adicionar aqui mais validações de ambiente */
