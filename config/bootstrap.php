@@ -66,13 +66,9 @@ require CAKE . 'functions.php';
  * for more information for recommended practices.
  *
  *
- * As informações contidas no arquivo config/.env serão carregadas se:
- * - A variável de ambiente APP_NAME não deve existir
- * - O arquivo .env deve existir
- *
- * Se as duas condições forem atendidas significa que estamos em ambiente de desenvolvimento.
+ * As informações contidas no arquivo config/.env serão carregadas se as condições abaixo forem atendidas
 */
-if (!env('APP_NAME') && file_exists(CONFIG . '.env')) {
+if (!env('SERVER_NAME') && file_exists(CONFIG . '.env')) {
     $dotenv = new \josegonzalez\Dotenv\Loader([CONFIG . '.env']);
     $dotenv->parse()
         ->skipExisting()
