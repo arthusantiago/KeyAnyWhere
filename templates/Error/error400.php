@@ -10,7 +10,7 @@ use Cake\Error\Debugger;
 
 $this->layout = 'error';
 
-if (Application::isTheExecutionEnvironment(self::DESENVOLVIMENTO)) :
+if (Application::isTheExecutionEnvironment(Application::DESENVOLVIMENTO)) :
     $this->layout = 'dev_error';
 
     $this->assign('title', $message);
