@@ -1,6 +1,8 @@
 <?php
 /**
  * Modal do mecanismo de busca do sistema
+ *
+ * @var \App\View\AppView $this
  */
 ?>
 <div class="modal fade" id="modalBusca" tabindex="-1">

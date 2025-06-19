@@ -1,3 +1,10 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var string $strSvgQrCode
+ * @var \App\Model\Entity\User $user
+ */
+?>
 <br>
 <h1 class="text-center">Bem-vindo KeyAnyWhere!</h1>
 <p class="text-center">Neste passo a passo vamos executar a configuração inicial da ferramenta.</p>

@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var mixed $csrfToken
+ */
+?>
 <!doctype html>
 <html lang="pt-br">
     <head>

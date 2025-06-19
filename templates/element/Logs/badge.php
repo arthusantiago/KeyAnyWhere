@@ -1,4 +1,8 @@
 <?php
+/**
+ * @var \App\View\AppView $this
+ * @var array $param
+ */
 /*
     [
         'severidade' => 1, // Numero inteiro que represente o Nivel de Severidade

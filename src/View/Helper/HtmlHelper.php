@@ -5,6 +5,9 @@ namespace App\View\Helper;
 use Cake\View\Helper\HtmlHelper as Html;
 use App\Application;
 
+/**
+ * @property \Cake\View\Helper\UrlHelper $Url
+ */
 class HtmlHelper extends Html
 {
     /**

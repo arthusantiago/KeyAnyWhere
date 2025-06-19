@@ -28,6 +28,7 @@ use Cake\Event\EventInterface;
  * will inherit them.
  *
  * @link https://book.cakephp.org/4/en/controllers.html#the-app-controller
+ * @property \Authentication\Controller\Component\AuthenticationComponent $Authentication
  */
 class AppController extends Controller
 {
@@ -47,7 +48,10 @@ class AppController extends Controller
         $this->loadComponent('Authentication.Authentication');
         $this->loadComponent('FormProtection');
 
-        $userLogado = $this->Authentication->getResult()->getData();
+        $userLogado = null;
+        if ($this->getRequest()->getAttribute('authentication')) {
+            $userLogado = $this->Authentication->getResult()->getData();
+        }
         $sessionTimeout = Configure::read('Session.timeout');
         $csrfToken =  $this->request->getAttribute('csrfToken');
 

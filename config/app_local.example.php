@@ -17,6 +17,18 @@ return [
      */
     'debug' => filter_var(env('DEBUG', true), FILTER_VALIDATE_BOOLEAN),
 
+    'IdeHelper' => [
+        'annotators' => [
+            \IdeHelper\Annotator\ModelAnnotator::class => [
+                'skipTemplatePath' => true,
+            ],
+            \IdeHelper\Annotator\ControllerAnnotator::class,
+            \IdeHelper\Annotator\ShellAnnotator::class,
+            \IdeHelper\Annotator\ComponentAnnotator::class,
+            \IdeHelper\Annotator\HelperAnnotator::class,
+        ],
+    ],
+
     /*
      * Security and encryption configuration
      *

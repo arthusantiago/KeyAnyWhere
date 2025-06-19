@@ -17,7 +17,10 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
  *
- * @property \App\Model\Entity\User $user
+ * @property \App\Model\Entity\User|null $user
+ * @property string|null $user_agent
+ * @property string $navegador
+ * @property string $sistema_operacional
  */
 class Session extends Entity
 {
@@ -74,6 +77,7 @@ class Session extends Entity
      * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
      * @access protected
      * @return string
+     * @see \App\Model\Entity\Session::$navegador
      */
     protected function _getNavegador(): string
     {
@@ -88,6 +92,7 @@ class Session extends Entity
      * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
      * @access protected
      * @return string
+     * @see \App\Model\Entity\Session::$sistema_operacional
      */
     protected function _getSistemaOperacional(): string
     {

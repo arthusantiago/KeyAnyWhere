@@ -1,3 +1,10 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var \App\Model\Entity\Categoria[]|\Cake\Collection\CollectionInterface $categorias
+ * @var \App\Model\Entity\Entrada $entrada
+ */
+?>
 <div class="row">
     <div class="col-sm-auto mb-3">
         <span class="titulo">Nova Entrada</span>

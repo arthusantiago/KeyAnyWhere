@@ -1,4 +1,8 @@
 <?php
+/**
+ * @var \App\View\AppView $this
+ * @var mixed $resultado
+ */
 
 if (empty($resultado)) {
     echo '<li><a>Não localizado</a></li>';

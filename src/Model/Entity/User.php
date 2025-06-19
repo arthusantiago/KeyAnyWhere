@@ -15,14 +15,15 @@ use PragmaRX\Google2FA\Google2FA;
  * @property string $username
  * @property string $email
  * @property string $password
- * @property string $tfa_secret
- * @property string $tfa_ativo
+ * @property string|null $tfa_secret
+ * @property bool $tfa_ativo
  * @property bool $root Se o usuário e administrador
  * @property int $LENGTH_SECRET_2FA
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\Entrada[] $entradas
+ * @property \App\Model\Entity\Session[] $sessions
  */
 class User extends Entity
 {
@@ -71,6 +72,7 @@ class User extends Entity
     /**
      * @param string $password
      * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
+     * @see \App\Model\Entity\User::$password
      */
     protected function _setPassword(string $password): string
     {

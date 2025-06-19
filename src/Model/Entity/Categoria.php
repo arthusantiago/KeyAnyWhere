@@ -15,6 +15,7 @@ use Cake\ORM\Entity;
  * @property \Cake\I18n\DateTime $modified
  *
  * @property \App\Model\Entity\Entrada[] $entradas
+ * @property int|null $posicao
  */
 class Categoria extends Entity
 {
@@ -41,6 +42,7 @@ class Categoria extends Entity
      * @access protected
      * @param string $textoPuro
      * @return string
+     * @see \App\Model\Entity\Categoria::$nome
      */
     protected function _setNome(string $textoPuro): string
     {
