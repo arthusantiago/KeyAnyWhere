@@ -68,7 +68,11 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         // ambiente default
         $ambienteCorrente = self::PRODUCAO;
 
-        if (Configure::read('debug') || !getenv('SERVER_NAME', true)) {
+        if (
+            Configure::read('debug')
+            || file_exists(CONFIG . '.env')
+            || !getenv('SERVER_NAME', true)
+        ) {
             $ambienteCorrente = self::DESENVOLVIMENTO;
         }
         /* Adicionar aqui mais validações de ambiente */
@@ -104,6 +108,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
          */
         if (self::isTheExecutionEnvironment(self::DESENVOLVIMENTO)) {
             $this->addPlugin('DebugKit');
+            $this->addPlugin('IdeHelper');
         }
 
         // Load more plugins here

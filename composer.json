@@ -65,10 +65,8 @@
         "post-package-install": "Config\\Tools\\PreparaAssets::postPackageInstall",
         "post-package-update":  "Config\\Tools\\PreparaAssets::postPackageUpdate",
         "production-install": [
-            "@composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-progress --no-suggest"
-        ],
-        "ide-helper": "bin/cake annotate all",
-        "post-autoload-dump": "@ide-helper"
+            "@composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-progress"
+        ]
     },
     "prefer-stable": true,
     "config": {

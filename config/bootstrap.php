@@ -45,6 +45,7 @@ use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
 use Cake\Routing\Router;
 use Cake\Utility\Security;
+use App\Application;
 
 /**
  * Load global functions.
@@ -64,11 +65,8 @@ require CAKE . 'functions.php';
  * If you use .env files, be careful to not commit them to source control to avoid
  * security risks. See https://github.com/josegonzalez/php-dotenv#general-security-information
  * for more information for recommended practices.
- *
- *
- * As informações contidas no arquivo config/.env serão carregadas se as condições abaixo forem atendidas
 */
-if (!env('SERVER_NAME') && file_exists(CONFIG . '.env')) {
+if (Application::isTheExecutionEnvironment(Application::DESENVOLVIMENTO)) {
     $dotenv = new \josegonzalez\Dotenv\Loader([CONFIG . '.env']);
     $dotenv->parse()
         ->skipExisting()
