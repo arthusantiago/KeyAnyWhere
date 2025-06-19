@@ -73,8 +73,9 @@ class Session extends Entity
 
     /**
      * Propriedade virtual 'navegador'. Para acessar: $session->navegador
+     * Documentação do CakePHP sobre accessors-mutators:
+     * https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
      *
-     * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
      * @access protected
      * @return string
      * @see \App\Model\Entity\Session::$navegador
@@ -88,8 +89,9 @@ class Session extends Entity
 
     /**
      * Propriedade virtual 'sistema_operacional'. Para acessar: $session->sistema_operacional
+     * Documentação do CakePHP sobre accessors-mutators:
+     * https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
      *
-     * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
      * @access protected
      * @return string
      * @see \App\Model\Entity\Session::$sistema_operacional

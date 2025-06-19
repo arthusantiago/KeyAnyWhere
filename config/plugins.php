@@ -1,6 +1,5 @@
 <?php
 
 return [
-    'IdeHelper' => [
-    ],
+    'IdeHelper' => [],
 ];

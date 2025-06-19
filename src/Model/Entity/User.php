@@ -70,8 +70,10 @@ class User extends Entity
     }
 
     /**
+     * Documentação do CakePHP sobre accessors-mutators:
+     * https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
+     *
      * @param string $password
-     * @see https://book.cakephp.org/4/en/orm/entities.html#accessors-mutators
      * @see \App\Model\Entity\User::$password
      */
     protected function _setPassword(string $password): string
