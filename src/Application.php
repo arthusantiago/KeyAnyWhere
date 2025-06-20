@@ -71,7 +71,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         if (
             Configure::read('debug')
             || file_exists(CONFIG . '.env')
-            || !getenv('SERVER_NAME', true)
+            || !getenv('SERVER_NAME')
         ) {
             $ambienteCorrente = self::DESENVOLVIMENTO;
         }
