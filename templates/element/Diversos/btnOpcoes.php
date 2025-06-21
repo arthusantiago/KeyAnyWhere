@@ -2,6 +2,9 @@
 /**
  * Botão que concentra as opções não centrais do sistema, como configuração, logout, minha conta e etc.
  *
+ *
+ * @var \App\View\AppView $this
+ * @var object $userLogado
  **/
 ?>
 <div class="btn-group dropdown">

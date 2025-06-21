@@ -34,6 +34,8 @@
  *	Resultado: Home / Configurações / Usuários / Listagem   ('Home' e 'Usuários' são links)
  *
  *	@param array $caminho contendo em cada posição do array uma parte do caminho exibido no breadcrumb
+ * @var \App\View\AppView $this
+ * @var mixed $caminho
  */
 ?>
 

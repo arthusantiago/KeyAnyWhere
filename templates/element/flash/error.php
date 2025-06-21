@@ -14,6 +14,10 @@
    *
    * @param array|null $params Variável padrão do Flash usada para passar dados ao template.
    * @param string $message Variável padrão do Flash contendo o texto que será exibido ao usuário.
+ * @var \App\View\AppView $this
+ * @var mixed $msg
+ * @var array $params
+ * @var mixed $tipoErro
    */
 
 //array de mensagens de erro

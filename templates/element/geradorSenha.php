@@ -1,3 +1,8 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ */
+?>
 <?php echo $this->Html->script('geradorSenha.js', ['block' => 'script-last-load']);?>
 
 <div class="modal" tabindex="-1" id="modalGeradorSenha">

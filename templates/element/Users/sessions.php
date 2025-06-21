@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var \App\Model\Entity\Session[]|\Cake\Collection\CollectionInterface $sessions
+ */
+?>
 <div class="table-responsive">
     <table class="table table-borderless table-striped table-hover">
         <thead>

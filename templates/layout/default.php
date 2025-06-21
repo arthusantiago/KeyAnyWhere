@@ -1,3 +1,10 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var mixed $csrfToken
+ * @var string $sessionTimeout
+ */
+?>
 <!doctype html>
 <html lang="pt-br">
 <head>

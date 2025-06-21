@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var mixed $query
+ */
+?>
 <div class="row">
     <div class="col-sm mb-3">
         <span class="titulo">Categorias</span>

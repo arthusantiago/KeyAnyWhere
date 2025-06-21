@@ -1,3 +1,9 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var mixed $ipsBloqueados
+ */
+?>
 <div class="row">
   <div class="col-sm-auto">
     <?=$this->element(

@@ -56,14 +56,14 @@ class Installer
     public static function postInstall(Event $event): void
     {
         $io = $event->getIO();
-
         $rootDir = dirname(dirname(__DIR__));
 
-        static::createAppLocalConfig($rootDir, $io);
-        static::createWritableDirectories($rootDir, $io);
-
-        static::setFolderPermissions($rootDir, $io);
-        static::setSecuritySalt($rootDir, $io);
+        if ($event->isDevMode()) {
+            static::createAppLocalConfig($rootDir, $io);
+            static::createWritableDirectories($rootDir, $io);
+            static::setFolderPermissions($rootDir, $io);
+            static::setSecuritySalt($rootDir, $io);
+        }
 
         if (class_exists(CodeceptionInstaller::class)) {
             CodeceptionInstaller::customizeCodeceptionBinary($event);

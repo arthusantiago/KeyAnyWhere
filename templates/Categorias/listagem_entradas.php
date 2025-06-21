@@ -1,3 +1,10 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var \App\Model\Entity\Entrada[]|\Cake\Collection\CollectionInterface $entradas
+ * @var \App\Model\Entity\Categoria $categoria
+ */
+?>
 <!-- usado para marcar em qual categoria o usuário está -->
 <input type="hidden" id="id-categoria-selecionada" value="<?=$categoria->id?>">
 <?=$this->Html->script('categorias.js', ['block' => 'script-first-load']);?>

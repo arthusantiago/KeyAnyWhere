@@ -7,6 +7,9 @@
    *
    * @param array|null $params Variável padrão do Flash usada para passar dados ao template.
    * @param string $message Variável padrão do Flash contendo o texto que será exibido ao usuário.
+ * @var \App\View\AppView $this
+ * @var string $message
+ * @var array $params
    */
 ?>
 <div class="alert alert-primary" role="alert" id="alert-do-sistema">
