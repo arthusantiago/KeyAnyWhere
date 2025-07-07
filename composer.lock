@@ -3912,16 +3912,16 @@
         },
         {
             "name": "dereuromark/cakephp-ide-helper",
-            "version": "2.10.0",
+            "version": "2.10.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dereuromark/cakephp-ide-helper.git",
-                "reference": "16f6adf84fdb40ff8ee76b74a3d793ec5c47ba83"
+                "reference": "cece0b97a20c2db58045402692e9fa35ade973d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dereuromark/cakephp-ide-helper/zipball/16f6adf84fdb40ff8ee76b74a3d793ec5c47ba83",
-                "reference": "16f6adf84fdb40ff8ee76b74a3d793ec5c47ba83",
+                "url": "https://api.github.com/repos/dereuromark/cakephp-ide-helper/zipball/cece0b97a20c2db58045402692e9fa35ade973d0",
+                "reference": "cece0b97a20c2db58045402692e9fa35ade973d0",
                 "shasum": ""
             },
             "require": {
@@ -3933,7 +3933,7 @@
                 "squizlabs/php_codesniffer": "^3.11"
             },
             "require-dev": {
-                "cakephp/migrations": "^4.0.1",
+                "cakephp/migrations": "^4.5.1",
                 "cakephp/plugin-installer": "^2.0.1",
                 "dereuromark/cakephp-shim": "^3.3.0",
                 "fig-r/psr2r-sniffer": "dev-master",
@@ -3984,7 +3984,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-05-15T16:28:54+00:00"
+            "time": "2025-06-25T12:32:05+00:00"
         },
         {
             "name": "doctrine/sql-formatter",
