@@ -23,4 +23,4 @@ Ajude a manter o projeto, me doe um trocado pra comprar o café 😉☕
 
 # Avisos legais
 
-Se for utiliza para fins comerciais, fica o alerta sobre **sua responsabilidade** da devida aplicação da [LGPD](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm). Os desenvolvedores do projeto se isentão totalmente de qualquer sanção legal, decorrente de alguma pratica indevida do uso da ferramenta. Leia nossa [licença de uso](https://github.com/arthusantiago/KeyAnyWhere/blob/main/LICENSE).
+Se for utiliza para fins comerciais, fica o alerta sobre **sua responsabilidade** da devida aplicação da [LGPD](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm). Os desenvolvedores do projeto se isentam totalmente de qualquer sanção legal, decorrente de alguma pratica indevida do uso da ferramenta. Leia nossa [licença de uso](https://github.com/arthusantiago/KeyAnyWhere/blob/main/LICENSE).
