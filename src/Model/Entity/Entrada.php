@@ -55,6 +55,12 @@ class Entrada extends Entity
         'password',
     ];
 
+    /**
+     * Retorna o link descriptografado, encurtado até o tamanho informado.
+     *
+     * @param int $tamanho
+     * @return string
+     */
     public function linkEncurtado(int $tamanho = 70): string
     {
         return substr(Criptografia::descriptografar($this->link), 0, $tamanho);

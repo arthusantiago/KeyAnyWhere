@@ -3,12 +3,16 @@ declare(strict_types=1);
 
 namespace App\Test\Fixture;
 
-use Cake\TestSuite\Fixture\TestFixture;
+use App\Criptografia\Criptografia;
 
 /**
  * EntradasFixture
+ *
+ * Os campos abaixo são tratados pela aplicação como ciphertext (ver mutators
+ * em App\Model\Entity\Entrada) — precisam ser gerados com Criptografia::criptografar()
+ * para que qualquer teste que leia esses campos via getter consiga descriptografar.
  */
-class EntradasFixture extends TestFixture
+class EntradasFixture extends AppFixture
 {
     /**
      * Init method
@@ -20,11 +24,11 @@ class EntradasFixture extends TestFixture
         $this->records = [
             [
                 'id' => 1,
-                'titulo' => 'Lorem ipsum dolor sit amet',
-                'user' => 'Lorem ipsum dolor sit amet',
-                'password' => 'Lorem ipsum dolor sit amet',
-                'link' => 'Lorem ipsum dolor sit amet',
-                'anotacoes' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
+                'titulo' => Criptografia::criptografar('Entrada de Teste'),
+                'username' => Criptografia::criptografar('usuario.teste'),
+                'password' => Criptografia::criptografar('SenhaSuperSecreta123!'),
+                'link' => Criptografia::criptografar('https://exemplo.com'),
+                'anotacoes' => Criptografia::criptografar('Anotações de teste para a entrada.'),
                 'categoria_id' => 1,
                 'created' => 1643082487,
                 'modified' => 1643082487,

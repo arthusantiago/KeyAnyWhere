@@ -13,6 +13,12 @@ use Cake\Event\EventInterface;
  */
 class CategoriasController extends AppController
 {
+    /**
+     * beforeFilter callback.
+     *
+     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
+     * @return void
+     */
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
@@ -71,7 +77,7 @@ class CategoriasController extends AppController
 
                 return $this->redirect(['action' => 'edit', $categoria->id]);
             }
-            $this->Flash->error(null, ['params' => ['mensagens' => $categoria->getErrors()]]);
+            $this->Flash->error('', ['params' => ['mensagens' => $categoria->getErrors()]]);
         }
         $this->set(compact('categoria'));
     }
@@ -93,7 +99,7 @@ class CategoriasController extends AppController
                 $this->Flash->success(__('Salvo com sucesso'));
                 $this->Categorias->reordenar();
             } else {
-                $this->Flash->error(null, ['params' => ['mensagens' => $categoria->getErrors()]]);
+                $this->Flash->error('', ['params' => ['mensagens' => $categoria->getErrors()]]);
             }
 
             return $this->redirect(['action' => 'edit', $categoria->id]);
@@ -118,7 +124,7 @@ class CategoriasController extends AppController
             $this->Flash->success(__('Excluído com sucesso'));
             $this->Categorias->reordenar();
         } else {
-            $this->Flash->error(null, ['params' => ['mensagens' => $categoria->getErrors()]]);
+            $this->Flash->error('', ['params' => ['mensagens' => $categoria->getErrors()]]);
         }
 
         return $this->redirect(['action' => 'index']);

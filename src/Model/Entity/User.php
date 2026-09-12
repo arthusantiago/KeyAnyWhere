@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use App\Application;
 use App\Criptografia\Criptografia;
 use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Cake\ORM\Entity;
@@ -62,6 +63,12 @@ class User extends Entity
         'root',
     ];
 
+    /**
+     * Retorna o username encurtado até o tamanho informado.
+     *
+     * @param int $tamanho
+     * @return string
+     */
     public function usernameEncurtado(int $tamanho = 15): string
     {
         $complemento = strlen($this->username) > $tamanho ? '(...)' : '';
@@ -81,26 +88,61 @@ class User extends Entity
         return (new DefaultPasswordHasher())->hash($password);
     }
 
+    /**
+     * Mutator usado para criptografar o segredo do 2FA.
+     *
+     * @param string $secret
+     * @see \App\Model\Entity\User::$tfa_secret
+     */
     protected function _setTfaSecret(string $secret): string
     {
         return Criptografia::criptografar($secret);
     }
 
+    /**
+     * Retorna o segredo do 2FA descriptografado.
+     *
+     * @return string
+     */
     public function descripSecret2FA(): string
     {
         return Criptografia::descriptografar($this->tfa_secret);
     }
 
-    public function geraSecret2FA()
+    /**
+     * Gera um novo segredo para o 2FA.
+     *
+     * @return string
+     */
+    public function geraSecret2FA(): string
     {
         return (new Google2FA())->generateSecretKey(User::LENGTH_SECRET_2FA);
     }
 
+    /**
+     * Verifica se o código do 2FA informado é válido.
+     *
+     * Em ambiente de desenvolvimento o código não é realmente validado, para
+     * facilitar o login local sem precisar de um autenticador TOTP configurado.
+     *
+     * @param string $secret
+     * @return bool
+     */
     public function valida2fa(string $secret): bool
     {
+        if (Application::isTheExecutionEnvironment(Application::DESENVOLVIMENTO)) {
+            return true;
+        }
+
         return (new Google2FA())->verifyKey($this->descripSecret2FA(), $secret);
     }
 
+    /**
+     * Mutator usado para normalizar o email em caixa baixa.
+     *
+     * @param string $email
+     * @see \App\Model\Entity\User::$email
+     */
     protected function _setEmail(string $email): string
     {
         return strtolower($email);

@@ -43,11 +43,22 @@ class Log extends Entity
         'modified' => true,
     ];
 
+    /**
+     * Retorna o nível de severidade em formato textual.
+     *
+     * @return string
+     */
     public function stringNivelSeveridade(): string
     {
         return ucfirst(LogLevelInt::toString($this->nivel_severidade));
     }
 
+    /**
+     * Retorna a mensagem encurtada até o tamanho informado.
+     *
+     * @param int $tamanho
+     * @return string
+     */
     public function mensagemEncurtada(int $tamanho = 50): string
     {
         if (strlen($this->mensagem) >= $tamanho) {

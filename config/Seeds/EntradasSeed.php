@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use App\Criptografia\Criptografia;
 use Migrations\AbstractSeed;
 
 /**
@@ -32,7 +33,7 @@ class EntradasSeed extends AbstractSeed
                 $data[] = [
                     'titulo' => 'REFAZER-ESSE-SEED',
                     'username' =>'REFAZER-ESSE-SEED@REFAZER.COM',
-                    'password' => sha1('REFAZER-ESSE-SEED'),
+                    'password' => Criptografia::criptografar('REFAZER-ESSE-SEED'),
                     'link' =>  'https://' . 'REFAZER-ESSE-SEED',
                     'anotacoes' => 'Ut ab voluptas sed a nam. Sint autem inventore aut officia aut aut blanditiis. Ducimus eos odit amet et est ut eum.',
                     'categoria_id' => $categoria['id'],

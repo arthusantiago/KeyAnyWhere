@@ -1,0 +1,68 @@
+name: Security
+
+on:
+  pull_request:
+  schedule:
+    - cron: '0 8 * * 1'
+
+jobs:
+  # Verifica se alguma dependência do composer.lock possui CVE conhecido,
+  # consultando a Packagist Security Advisory API + GitHub Advisory Database.
+  audit:
+    name: Composer Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring
+          coverage: none
+
+      - name: Get Composer Cache Directory
+        id: composercache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Run Security Audit
+        run: composer audit
+
+  # Analisa o código-fonte em busca de vulnerabilidades introduzidas pelo próprio projeto
+  # (SQL injection, XSS, path traversal, etc.) usando taint analysis via Snyk Code.
+  snyk-code:
+    name: Snyk Code (SAST)
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for Snyk token
+        id: snyk_token_check
+        run: |
+          if [ -n "${{ secrets.SNYK_TOKEN }}" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::SNYK_TOKEN não está configurado nos secrets do repositório — pulando o scan do Snyk Code. Configure em Settings > Secrets and variables > Actions."
+          fi
+
+      - name: Run Snyk Code
+        if: steps.snyk_token_check.outputs.configured == 'true'
+        uses: snyk/actions/php@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: code test

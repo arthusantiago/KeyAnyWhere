@@ -43,9 +43,47 @@ var factoryRequest = async function (url, parametros)
 }
 
 /**
- * Busca genérica que envia ao servidor o JSON e espera receber um HTML de retorno.
+ * Cria um <li><a>texto</a></li> via DOM (nunca innerHTML), para que o texto retornado
+ * pelo servidor seja sempre inserido como texto puro, nunca interpretado como HTML.
+ *
+ * @param string texto Texto exibido no link
+ * @param string|null href Se informado, define o destino do link
+ * @return HTMLLIElement
+ */
+function criarItemListaBusca(texto, href)
+{
+	let item = document.createElement('li');
+	let link = document.createElement('a');
+	link.textContent = texto;
+	if (href) {
+		link.setAttribute('href', href);
+	}
+	item.appendChild(link);
+
+	return item;
+}
+
+/**
+ * Limpa o conteúdo de um elemento (via DOM, nunca innerHTML) e insere os itens informados.
+ *
+ * @param string idElemento
+ * @param HTMLElement[] itens
+ */
+function substituirConteudoLista(idElemento, itens)
+{
+	let container = document.getElementById(idElemento);
+	while (container.firstChild) {
+		container.removeChild(container.firstChild);
+	}
+	itens.forEach(function (item) {
+		container.appendChild(item);
+	});
+}
+
+/**
+ * Busca genérica que envia ao servidor o JSON e espera receber um JSON de retorno.
  * Atributos esperados no elemento HTML que acionou o manipulador:
- * 'data-busca-inserir-resultado' : ID do elemento HTML onde será inserido o html de retorno do servidor
+ * 'data-busca-inserir-resultado' : ID do elemento HTML onde será inserido o resultado da busca
  * 'data-busca-url' : URL para onde será disparada a request
  *
  * @param Event event Evento que está acionando a function (manipulado)
@@ -76,7 +114,6 @@ function buscaGenerica(event)
 				factoryRequest(
 					urlParaBusca,
 					{
-						'headers' : {'Accept': 'text/html'},
 						'body' : dadosParaRequest,
 					}
 				)
@@ -84,10 +121,19 @@ function buscaGenerica(event)
 					if (!response.ok) {
 						throw new Error(response.status + ' - '+ response.statusText);
 					}
-					return response.text();
+					return response.json();
 				})
-				.then(function(dadoRetornado){
-					document.getElementById(destinoHtmlRetorno).innerHTML = dadoRetornado;
+				.then(function(resultado){
+					if (!resultado.length) {
+						substituirConteudoLista(destinoHtmlRetorno, [criarItemListaBusca('Não localizado')]);
+
+						return;
+					}
+
+					let itens = resultado.map(function (entrada) {
+						return criarItemListaBusca(entrada.titulo, entrada.url);
+					});
+					substituirConteudoLista(destinoHtmlRetorno, itens);
 				})
 				.catch(function(error){
 					alert('Ocorreu um erro \n\n' + error.message);
@@ -96,9 +142,12 @@ function buscaGenerica(event)
 		};
 
 		paraExecutar = setTimeout(chamadaAoServidor, config.tempoEspera);
-		document.getElementById(destinoHtmlRetorno).innerHTML = "<li><a>Buscando...</a></li>";
+		substituirConteudoLista(destinoHtmlRetorno, [criarItemListaBusca('Buscando...')]);
 	} else {
-		document.getElementById(destinoHtmlRetorno).innerHTML = "<li><a>Digite no mínimo " + config.quantMinCaracter + " caracteres</a></li>";
+		substituirConteudoLista(
+			destinoHtmlRetorno,
+			[criarItemListaBusca('Digite no mínimo ' + config.quantMinCaracter + ' caracteres')],
+		);
 	}
 }
 /* Aplicando o manipulador de evento no elemento HTML*/
@@ -153,7 +202,7 @@ function obterQrCode2FA(event)
 	});
 
 	let parametros = 		{
-		'headers': {'Accept': 'text/html'},
+		'headers': {'Accept': 'text/plain'},
 		'body': body,
 	};
 
@@ -166,8 +215,16 @@ function obterQrCode2FA(event)
 		}
 		return response.text();
 	})
-	.then(function (dadoRetornado) {
-		document.getElementById('imagemQrCode').innerHTML = dadoRetornado;
+	.then(function (dataUriQrCode) {
+		let container = document.getElementById('imagemQrCode');
+		while (container.firstChild) {
+			container.removeChild(container.firstChild);
+		}
+
+		let img = document.createElement('img');
+		img.src = dataUriQrCode;
+		img.alt = 'QR Code 2FA';
+		container.appendChild(img);
 	})
 	.catch(function (error) {
 		alert('Ocorreu um erro \n\n' + error.message);

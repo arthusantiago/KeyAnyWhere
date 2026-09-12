@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Test\TestCase\View\Cell;
 
 use App\View\Cell\CategoriasMenuCell;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -12,18 +14,13 @@ use Cake\TestSuite\TestCase;
 class CategoriasMenuCellTest extends TestCase
 {
     /**
-     * Request mock
+     * Fixtures
      *
-     * @var \Cake\Http\ServerRequest|\PHPUnit\Framework\MockObject\MockObject
+     * @var array
      */
-    protected $request;
-
-    /**
-     * Response mock
-     *
-     * @var \Cake\Http\Response|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $response;
+    protected array $fixtures = [
+        'app.Categorias',
+    ];
 
     /**
      * Test subject
@@ -40,9 +37,7 @@ class CategoriasMenuCellTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
-        $this->response = $this->getMockBuilder('Cake\Http\Response')->getMock();
-        $this->CategoriasMenu = new CategoriasMenuCell($this->request, $this->response);
+        $this->CategoriasMenu = new CategoriasMenuCell(new ServerRequest(), new Response());
     }
 
     /**
@@ -58,13 +53,32 @@ class CategoriasMenuCellTest extends TestCase
     }
 
     /**
-     * Test display method
+     * desktop() deve disponibilizar para a view a lista de categorias ordenada por posição.
      *
      * @return void
-     * @uses \App\View\Cell\CategoriasMenuCell::display()
+     * @uses \App\View\Cell\CategoriasMenuCell::desktop()
      */
-    public function testDisplay(): void
+    public function testDesktopExpoeCategoriasOrdenadasPorPosicao(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->CategoriasMenu->desktop();
+
+        $viewVars = $this->CategoriasMenu->viewBuilder()->getVars();
+        $this->assertArrayHasKey('query', $viewVars);
+        $this->assertGreaterThanOrEqual(1, $viewVars['query']->count());
+    }
+
+    /**
+     * responsivo() deve disponibilizar para a view a mesma lista de categorias que desktop().
+     *
+     * @return void
+     * @uses \App\View\Cell\CategoriasMenuCell::responsivo()
+     */
+    public function testResponsivoExpoeCategoriasOrdenadasPorPosicao(): void
+    {
+        $this->CategoriasMenu->responsivo();
+
+        $viewVars = $this->CategoriasMenu->viewBuilder()->getVars();
+        $this->assertArrayHasKey('query', $viewVars);
+        $this->assertGreaterThanOrEqual(1, $viewVars['query']->count());
     }
 }

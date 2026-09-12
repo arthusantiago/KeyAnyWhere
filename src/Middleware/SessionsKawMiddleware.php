@@ -59,7 +59,7 @@ class SessionsKawMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $modelSessions =  $this->getTableLocator()->get($this->table);
+        $modelSessions = $this->getTableLocator()->get($this->table);
         $resultAutenticacao = $this->subject
             ->getAuthenticationService($request)
             ->authenticate($request);
@@ -72,7 +72,7 @@ class SessionsKawMiddleware implements MiddlewareInterface
                 ->where([$pkField => $idSession])
                 ->first();
 
-            if (!$sessionDb->user_id || !$sessionDb->user_agent) {
+            if ($sessionDb && (!$sessionDb->user_id || !$sessionDb->user_agent)) {
                 $userAutenticado = $resultAutenticacao->getData();
                 $sessionDb->user_id = $userAutenticado->id;
                 $sessionDb->user_agent = $request->getHeaders()['User-Agent'][0];

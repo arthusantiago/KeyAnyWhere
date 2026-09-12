@@ -85,7 +85,14 @@ class IpsBloqueadosTable extends Table
         return $rules;
     }
 
-    public function findUltimosBloqueados(Query $query, array $options)
+    /**
+     * Finder para os últimos IPs bloqueados.
+     *
+     * @param \Cake\ORM\Query $query Query object.
+     * @param array $options Options array.
+     * @return \Cake\ORM\Query
+     */
+    public function findUltimosBloqueados(Query $query, array $options): Query
     {
         $query
             ->select(['ip', 'created'])

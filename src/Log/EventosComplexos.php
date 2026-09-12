@@ -16,10 +16,13 @@ use Cake\Log\Log;
  */
 class EventosComplexos
 {
-    private $tableLogs;
-    private $frozenTime;
+    private LogsTable $tableLogs;
+    private DateTime $frozenTime;
 
-    function __construct()
+    /**
+     * Construtor.
+     */
+    public function __construct()
     {
         $this->tableLogs = new LogsTable();
         $this->frozenTime = DateTime::now();
@@ -73,11 +76,13 @@ class EventosComplexos
     private function executaMetodoEspecifico(array $eventos, Evento $eventoOrigemLog): void
     {
         foreach ($eventos as $idEvento) {
-            $nomeMetodo = str_replace('-', '_', $idEvento);
+            $nomeMetodo = 'evento' . str_replace('-', '', $idEvento);
             if (method_exists('App\Log\EventosComplexos', $nomeMetodo)) {
                 $this->$nomeMetodo($eventoOrigemLog);
             } else {
-                throw new CakeException('O método App\Log\EventosComplexos::' . $nomeMetodo . '() precisa ser implementado');
+                throw new CakeException(
+                    'O método App\Log\EventosComplexos::' . $nomeMetodo . '() precisa ser implementado',
+                );
             }
         }
     }
@@ -89,7 +94,7 @@ class EventosComplexos
      * @param \App\Log\Evento  $eventoOrigemLog
      * @return void
      */
-    private function C1_3(Evento $eventoOrigemLog): void
+    private function eventoC13(Evento $eventoOrigemLog): void
     {
         $C1_1 = $this->tableLogs
             ->find()
@@ -126,7 +131,10 @@ class EventosComplexos
                     },
                 );
 
-                Log::error('Erro ao salvar no DB o bloqueio do IP ' . $novoIp->ip . ' | Erros: ' . implode(',', $mensagensErro));
+                Log::error(
+                    'Erro ao salvar no DB o bloqueio do IP ' . $novoIp->ip
+                    . ' | Erros: ' . implode(',', $mensagensErro),
+                );
             }
 
             GerenciadorEventos::notificarEvento([
@@ -134,7 +142,7 @@ class EventosComplexos
                 'request' => $eventoOrigemLog->getRequest(),
                 'usuario' => [
                     'dados' => [
-                        'email'  => $eventoOrigemLog->getRequest()->getData('email'),
+                        'email' => $eventoOrigemLog->getRequest()->getData('email'),
                     ],
                     'texto' => 'Credenciais utilizadas para logar: ',
                 ],

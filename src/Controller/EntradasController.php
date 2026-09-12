@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Event\EventInterface;
+use Cake\Routing\Router;
 use Cake\Validation\Validator;
 
 /**
@@ -14,6 +15,12 @@ use Cake\Validation\Validator;
  */
 class EntradasController extends AppController
 {
+    /**
+     * beforeFilter callback.
+     *
+     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
+     * @return void
+     */
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
@@ -38,7 +45,7 @@ class EntradasController extends AppController
 
                 return $this->redirect(['action' => 'edit', $entrada->id]);
             }
-            $this->Flash->error(null, ['params' => ['mensagens' => $entrada->getErrors()]]);
+            $this->Flash->error('', ['params' => ['mensagens' => $entrada->getErrors()]]);
         }
 
         $categorias = $this->Entradas->Categorias
@@ -63,7 +70,7 @@ class EntradasController extends AppController
             if ($this->Entradas->save($entrada)) {
                 $this->Flash->success(__('Salvo com sucesso'));
             } else {
-                $this->Flash->error(null, ['params' => ['mensagens' => $entrada->getErrors()]]);
+                $this->Flash->error('', ['params' => ['mensagens' => $entrada->getErrors()]]);
             }
 
             return $this->redirect(['action' => 'edit', $entrada->id]);
@@ -90,7 +97,7 @@ class EntradasController extends AppController
         if ($this->Entradas->delete($entrada)) {
             $this->Flash->success(__('Excluído com sucesso'));
         } else {
-            $this->Flash->error(null, ['params' => ['mensagens' => $entrada->getErrors()]]);
+            $this->Flash->error('', ['params' => ['mensagens' => $entrada->getErrors()]]);
         }
 
         return $this->redirect(['controller' => 'categorias', 'action' => 'listagemEntradas', $entrada->categoria_id]);
@@ -142,12 +149,17 @@ class EntradasController extends AppController
 
     /**
      * Busca por entrada.
+     *
+     * Retorna JSON (não HTML) propositalmente: o cliente monta o resultado no DOM
+     * via createElement/textContent (nunca innerHTML) para não expor um sink de
+     * DOM XSS client-side, mesmo o título já vindo escapado nesse ponto.
+     *
+     * @return \Cake\Http\Response
      */
     public function busca()
     {
         $this->request->allowMethod(['post']);
         $request = $this->request->getParsedBody();
-        $request['stringBusca'] = strtolower($request['stringBusca']);
         $validator = new Validator();
 
         $validator
@@ -163,14 +175,28 @@ class EntradasController extends AppController
                 ->withStringBody(json_encode($erros));
         }
 
+        $request['stringBusca'] = strtolower($request['stringBusca']);
+
         $query = $this->Entradas
             ->find()
             ->select(['id','titulo']);
 
         $resultado = [];
         foreach ($query as $entrada) {
-            if (str_contains(strtolower($entrada->tituloDescrip()), $request['stringBusca'])) {
-                $resultado[] = $entrada;
+            $texto = $entrada->tituloDescrip();
+
+            if (str_contains(strtolower($texto), $request['stringBusca'])) {
+                if (strlen($texto) > 30) {
+                    $texto = substr($texto, 0, 30) . ' (...)';
+                }
+
+                $resultado[] = [
+                    'titulo' => $texto,
+                    'url' => Router::url(
+                        ['controller' => 'Entradas', 'action' => 'edit', $entrada->id],
+                        true,
+                    ),
+                ];
             }
 
             if (count($resultado) > 9) {
@@ -178,8 +204,9 @@ class EntradasController extends AppController
             }
         }
 
-        $this->viewBuilder()->setLayout('layout_vazio');
-        $this->set(compact('resultado'));
+        return $this->response
+            ->withType('application/json; charset=UTF-8')
+            ->withStringBody(json_encode($resultado));
     }
 
     /**

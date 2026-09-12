@@ -13,23 +13,23 @@ class LogLevelInt
     * @see https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1
     */
     public const EMERGENCY = 0;
-    public const ALERT     = 1;
-    public const CRITICAL  = 2;
-    public const ERROR     = 3;
-    public const WARNING   = 4;
-    public const NOTICE    = 5;
-    public const INFO      = 6;
-    public const DEBUG     = 7;
+    public const ALERT = 1;
+    public const CRITICAL = 2;
+    public const ERROR = 3;
+    public const WARNING = 4;
+    public const NOTICE = 5;
+    public const INFO = 6;
+    public const DEBUG = 7;
 
     public const ARRAY_LOG_LEVEL = [
         self::EMERGENCY => LogLevel::EMERGENCY,
-        self::ALERT     => LogLevel::ALERT,
-        self::CRITICAL  => LogLevel::CRITICAL,
-        self::ERROR     => LogLevel::ERROR,
-        self::WARNING   => LogLevel::WARNING,
-        self::NOTICE    => LogLevel::NOTICE,
-        self::INFO      => LogLevel::INFO,
-        self::DEBUG     => LogLevel::DEBUG,
+        self::ALERT => LogLevel::ALERT,
+        self::CRITICAL => LogLevel::CRITICAL,
+        self::ERROR => LogLevel::ERROR,
+        self::WARNING => LogLevel::WARNING,
+        self::NOTICE => LogLevel::NOTICE,
+        self::INFO => LogLevel::INFO,
+        self::DEBUG => LogLevel::DEBUG,
     ];
 
     /**

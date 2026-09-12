@@ -1,0 +1,77 @@
+name: PHPUnit Tests
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: ['8.4']
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: keyanywhere_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: sqlite, pdo_pgsql, mbstring, intl, sodium
+        coverage: none
+
+    - name: Get Composer Cache
+      id: composercache
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: Cache Composer dependencies
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.composercache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: ${{ runner.os }}-composer-
+
+    - name: Install Dependencies
+      run: composer install --prefer-dist --no-interaction
+
+    - name: Create .env file
+      run: |
+        cp config/.env.example config/.env
+        KEY_CRIPTOGRAFIC=$(php -r "echo sodium_bin2hex(sodium_crypto_secretbox_keygen());")
+        sed -i "s/^export KEY_CRIPTOGRAFIC=.*/export KEY_CRIPTOGRAFIC=\"${KEY_CRIPTOGRAFIC}\"/" config/.env
+        sed -i "s/^export DB_TEST_HOST=.*/export DB_TEST_HOST=\"127.0.0.1\"/" config/.env
+
+    - name: Create config/app.php and config/app_local.php
+      run: |
+        cp config/app.example.php config/app.php
+        cp config/app_local.example.php config/app_local.php
+
+    - name: Run PHPUnit Tests
+      run: vendor/bin/phpunit --configuration phpunit.xml.dist
+
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: phpunit-results-${{ matrix.php-version }}
+        path: |
+          build/
+          junit.xml
+        retention-days: 30
+        if-no-files-found: ignore

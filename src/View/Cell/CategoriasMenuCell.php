@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\View\Cell;
 
+use Cake\ORM\Query\SelectQuery;
 use Cake\View\Cell;
 
 /**
@@ -49,7 +50,12 @@ class CategoriasMenuCell extends Cell
         $this->set(compact('query'));
     }
 
-    private function queryCategorias()
+    /**
+     * Monta a query das categorias ordenadas por posição, usada pelas actions do cell.
+     *
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    private function queryCategorias(): SelectQuery
     {
         return $this
             ->fetchTable('Categorias')

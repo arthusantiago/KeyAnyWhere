@@ -10,6 +10,12 @@ use Throwable;
  */
 class Criptografia
 {
+    /**
+     * Criptografa o texto informado.
+     *
+     * @param string $textoPuro
+     * @return string
+     */
     public static function criptografar(string $textoPuro): string
     {
         $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
@@ -24,6 +30,12 @@ class Criptografia
         return sodium_bin2hex($nonce . $encrypted);
     }
 
+    /**
+     * Descriptografa o texto informado.
+     *
+     * @param string $strCriptografada
+     * @return string
+     */
     public static function descriptografar(string $strCriptografada): string
     {
         try {
