@@ -92,7 +92,8 @@ try {
     Configure::config('default', new PhpConfig());
     Configure::load('app', 'default', false);
 } catch (\Exception $e) {
-    exit($e->getMessage() . "\n");
+    error_log($e->getMessage());
+    exit('Application configuration error. Please contact the administrator.' . "\n");
 }
 
 /*

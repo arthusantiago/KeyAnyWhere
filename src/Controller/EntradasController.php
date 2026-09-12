@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Event\EventInterface;
+use Cake\Routing\Router;
 use Cake\Validation\Validator;
 
 /**
@@ -149,7 +150,11 @@ class EntradasController extends AppController
     /**
      * Busca por entrada.
      *
-     * @return void
+     * Retorna JSON (não HTML) propositalmente: o cliente monta o resultado no DOM
+     * via createElement/textContent (nunca innerHTML) para não expor um sink de
+     * DOM XSS client-side, mesmo o título já vindo escapado nesse ponto.
+     *
+     * @return \Cake\Http\Response
      */
     public function busca()
     {
@@ -177,8 +182,20 @@ class EntradasController extends AppController
 
         $resultado = [];
         foreach ($query as $entrada) {
-            if (str_contains(strtolower($entrada->tituloDescrip()), $request['stringBusca'])) {
-                $resultado[] = $entrada;
+            $texto = $entrada->tituloDescrip();
+
+            if (str_contains(strtolower($texto), $request['stringBusca'])) {
+                if (strlen($texto) > 30) {
+                    $texto = substr($texto, 0, 30) . ' (...)';
+                }
+
+                $resultado[] = [
+                    'titulo' => $texto,
+                    'url' => Router::url(
+                        ['controller' => 'Entradas', 'action' => 'edit', $entrada->id],
+                        true,
+                    ),
+                ];
             }
 
             if (count($resultado) > 9) {
@@ -186,8 +203,9 @@ class EntradasController extends AppController
             }
         }
 
-        $this->viewBuilder()->setLayout('layout_vazio');
-        $this->set(compact('resultado'));
+        return $this->response
+            ->withType('application/json; charset=UTF-8')
+            ->withStringBody(json_encode($resultado));
     }
 
     /**

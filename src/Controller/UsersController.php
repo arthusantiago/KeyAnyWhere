@@ -384,9 +384,13 @@ class UsersController extends AppController
 
         $strSvgQrCode = (new Writer($render))->writeString($g2faUrl);
 
+        // Retornado como data URI (não como markup SVG bruto): o cliente insere isso via
+        // um <img src="..."> em vez de innerHTML, o que evita expor um sink de DOM XSS.
+        $dataUriSvgQrCode = 'data:image/svg+xml;base64,' . base64_encode($strSvgQrCode);
+
         return $this->response
-            ->withType('text/html; charset=UTF-8')
-            ->withStringBody($strSvgQrCode);
+            ->withType('text/plain; charset=UTF-8')
+            ->withStringBody($dataUriSvgQrCode);
     }
 
     /**

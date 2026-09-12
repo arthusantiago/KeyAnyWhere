@@ -211,9 +211,9 @@ class EntradasControllerTest extends TestCase
     }
 
     /**
-     * busca deve localizar, por substring do título descriptografado, a entrada da fixture,
-     * renderizando um link para ela (templates/Entradas/busca.php monta uma lista HTML,
-     * diferente da versão paga que retorna JSON puro).
+     * busca deve localizar, por substring do título descriptografado, a entrada da fixture.
+     * Retorna JSON puro (não HTML) — o cliente monta a lista via DOM, nunca innerHTML,
+     * para não expor um sink de DOM XSS client-side.
      *
      * @return void
      */
@@ -223,13 +223,14 @@ class EntradasControllerTest extends TestCase
         $this->post('/entradas/busca', ['stringBusca' => 'entrada de teste']);
 
         $this->assertResponseOk();
-        $this->assertResponseContains('Entrada de Teste');
-        $this->assertResponseContains('<li>');
+        $resultado = json_decode((string)$this->_response->getBody(), true);
+        $this->assertCount(1, $resultado);
+        $this->assertSame('Entrada de Teste', $resultado[0]['titulo']);
+        $this->assertArrayHasKey('url', $resultado[0]);
     }
 
     /**
-     * busca não deve retornar nenhum link para um termo que não corresponde a nenhum título,
-     * exibindo a mensagem de "Não localizado".
+     * busca não deve retornar nenhum resultado para um termo que não corresponde a nenhum título.
      *
      * @return void
      */
@@ -239,7 +240,8 @@ class EntradasControllerTest extends TestCase
         $this->post('/entradas/busca', ['stringBusca' => 'termo-que-nao-existe-em-nada']);
 
         $this->assertResponseOk();
-        $this->assertResponseContains('Não localizado');
+        $resultado = json_decode((string)$this->_response->getBody(), true);
+        $this->assertSame([], $resultado);
     }
 
     /**
