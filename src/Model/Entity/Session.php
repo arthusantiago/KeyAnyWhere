@@ -44,7 +44,10 @@ class Session extends Entity
         'user' => true,
     ];
 
-    private $navegadores = [
+    /**
+     * @var array<string>
+     */
+    private array $navegadores = [
         'firefox',
         'chrome',
         'edge',
@@ -54,7 +57,10 @@ class Session extends Entity
         'webview',
     ];
 
-    private $sistemasOperacionais = [
+    /**
+     * @var array<string>
+     */
+    private array $sistemasOperacionais = [
         'linux',
         'android',
         'iphone',
@@ -82,9 +88,9 @@ class Session extends Entity
      */
     protected function _getNavegador(): string
     {
-        $navegadorSessao = $this->buscaNaString($this->navegadores, $this->user_agent) ?? 'Desconhecido';
+        $navegadorSessao = $this->buscaNaString($this->navegadores, $this->user_agent);
 
-        return ucfirst($navegadorSessao);
+        return ucfirst($navegadorSessao !== false ? $navegadorSessao : 'Desconhecido');
     }
 
     /**
@@ -98,9 +104,9 @@ class Session extends Entity
      */
     protected function _getSistemaOperacional(): string
     {
-        $sistOperaSessao = $this->buscaNaString($this->sistemasOperacionais, $this->user_agent) ?? 'Desconhecido';
+        $sistOperaSessao = $this->buscaNaString($this->sistemasOperacionais, $this->user_agent);
 
-        return ucfirst($sistOperaSessao);
+        return ucfirst($sistOperaSessao !== false ? $sistOperaSessao : 'Desconhecido');
     }
 
     /**

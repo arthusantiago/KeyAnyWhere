@@ -41,6 +41,12 @@ class UsersController extends AppController
         ResultInterface::FAILURE_CREDENTIALS_INVALID,
     ];
 
+    /**
+     * beforeFilter callback.
+     *
+     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
+     * @return \Cake\Http\Response|null|void
+     */
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
@@ -60,7 +66,11 @@ class UsersController extends AppController
             $user = $this->Authentication->getResult()->getData();
             if ($user->root == false) {
                 $this->Flash->error('Você não tem permissão');
-                GerenciadorEventos::notificarEvento(['evento' => 'C2-1', 'request' => $this->request, 'usuario' => $user]);
+                GerenciadorEventos::notificarEvento([
+                    'evento' => 'C2-1',
+                    'request' => $this->request,
+                    'usuario' => $user,
+                ]);
 
                 return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
             }
@@ -128,7 +138,11 @@ class UsersController extends AppController
             if ($this->Users->save($user)) {
                 if ($senhaAlterada) {
                     if ($this->finalizarTodasSessoes($user->id)) {
-                        $msg = sprintf('Como a senha do usuário <b>%s</b> foi alterada,<br> todas as suas sessões foram encerradas.', $user->username);
+                        $msg = sprintf(
+                            'Como a senha do usuário <b>%s</b> foi alterada,'
+                                . '<br> todas as suas sessões foram encerradas.',
+                            $user->username,
+                        );
                         $this->Flash->warning(__($msg));
                     }
                 }
@@ -162,7 +176,7 @@ class UsersController extends AppController
         if ($this->Users->delete($user)) {
             $this->Flash->success(__('Excluído com sucesso'));
         } else {
-            $this->Flash->error(null, ['params' => ['mensagens' => $user->getErrors()]]);
+            $this->Flash->error('', ['params' => ['mensagens' => $user->getErrors()]]);
         }
 
         return $this->redirect(['action' => 'index']);
@@ -236,7 +250,7 @@ class UsersController extends AppController
 
                 $this->Flash->success(__('Salvo com sucesso'));
             } else {
-                $this->Flash->error(null, ['params' => ['mensagens' => $user->getErrors()]]);
+                $this->Flash->error('', ['params' => ['mensagens' => $user->getErrors()]]);
             }
         }
 
@@ -245,7 +259,7 @@ class UsersController extends AppController
             ->where(['user_id' => $user->id])
             ->orderByAsc('created');
 
-        foreach ($sessions as $key => $session) {
+        foreach ($sessions as $session) {
             if ($this->request->getSession()->id() == $session->id) {
                 $session->esteDispositivo = true;
             }
@@ -337,11 +351,15 @@ class UsersController extends AppController
         $user = $this->Authentication->getResult()->getData();
 
         // Somente o usuário root pode gerar o QrCode para outro usuário.
-        if ($request['idUser'] !=  $user->id) {
+        if ($request['idUser'] != $user->id) {
             if ($user->root) {
                 $user = $this->Users->get($request['idUser']);
             } else {
-                GerenciadorEventos::notificarEvento(['evento' => 'C2-1', 'request' => $this->request, 'usuario' => $user]);
+                GerenciadorEventos::notificarEvento([
+                    'evento' => 'C2-1',
+                    'request' => $this->request,
+                    'usuario' => $user,
+                ]);
 
                 return $this->response
                     ->withType('application/json; charset=UTF-8')
@@ -521,9 +539,7 @@ class UsersController extends AppController
             $this->redirect(['controller' => 'Users', 'action' => 'login']);
         }
 
-        /**
-         * @var \App\Model\Entity\User
-         */
+        /** @var \App\Model\Entity\User $user */
         $user = $this->Users
             ->find()
             ->orderByDesc('id')

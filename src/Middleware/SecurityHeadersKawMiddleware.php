@@ -24,7 +24,8 @@ class SecurityHeadersKawMiddleware extends SecurityHeadersMiddleware
     public function setContentSecurityPolicy(string $policy = ''): SecurityHeadersKawMiddleware
     {
         if (empty($policy)) {
-            $policy = 'default-src https: \'self\'; img-src \'self\'; script-src \'self\'; style-src \'self\'; object-src \'none\'';
+            $policy = 'default-src https: \'self\'; img-src \'self\'; script-src \'self\'; '
+                . 'style-src \'self\'; object-src \'none\'';
         }
 
         $this->headers['content-security-policy'] = $policy;

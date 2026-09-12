@@ -71,8 +71,8 @@ class SessionsTable extends Table
 
         $validator
             ->scalar('user_agent')
-            ->maxLength('userAgent', 256)
-            ->allowEmptyString('userAgent');
+            ->maxLength('user_agent', 256)
+            ->allowEmptyString('user_agent');
 
         $validator
             ->uuid('id_secundario', 'O campo id_secundario precisa ser do tipo UUID')

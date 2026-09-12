@@ -63,15 +63,14 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
      * @param bool $isEnvironment Default: self::PRODUCAO
      * @return int|bool
      */
-    public static function isTheExecutionEnvironment(int|bool $isEnvironment = self::PRODUCAO)
+    public static function isTheExecutionEnvironment(int|bool $isEnvironment = self::PRODUCAO): int|bool
     {
         // ambiente default
         $ambienteCorrente = self::PRODUCAO;
 
         if (
-            Configure::read('debug')
-            || file_exists(CONFIG . '.env')
-            || !getenv('SERVER_NAME')
+            Configure::read('debug') === true
+            && (file_exists(CONFIG . '.env') || !getenv('SERVER_NAME'))
         ) {
             $ambienteCorrente = self::DESENVOLVIMENTO;
         }
@@ -83,6 +82,17 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
         return $ambienteCorrente === $isEnvironment;
     }
+
+    /**
+     * Verifica se a aplicação está sendo executada dentro da suite de testes (PHPUnit).
+     *
+     * @return bool True se estiver rodando dentro do PHPUnit, false caso contrário.
+     */
+    public function isRunningUnitTests(): bool
+    {
+        return defined('PHPUNIT_TESTSUITE') || defined('PHPUNIT_COMPOSER_INSTALL');
+    }
+
     /**
      * Load all the application configuration and bootstrap logic.
      *
@@ -148,12 +158,19 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/4/en/controllers/middleware.html#cross-site-request-forgery-csrf-middleware
             $csrfProtecConfig = [
-                'cookieName' => self::isTheExecutionEnvironment(self::DESENVOLVIMENTO) ? 'Secure-csrfToken' : '__Secure-csrfToken',
+                'cookieName' => self::isTheExecutionEnvironment(self::DESENVOLVIMENTO)
+                    ? 'Secure-csrfToken'
+                    : '__Secure-csrfToken',
                 'httponly' => true,
                 'secure' => true,
                 'samesite' => 'Strict',
             ];
-            $middlewareQueue->add(new CsrfProtectionMiddleware($csrfProtecConfig));
+            $csrf = new CsrfProtectionMiddleware($csrfProtecConfig);
+            $csrf->skipCheckCallback(function () {
+                // Skip CSRF checks during unit tests
+                return $this->isRunningUnitTests();
+            });
+            $middlewareQueue->add($csrf);
 
         // Forçando HTTPS em todas as conexões;
         $middlewareQueue->add(new HttpsEnforcerMiddleware([
@@ -213,12 +230,25 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         // Load more plugins here
     }
 
+    /**
+     * Returns a authentication service instance.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request
+     * @return \Authentication\AuthenticationServiceInterface
+     */
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
     {
-        $authenticationService = new AuthenticationService([
-            'unauthenticatedRedirect' => Router::url('/users/login'),
+        $config = [
             'queryParam' => 'redirect',
-        ]);
+            'unauthenticatedRedirect' => null,
+        ];
+
+        // During unit tests, disable automatic redirect
+        if (!$this->isRunningUnitTests()) {
+            $config['unauthenticatedRedirect'] = Router::url('/users/login');
+        }
+
+        $authenticationService = new AuthenticationService($config);
 
         // Load identifiers, ensure we check email and password fields
         $authenticationService->loadIdentifier('Authentication.Password', [

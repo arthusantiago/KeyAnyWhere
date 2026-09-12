@@ -53,11 +53,17 @@ class AppController extends Controller
             $userLogado = $this->Authentication->getResult()->getData();
         }
         $sessionTimeout = Configure::read('Session.timeout');
-        $csrfToken =  $this->request->getAttribute('csrfToken');
+        $csrfToken = $this->request->getAttribute('csrfToken');
 
         $this->set(compact('userLogado', 'sessionTimeout', 'csrfToken'));
     }
 
+    /**
+     * beforeFilter callback.
+     *
+     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
+     * @return \Cake\Http\Response|null|void
+     */
     public function beforeFilter(EventInterface $event)
     {
         if ($this->ipEstaBloqueado()) {

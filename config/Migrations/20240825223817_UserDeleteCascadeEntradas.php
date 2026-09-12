@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
-class UserDeleteCascadeEntradas extends AbstractMigration
+class UserDeleteCascadeEntradas extends BaseMigration
 {
     /**
      * Removendo do BD a relação entre o usuário e a entrada criada

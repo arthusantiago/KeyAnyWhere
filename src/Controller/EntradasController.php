@@ -14,6 +14,12 @@ use Cake\Validation\Validator;
  */
 class EntradasController extends AppController
 {
+    /**
+     * beforeFilter callback.
+     *
+     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
+     * @return void
+     */
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
@@ -38,7 +44,7 @@ class EntradasController extends AppController
 
                 return $this->redirect(['action' => 'edit', $entrada->id]);
             }
-            $this->Flash->error(null, ['params' => ['mensagens' => $entrada->getErrors()]]);
+            $this->Flash->error('', ['params' => ['mensagens' => $entrada->getErrors()]]);
         }
 
         $categorias = $this->Entradas->Categorias
@@ -63,7 +69,7 @@ class EntradasController extends AppController
             if ($this->Entradas->save($entrada)) {
                 $this->Flash->success(__('Salvo com sucesso'));
             } else {
-                $this->Flash->error(null, ['params' => ['mensagens' => $entrada->getErrors()]]);
+                $this->Flash->error('', ['params' => ['mensagens' => $entrada->getErrors()]]);
             }
 
             return $this->redirect(['action' => 'edit', $entrada->id]);
@@ -90,7 +96,7 @@ class EntradasController extends AppController
         if ($this->Entradas->delete($entrada)) {
             $this->Flash->success(__('Excluído com sucesso'));
         } else {
-            $this->Flash->error(null, ['params' => ['mensagens' => $entrada->getErrors()]]);
+            $this->Flash->error('', ['params' => ['mensagens' => $entrada->getErrors()]]);
         }
 
         return $this->redirect(['controller' => 'categorias', 'action' => 'listagemEntradas', $entrada->categoria_id]);
@@ -142,6 +148,8 @@ class EntradasController extends AppController
 
     /**
      * Busca por entrada.
+     *
+     * @return void
      */
     public function busca()
     {

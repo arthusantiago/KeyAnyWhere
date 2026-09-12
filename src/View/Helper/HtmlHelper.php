@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace App\View\Helper;
 
-use Cake\View\Helper\HtmlHelper as Html;
 use App\Application;
+use Cake\View\Helper\HtmlHelper as Html;
 
 /**
  * @property \Cake\View\Helper\UrlHelper $Url
@@ -13,18 +14,21 @@ class HtmlHelper extends Html
     /**
      * Controla em qual ambiente a aplicação está executando.
      * O default é estar sendo executado em produção.
+     *
      * @var bool $ambienteProducao
      */
     private bool $ambienteProducao = true;
 
     /**
      * Pasta que armazena os arquivos minifcados
+     *
      * @var string $caminhoArquivoMinificado
      */
     private string $caminhoArquivoMinificado = ARQ_MINIFICADOS;
 
     /**
      * Configuração padrões
+     *
      * @var array $defaults
      */
     private array $defaults = [
@@ -32,6 +36,12 @@ class HtmlHelper extends Html
         'checarAmbiente' => true,
     ];
 
+    /**
+     * Initialization hook method.
+     *
+     * @param array<string, mixed> $config The configuration settings provided to this helper.
+     * @return void
+     */
     public function initialize(array $config): void
     {
         /**
@@ -85,7 +95,7 @@ class HtmlHelper extends Html
      * @param string $path
      * @return array|string
      */
-    private function assetMinificado(array|string $path)
+    private function assetMinificado(array|string $path): array|string
     {
         if (is_array($path)) {
             foreach ($path as $key => $nomeArquivo) {

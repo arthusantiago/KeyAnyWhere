@@ -94,7 +94,14 @@ class LogsTable extends Table
         return $validator;
     }
 
-    public function findCountAtividadesSuspeitas(Query $query, array $options)
+    /**
+     * Finder para contar atividades suspeitas ainda não analisadas, agrupadas por nível de severidade.
+     *
+     * @param \Cake\ORM\Query $query Query object.
+     * @param array $options Options array.
+     * @return \Cake\ORM\Query
+     */
+    public function findCountAtividadesSuspeitas(Query $query, array $options): Query
     {
         $query
             ->select([

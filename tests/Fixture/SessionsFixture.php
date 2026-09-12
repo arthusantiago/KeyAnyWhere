@@ -23,7 +23,7 @@ class SessionsFixture extends TestFixture
                 'data' => 'Lorem ipsum dolor sit amet',
                 'expires' => 1,
                 'user_id' => 1,
-                'userAgent' => 'Lorem ipsum dolor sit amet',
+                'user_agent' => 'Lorem ipsum dolor sit amet',
                 'created' => 1720745290,
                 'modified' => 1720745290,
             ],

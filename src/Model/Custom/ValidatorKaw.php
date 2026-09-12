@@ -36,7 +36,8 @@ class ValidatorKaw extends Validator
                 $recurso .= $context['data']['id'] ?? null;
 
                 /* Mensagem complementar */
-                $texto = ' Houve a tentativa de salvar no campo "' . $context['field'] . '" uma string possivelmente maliciosa.';
+                $texto = ' Houve a tentativa de salvar no campo "' . $context['field']
+                    . '" uma string possivelmente maliciosa.';
 
                 GerenciadorEventos::notificarEvento([
                     'evento' => 'C3-1',

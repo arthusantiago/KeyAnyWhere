@@ -55,9 +55,14 @@ require CAKE . 'functions.php';
 /*
  * See https://github.com/josegonzalez/php-dotenv for API details.
  *
- * Uncomment block of code below if you want to use `.env` file during development.
- * You should copy `config/.env.example` to `config/.env` and set/modify the
- * variables as required.
+ * Load the `.env` file before the application configuration below, so that
+ * env() calls in config/app.php and config/app_local.php resolve to the
+ * values defined there instead of null.
+ *
+ * This must run before Configure::load('app', ...), so we can't rely on
+ * Application::isTheExecutionEnvironment() here (it reads Configure::read('debug'),
+ * which is itself only set once config/app.php is loaded, further down).
+ * The file/SERVER_NAME check below is the bootstrap-time equivalent.
  *
  * The purpose of the .env file is to emulate the presence of the environment
  * variables like they would be present in production.
@@ -66,7 +71,7 @@ require CAKE . 'functions.php';
  * security risks. See https://github.com/josegonzalez/php-dotenv#general-security-information
  * for more information for recommended practices.
 */
-if (Application::isTheExecutionEnvironment(Application::DESENVOLVIMENTO)) {
+if (!getenv('SERVER_NAME') && file_exists(CONFIG . '.env')) {
     $dotenv = new \josegonzalez\Dotenv\Loader([CONFIG . '.env']);
     $dotenv->parse()
         ->skipExisting()
