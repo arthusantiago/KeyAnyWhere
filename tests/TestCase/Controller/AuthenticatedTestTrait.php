@@ -27,6 +27,13 @@ trait AuthenticatedTestTrait
             'email' => 'usuario.teste@example.com',
             'root' => true,
             'tfa_ativo' => false,
+            // Um segredo 2FA é necessário para ações que chamam descripSecret2FA() sobre a
+            // identidade da sessão (ex.: UsersController::geraQrCode2fa() ao gerar o QR Code
+            // da própria conta) — sem isso, tfa_secret ficaria nulo e quebraria com TypeError,
+            // já que a identidade aqui é simulada e não vem de um SELECT real. Texto puro:
+            // o mutator _setTfaSecret() do entity já criptografa ao atribuir (new User() não
+            // usa guard, mas ainda passa pelos mutators), como aconteceria num save() de verdade.
+            'tfa_secret' => 'SEGREDOTESTEFAKE234567',
         ];
 
         $this->session(['Auth' => new User($userData)]);

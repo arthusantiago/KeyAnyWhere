@@ -28,6 +28,29 @@ class CategoriasControllerTest extends TestCase
     ];
 
     /**
+     * Test index method - requires authentication
+     *
+     * @return void
+     */
+    public function testIndexRequiresAuthentication(): void
+    {
+        $this->get('/categorias');
+        $this->assertTrue(in_array($this->_response->getStatusCode(), [302, 401]));
+    }
+
+    /**
+     * index deve listar as categorias existentes para um usuário autenticado.
+     *
+     * @return void
+     */
+    public function testIndexAsAuthenticatedUser(): void
+    {
+        $this->loginAsUser();
+        $this->get('/categorias');
+        $this->assertResponseOk();
+    }
+
+    /**
      * Test add method - GET request without auth should redirect to login
      *
      * @return void
@@ -41,26 +64,14 @@ class CategoriasControllerTest extends TestCase
     }
 
     /**
-     * Test add method
-     *
-     * @return void
-     * @uses \App\Controller\CategoriasController::add()
-     */
-    public function testAdd(): void
-    {
-        $this->testAddGetRequestRequiresAuthentication();
-    }
-
-    /**
-     * index deve listar as categorias existentes para um usuário autenticado.
+     * Test add method - POST request without auth should redirect to login
      *
      * @return void
      */
-    public function testIndexAsAuthenticatedUser(): void
+    public function testAddPostRequestRequiresAuthentication(): void
     {
-        $this->loginAsUser();
-        $this->get('/categorias');
-        $this->assertResponseOk();
+        $this->post('/categorias/add', ['nome' => 'Categoria Sem Autenticacao']);
+        $this->assertTrue(in_array($this->_response->getStatusCode(), [302, 401]));
     }
 
     /**
@@ -97,6 +108,40 @@ class CategoriasControllerTest extends TestCase
     }
 
     /**
+     * Test edit method - GET request without auth should redirect to login
+     *
+     * @return void
+     */
+    public function testEditGetRequestRequiresAuthentication(): void
+    {
+        $this->get('/categorias/edit/1');
+        $this->assertTrue(in_array($this->_response->getStatusCode(), [302, 401]));
+    }
+
+    /**
+     * Test edit method - POST request without auth should redirect to login
+     *
+     * @return void
+     */
+    public function testEditPostRequestRequiresAuthentication(): void
+    {
+        $this->post('/categorias/edit/1', ['nome' => 'Alterada Sem Autenticacao']);
+        $this->assertTrue(in_array($this->_response->getStatusCode(), [302, 401]));
+    }
+
+    /**
+     * GET em edit, autenticado, deve renderizar o formulário com a categoria da fixture.
+     *
+     * @return void
+     */
+    public function testEditGetAsAuthenticatedUser(): void
+    {
+        $this->loginAsUser();
+        $this->get('/categorias/edit/1');
+        $this->assertResponseOk();
+    }
+
+    /**
      * Um POST autenticado em edit deve persistir a alteração do nome no banco.
      *
      * @return void
@@ -110,6 +155,58 @@ class CategoriasControllerTest extends TestCase
         $categorias = $this->getTableLocator()->get('Categorias');
         $recarregada = $categorias->get(1);
         $this->assertSame('Categoria Renomeada', $recarregada->nomeDescrip());
+    }
+
+    /**
+     * Um POST autenticado em edit com nome vazio não deve alterar a categoria (fica com o erro).
+     *
+     * @return void
+     */
+    public function testEditComNomeVazioNaoAlteraCategoria(): void
+    {
+        $this->loginAsUser();
+        $categorias = $this->getTableLocator()->get('Categorias');
+        $nomeOriginal = $categorias->get(1)->nomeDescrip();
+
+        $this->post('/categorias/edit/1', ['nome' => '']);
+
+        $this->assertResponseSuccess();
+        $recarregada = $categorias->get(1);
+        $this->assertSame($nomeOriginal, $recarregada->nomeDescrip());
+    }
+
+    /**
+     * Editar uma categoria inexistente deve retornar 404.
+     *
+     * @return void
+     */
+    public function testEditCategoriaInexistenteRetorna404(): void
+    {
+        $this->loginAsUser();
+        $this->get('/categorias/edit/9999');
+        $this->assertResponseCode(404);
+    }
+
+    /**
+     * Test delete method - requires POST or DELETE
+     *
+     * @return void
+     */
+    public function testDeleteRequiresPostOrDelete(): void
+    {
+        $this->get('/categorias/delete/1');
+        $this->assertTrue(in_array($this->_response->getStatusCode(), [302, 401, 405]));
+    }
+
+    /**
+     * Test delete method - POST request without auth should redirect to login
+     *
+     * @return void
+     */
+    public function testDeletePostRequestRequiresAuthentication(): void
+    {
+        $this->post('/categorias/delete', ['id' => '1']);
+        $this->assertTrue(in_array($this->_response->getStatusCode(), [302, 401]));
     }
 
     /**
@@ -129,5 +226,43 @@ class CategoriasControllerTest extends TestCase
 
         $this->assertResponseSuccess();
         $this->assertFalse($categorias->exists(['id' => 1]));
+    }
+
+    /**
+     * Test listagemEntradas method - requires authentication
+     *
+     * @return void
+     */
+    public function testListagemEntradasRequiresAuthentication(): void
+    {
+        $this->get('/categorias/listagem-entradas/1');
+        $this->assertTrue(in_array($this->_response->getStatusCode(), [302, 401]));
+    }
+
+    /**
+     * listagemEntradas deve listar, para um usuário autenticado, as entradas
+     * pertencentes à categoria informada.
+     *
+     * @return void
+     */
+    public function testListagemEntradasListaEntradasDaCategoria(): void
+    {
+        $this->loginAsUser();
+        $this->get('/categorias/listagem-entradas/1');
+
+        $this->assertResponseOk();
+        $this->assertResponseContains('Entrada de Teste');
+    }
+
+    /**
+     * listagemEntradas de uma categoria inexistente deve retornar 404.
+     *
+     * @return void
+     */
+    public function testListagemEntradasCategoriaInexistenteRetorna404(): void
+    {
+        $this->loginAsUser();
+        $this->get('/categorias/listagem-entradas/9999');
+        $this->assertResponseCode(404);
     }
 }

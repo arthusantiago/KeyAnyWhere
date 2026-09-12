@@ -160,7 +160,6 @@ class EntradasController extends AppController
     {
         $this->request->allowMethod(['post']);
         $request = $this->request->getParsedBody();
-        $request['stringBusca'] = strtolower($request['stringBusca']);
         $validator = new Validator();
 
         $validator
@@ -175,6 +174,8 @@ class EntradasController extends AppController
                 ->withStatus(400, 'Dados invalidos enviados ao servidor')
                 ->withStringBody(json_encode($erros));
         }
+
+        $request['stringBusca'] = strtolower($request['stringBusca']);
 
         $query = $this->Entradas
             ->find()

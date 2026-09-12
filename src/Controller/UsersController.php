@@ -194,7 +194,7 @@ class UsersController extends AppController
         $this->viewBuilder()->setLayout('login');
 
         if ($this->executarConfigInicial()) {
-            $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
+            return $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
         }
 
         if ($this->request->is('post')) {
@@ -245,7 +245,8 @@ class UsersController extends AppController
                 if ($senhaAlterada) {
                     $this->finalizarTodasSessoes();
                     $this->Flash->warning(__('Como sua senha foi alterada,<br> você precisa logar novamente.'));
-                    $this->redirect(['action' => 'login']);
+
+                    return $this->redirect(['action' => 'login']);
                 }
 
                 $this->Flash->success(__('Salvo com sucesso'));
@@ -296,7 +297,7 @@ class UsersController extends AppController
             }
         }
 
-        $this->redirect($this->referer(['action' => 'minhaConta']));
+        return $this->redirect($this->referer(['action' => 'minhaConta']));
     }
 
     /**
@@ -496,12 +497,12 @@ class UsersController extends AppController
      * Esse processo deve ser executado ao acessar o KAW pela primeira vez.
      *
      * @access public
-     * @return void
+     * @return \Cake\Http\Response|null|void
      */
     public function configInicial()
     {
         if ($this->executarConfigInicial() == false) {
-            $this->redirect(['controller' => 'Users', 'action' => 'login']);
+            return $this->redirect(['controller' => 'Users', 'action' => 'login']);
         }
 
         $user = $this->Users
@@ -535,12 +536,12 @@ class UsersController extends AppController
      * Metodo que gerencia a configuração do 2FA no processo de Configuração Inicial
      *
      * @access public
-     * @return void
+     * @return \Cake\Http\Response|null|void
      */
     public function configInicialTfa()
     {
         if ($this->executarConfigInicial() == false) {
-            $this->redirect(['controller' => 'Users', 'action' => 'login']);
+            return $this->redirect(['controller' => 'Users', 'action' => 'login']);
         }
 
         /** @var \App\Model\Entity\User $user */

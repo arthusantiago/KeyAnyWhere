@@ -142,6 +142,29 @@ class EntradasControllerTest extends TestCase
     }
 
     /**
+     * Um POST autenticado com título vazio não deve criar a entrada (fica na tela com erro).
+     *
+     * @return void
+     */
+    public function testAddComTituloVazioNaoCriaEntrada(): void
+    {
+        $this->loginAsUser();
+        $entradas = $this->getTableLocator()->get('Entradas');
+        $totalAntes = $entradas->find()->count();
+
+        $this->post('/entradas/add', [
+            'titulo' => '',
+            'username' => 'novo.usuario',
+            'password' => self::gerarSenhaDeTeste(),
+            'categoria_id' => 1,
+            'anotacoes' => '',
+        ]);
+
+        $this->assertResponseOk();
+        $this->assertSame($totalAntes, $entradas->find()->count());
+    }
+
+    /**
      * Um POST autenticado em edit deve persistir a alteração do título no banco.
      *
      * @return void
@@ -166,6 +189,43 @@ class EntradasControllerTest extends TestCase
     }
 
     /**
+     * Um POST autenticado em edit com título vazio não deve alterar a entrada (fica com o erro).
+     *
+     * @return void
+     */
+    public function testEditComTituloVazioNaoAlteraEntrada(): void
+    {
+        $this->loginAsUser();
+        $entradas = $this->getTableLocator()->get('Entradas');
+        $original = $entradas->get(1);
+        $tituloOriginal = $original->tituloDescrip();
+
+        $this->post('/entradas/edit/1', [
+            'titulo' => '',
+            'username' => $original->usernameDescrip(),
+            'password' => $original->passwordDescrip(),
+            'categoria_id' => $original->categoria_id,
+            'anotacoes' => $original->anotacoes,
+        ]);
+
+        $this->assertResponseSuccess();
+        $recarregada = $entradas->get(1);
+        $this->assertSame($tituloOriginal, $recarregada->tituloDescrip());
+    }
+
+    /**
+     * Editar uma entrada inexistente deve retornar 404.
+     *
+     * @return void
+     */
+    public function testEditEntradaInexistenteRetorna404(): void
+    {
+        $this->loginAsUser();
+        $this->get('/entradas/edit/9999');
+        $this->assertResponseCode(404);
+    }
+
+    /**
      * Um POST autenticado em delete deve remover a entrada do banco.
      *
      * @return void
@@ -178,6 +238,31 @@ class EntradasControllerTest extends TestCase
         $this->assertResponseSuccess();
         $entradas = $this->getTableLocator()->get('Entradas');
         $this->assertFalse($entradas->exists(['id' => 1]));
+    }
+
+    /**
+     * clipboard não deve retornar dados sem autenticação — esse endpoint devolve
+     * segredos descriptografados, então exigir autenticação aqui é crítico.
+     *
+     * @return void
+     */
+    public function testClipboardRequiresAuthentication(): void
+    {
+        $this->post('/entradas/clipboard', ['id' => 1, 'type' => 'password']);
+        $this->assertTrue(in_array($this->_response->getStatusCode(), [302, 401]));
+    }
+
+    /**
+     * clipboard deve retornar 400 quando os dados enviados são inválidos.
+     *
+     * @return void
+     */
+    public function testClipboardComDadosInvalidosRetorna400(): void
+    {
+        $this->loginAsUser();
+        $this->post('/entradas/clipboard', ['id' => 1, 'type' => 'algo-nao-permitido']);
+
+        $this->assertResponseCode(400);
     }
 
     /**
@@ -208,6 +293,30 @@ class EntradasControllerTest extends TestCase
         $this->assertResponseOk();
         $body = json_decode((string)$this->_response->getBody(), true);
         $this->assertSame('usuario.teste', $body['data']);
+    }
+
+    /**
+     * busca não deve funcionar sem autenticação.
+     *
+     * @return void
+     */
+    public function testBuscaRequiresAuthentication(): void
+    {
+        $this->post('/entradas/busca', ['stringBusca' => 'entrada']);
+        $this->assertTrue(in_array($this->_response->getStatusCode(), [302, 401]));
+    }
+
+    /**
+     * busca deve retornar 400 quando a string de busca não é informada.
+     *
+     * @return void
+     */
+    public function testBuscaSemStringBuscaRetorna400(): void
+    {
+        $this->loginAsUser();
+        $this->post('/entradas/busca', []);
+
+        $this->assertResponseCode(400);
     }
 
     /**
@@ -242,6 +351,30 @@ class EntradasControllerTest extends TestCase
         $this->assertResponseOk();
         $resultado = json_decode((string)$this->_response->getBody(), true);
         $this->assertSame([], $resultado);
+    }
+
+    /**
+     * senhaInsegura não deve funcionar sem autenticação.
+     *
+     * @return void
+     */
+    public function testSenhaInseguraRequiresAuthentication(): void
+    {
+        $this->post('/entradas/senha-insegura', ['password' => '123456']);
+        $this->assertTrue(in_array($this->_response->getStatusCode(), [302, 401]));
+    }
+
+    /**
+     * senhaInsegura deve retornar 400 quando a senha não é informada.
+     *
+     * @return void
+     */
+    public function testSenhaInseguraSemPasswordRetorna400(): void
+    {
+        $this->loginAsUser();
+        $this->post('/entradas/senha-insegura', []);
+
+        $this->assertResponseCode(400);
     }
 
     /**
