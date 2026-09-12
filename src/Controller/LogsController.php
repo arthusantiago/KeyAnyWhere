@@ -45,7 +45,13 @@ class LogsController extends AppController
         $this->set(compact('log'));
     }
 
-    public function analisado($id)
+    /**
+     * Alterna o status 'analisado' do log informado.
+     *
+     * @param string|int $id Log id.
+     * @return \Cake\Http\Response|null|void Redirects to index.
+     */
+    public function analisado(string|int $id)
     {
         $this->request->allowMethod(['get']);
 
@@ -55,7 +61,7 @@ class LogsController extends AppController
         if ($this->Logs->save($log)) {
             $this->Flash->success(__('Salvo com sucesso'));
         } else {
-            $this->Flash->error(null, ['params' => ['mensagens' => $log->getErrors()]]);
+            $this->Flash->error('', ['params' => ['mensagens' => $log->getErrors()]]);
         }
 
         return $this->redirect(['action' => 'index']);

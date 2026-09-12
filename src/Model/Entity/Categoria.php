@@ -60,6 +60,13 @@ class Categoria extends Entity
         return Criptografia::descriptografar($this->nome);
     }
 
+    /**
+     * Retorna o nome descriptografado, encurtado até o tamanho informado.
+     *
+     * @access public
+     * @param int $tamanho
+     * @return string
+     */
     public function nomeEncurtado(int $tamanho = 35): string
     {
         $nomeDescrip = $this->nomeDescrip();

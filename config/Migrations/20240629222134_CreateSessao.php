@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-use Migrations\AbstractMigration;
-use Phinx\Util\Literal;
+use Migrations\BaseMigration;
+use Cake\Database\Expression\QueryExpression;
 
-class CreateSessao extends AbstractMigration
+class CreateSessao extends BaseMigration
 {
     /**
      * Change Method.
@@ -15,11 +15,26 @@ class CreateSessao extends AbstractMigration
      */
     public function change(): void
     {
-        $this->execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
+        $adaptador = $this->adapter->getAdapterType();
 
-        $this->table('sessions', ['id' => false, 'primary_key' => ['id']])
-            ->addColumn('id', 'string', ['limit' => 40, 'null' => false])
-            ->addColumn('id_secundario', 'uuid', ['default' => Literal::from('uuid_generate_v4()')])
+        // Only create uuid-ossp extension for PostgreSQL
+        // SQLite doesn't support this extension
+        if ($adaptador === 'pgsql') {
+            $this->execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
+        }
+
+        $table = $this->table('sessions', ['id' => false, 'primary_key' => ['id']])
+            ->addColumn('id', 'string', ['limit' => 40, 'null' => false]);
+
+        // id_secundario: UUID with different defaults for different databases
+        if ($adaptador === 'pgsql') {
+            $table->addColumn('id_secundario', 'uuid', ['default' => new QueryExpression('uuid_generate_v4()') ]);
+        } else {
+            // For SQLite and other databases, use a regular string and generate in PHP
+            $table->addColumn('id_secundario', 'string', ['limit' => 40, 'null' => false]);
+        }
+
+        $table
             ->addColumn('data', 'binary', ['null' => true, 'default' => null])
             ->addColumn('expires', 'integer', ['null' => true, 'default' => null])
             ->addColumn('user_id', 'integer', ['null' => true, 'default' => null])

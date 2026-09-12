@@ -1,0 +1,76 @@
+name: Code Quality
+
+on:
+  pull_request:
+
+jobs:
+  # Verifica se o código segue o padrão de estilo PSR-12 + convenções do CakePHP,
+  # bloqueando formatação inconsistente antes do merge.
+  phpcs:
+    name: Code Style (phpcs)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring
+          coverage: none
+
+      - name: Get Composer Cache Directory
+        id: composercache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Run PHP CodeSniffer
+        run: composer cs-check
+
+  # Análise estática de tipos, detectando erros em tempo de compilação
+  # sem executar o código (tipos incorretos, métodos inexistentes, nullables não tratados).
+  phpstan:
+    name: Static Analysis (phpstan)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: sqlite, pdo_pgsql, mbstring, intl, sodium
+          coverage: none
+
+      - name: Get Composer Cache Directory
+        id: composercache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Create .env and config/app.php for PHPStan bootstrap
+        run: |
+          cp config/.env.example config/.env
+          cp config/app.example.php config/app.php
+
+      - name: Run PHPStan
+        run: composer stan

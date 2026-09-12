@@ -3,12 +3,10 @@ declare(strict_types=1);
 
 namespace App\Test\Fixture;
 
-use Cake\TestSuite\Fixture\TestFixture;
-
 /**
  * InsecurePasswordsFixture
  */
-class InsecurePasswordsFixture extends TestFixture
+class InsecurePasswordsFixture extends AppFixture
 {
     /**
      * Init method
@@ -20,7 +18,7 @@ class InsecurePasswordsFixture extends TestFixture
         $this->records = [
             [
                 'id' => 1,
-                'password' => 'Lorem ipsum dolor sit amet',
+                'password' => '123456',
                 'created' => 1688597054,
                 'modified' => 1688597054,
             ],

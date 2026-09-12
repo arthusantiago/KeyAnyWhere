@@ -24,19 +24,23 @@ use Cake\Http\ServerRequest;
  */
 class Evento
 {
-    private $id;
-    private $nivelSeveridadeString;
-    private $nivelSeveridade;
-    private $mensagem;
+    private string $id;
+    private string $nivelSeveridadeString;
+    private int $nivelSeveridade;
+    private string $mensagem;
 
     /**
      * @var \Cake\Http\ServerRequest
      */
     private ServerRequest $request;
-    private $recurso;
-    private $ipOrigem;
-    private $usuario = 'Sem informações de usuário';
-    private $eventoGatilho = [];
+    private string $recurso;
+    private string $ipOrigem;
+    private string $usuario = 'Sem informações de usuário';
+
+    /**
+     * @var array<string>
+     */
+    private array $eventoGatilho = [];
 
     /**
      * Ler a documentação da classe App\Log\GerenciadorEventos::$catalogoEventos para entender
@@ -56,7 +60,7 @@ class Evento
      * @param array $complemento Informações complementares
      * @param array $eventoGatilho = []
      */
-    function __construct(
+    public function __construct(
         string $idEvento,
         string|int $nivelSeveridade,
         string $mensagem,
@@ -97,6 +101,12 @@ class Evento
         $this->id = strtoupper($id);
     }
 
+    /**
+     * Retorna o ID do evento.
+     *
+     * @access public
+     * @return string
+     */
     public function getId(): string
     {
         return $this->id;
@@ -160,6 +170,12 @@ class Evento
         $this->mensagem = $mensagem;
     }
 
+    /**
+     * Retorna o texto da mensagem que descreve o evento ocorrido.
+     *
+     * @access public
+     * @return string
+     */
     public function getMensagem(): string
     {
         return $this->mensagem;
@@ -169,16 +185,22 @@ class Evento
      * Seta a request e as outras informações importantes;
      *
      * @access public
-     * @param \App\Log\Cake\Http\ServerRequest $request
+     * @param \Cake\Http\ServerRequest $request
      * @return void
      */
     public function setRequest(ServerRequest $request): void
     {
         $this->request = $request;
         $this->setRecurso($request->getPath());
-        $this->ipOrigem = $request->clientIp();
+        $this->ipOrigem = ($request->clientIp() ?: '');
     }
 
+    /**
+     * Retorna a request associada ao evento.
+     *
+     * @access public
+     * @return \Cake\Http\ServerRequest
+     */
     public function getRequest(): ServerRequest
     {
         return $this->request;
@@ -196,11 +218,23 @@ class Evento
         $this->recurso = $recurso;
     }
 
+    /**
+     * Retorna o recurso que foi acessado.
+     *
+     * @access public
+     * @return string
+     */
     public function getRecurso(): string
     {
         return $this->recurso;
     }
 
+    /**
+     * Retorna o IP de origem do evento.
+     *
+     * @access public
+     * @return string
+     */
     public function getIpOrigem(): string
     {
         return $this->ipOrigem;
@@ -258,16 +292,35 @@ class Evento
         }
     }
 
+    /**
+     * Retorna a string com as informações do usuário.
+     *
+     * @access public
+     * @return string
+     */
     public function getUsuario(): string
     {
         return $this->usuario;
     }
 
+    /**
+     * Seta os eventos que esse evento aguarda para ser disparado.
+     *
+     * @access public
+     * @param array $eventoGatilho
+     * @return void
+     */
     public function setEventoGatilho(array $eventoGatilho): void
     {
         $this->eventoGatilho = $eventoGatilho;
     }
 
+    /**
+     * Retorna os eventos que esse evento aguarda para ser disparado.
+     *
+     * @access public
+     * @return array
+     */
     public function getEventoGatilho(): array
     {
         return $this->eventoGatilho;
@@ -285,6 +338,12 @@ class Evento
         return in_array($idEvento, $this->getEventoGatilho());
     }
 
+    /**
+     * Retorna os dados do evento em formato de array.
+     *
+     * @access public
+     * @return array
+     */
     public function toArray(): array
     {
         return [

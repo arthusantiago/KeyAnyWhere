@@ -116,7 +116,10 @@ class EntradasTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn('categoria_id', 'Categorias', 'Categoria não encontrada'), ['errorField' => 'categoria_id']);
+        $rules->add(
+            $rules->existsIn('categoria_id', 'Categorias', 'Categoria não encontrada'),
+            ['errorField' => 'categoria_id'],
+        );
 
         return $rules;
     }

@@ -3,12 +3,10 @@ declare(strict_types=1);
 
 namespace App\Test\Fixture;
 
-use Cake\TestSuite\Fixture\TestFixture;
-
 /**
  * IpsBloqueadosFixture
  */
-class IpsBloqueadosFixture extends TestFixture
+class IpsBloqueadosFixture extends AppFixture
 {
     /**
      * Init method
@@ -20,7 +18,7 @@ class IpsBloqueadosFixture extends TestFixture
         $this->records = [
             [
                 'id' => 1,
-                'ip' => 'Lorem ipsu',
+                'ip' => '203.0.113.10',
                 'created' => 1685370299,
                 'modified' => 1685370299,
             ],

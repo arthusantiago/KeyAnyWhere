@@ -30,6 +30,11 @@ use Cake\Core\Configure;
  */
 class PagesController extends AppController
 {
+    /**
+     * Home page.
+     *
+     * @return void
+     */
     public function home()
     {
         $logs = (new LogsTable())

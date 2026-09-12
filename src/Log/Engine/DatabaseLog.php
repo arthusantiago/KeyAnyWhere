@@ -10,12 +10,25 @@ use Stringable;
 
 class DatabaseLog extends BaseLog
 {
+    /**
+     * Constructor.
+     *
+     * @param array<string, mixed> $config Config
+     */
     public function __construct(array $config = [])
     {
         parent::__construct($config);
     }
 
-    public function log($level, string|Stringable $message, array $context = []): void
+    /**
+     * Logs with an arbitrary level.
+     *
+     * @param mixed $level The log level.
+     * @param \Stringable|string $message The log message.
+     * @param array<mixed> $context Additional information about the logged message.
+     * @return void
+     */
+    public function log(mixed $level, string|Stringable $message, array $context = []): void
     {
         $log = new LogsTable();
         $novoLog = $log->newEmptyEntity();
@@ -31,7 +44,9 @@ class DatabaseLog extends BaseLog
                 },
             );
 
-            Log::warning('Erro ao salvar no BD os dados do log: ' . $novoLog . ' | Erros: ' . implode(',', $mensagensErro));
+            Log::warning(
+                'Erro ao salvar no BD os dados do log: ' . $novoLog . ' | Erros: ' . implode(',', $mensagensErro),
+            );
         }
     }
 }

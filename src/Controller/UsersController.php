@@ -41,6 +41,12 @@ class UsersController extends AppController
         ResultInterface::FAILURE_CREDENTIALS_INVALID,
     ];
 
+    /**
+     * beforeFilter callback.
+     *
+     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
+     * @return \Cake\Http\Response|null|void
+     */
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
@@ -60,7 +66,11 @@ class UsersController extends AppController
             $user = $this->Authentication->getResult()->getData();
             if ($user->root == false) {
                 $this->Flash->error('Você não tem permissão');
-                GerenciadorEventos::notificarEvento(['evento' => 'C2-1', 'request' => $this->request, 'usuario' => $user]);
+                GerenciadorEventos::notificarEvento([
+                    'evento' => 'C2-1',
+                    'request' => $this->request,
+                    'usuario' => $user,
+                ]);
 
                 return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
             }
@@ -128,7 +138,11 @@ class UsersController extends AppController
             if ($this->Users->save($user)) {
                 if ($senhaAlterada) {
                     if ($this->finalizarTodasSessoes($user->id)) {
-                        $msg = sprintf('Como a senha do usuário <b>%s</b> foi alterada,<br> todas as suas sessões foram encerradas.', $user->username);
+                        $msg = sprintf(
+                            'Como a senha do usuário <b>%s</b> foi alterada,'
+                                . '<br> todas as suas sessões foram encerradas.',
+                            $user->username,
+                        );
                         $this->Flash->warning(__($msg));
                     }
                 }
@@ -180,7 +194,7 @@ class UsersController extends AppController
         $this->viewBuilder()->setLayout('login');
 
         if ($this->executarConfigInicial()) {
-            $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
+            return $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
         }
 
         if ($this->request->is('post')) {
@@ -232,12 +246,13 @@ class UsersController extends AppController
                 if ($senhaAlterada) {
                     $this->finalizarTodasSessoes();
                     $this->Flash->warning(__('Como sua senha foi alterada,<br> você precisa logar novamente.'));
-                    $this->redirect(['action' => 'login']);
+
+                    return $this->redirect(['action' => 'login']);
                 }
 
                 $this->Flash->success(__('Salvo com sucesso'));
             } else {
-                $this->Flash->error(null, ['params' => ['mensagens' => $user->getErrors()]]);
+                $this->Flash->error('', ['params' => ['mensagens' => $user->getErrors()]]);
             }
         }
 
@@ -246,7 +261,7 @@ class UsersController extends AppController
             ->where(['user_id' => $user->id])
             ->orderByAsc('created');
 
-        foreach ($sessions as $key => $session) {
+        foreach ($sessions as $session) {
             if ($this->request->getSession()->id() == $session->id) {
                 $session->esteDispositivo = true;
             }
@@ -283,7 +298,7 @@ class UsersController extends AppController
             }
         }
 
-        $this->redirect($this->referer(['action' => 'minhaConta']));
+        return $this->redirect($this->referer(['action' => 'minhaConta']));
     }
 
     /**
@@ -338,11 +353,15 @@ class UsersController extends AppController
         $user = $this->Authentication->getResult()->getData();
 
         // Somente o usuário root pode gerar o QrCode para outro usuário.
-        if ($request['idUser'] !=  $user->id) {
+        if ($request['idUser'] != $user->id) {
             if ($user->root) {
                 $user = $this->Users->get($request['idUser']);
             } else {
-                GerenciadorEventos::notificarEvento(['evento' => 'C2-1', 'request' => $this->request, 'usuario' => $user]);
+                GerenciadorEventos::notificarEvento([
+                    'evento' => 'C2-1',
+                    'request' => $this->request,
+                    'usuario' => $user,
+                ]);
 
                 return $this->response
                     ->withType('application/json; charset=UTF-8')
@@ -367,9 +386,13 @@ class UsersController extends AppController
 
         $strSvgQrCode = (new Writer($render))->writeString($g2faUrl);
 
+        // Retornado como data URI (não como markup SVG bruto): o cliente insere isso via
+        // um <img src="..."> em vez de innerHTML, o que evita expor um sink de DOM XSS.
+        $dataUriSvgQrCode = 'data:image/svg+xml;base64,' . base64_encode($strSvgQrCode);
+
         return $this->response
-            ->withType('text/html; charset=UTF-8')
-            ->withStringBody($strSvgQrCode);
+            ->withType('text/plain; charset=UTF-8')
+            ->withStringBody($dataUriSvgQrCode);
     }
 
     /**
@@ -475,12 +498,12 @@ class UsersController extends AppController
      * Esse processo deve ser executado ao acessar o KAW pela primeira vez.
      *
      * @access public
-     * @return void
+     * @return \Cake\Http\Response|null|void
      */
     public function configInicial()
     {
         if ($this->executarConfigInicial() == false) {
-            $this->redirect(['controller' => 'Users', 'action' => 'login']);
+            return $this->redirect(['controller' => 'Users', 'action' => 'login']);
         }
 
         $user = $this->Users
@@ -514,17 +537,15 @@ class UsersController extends AppController
      * Metodo que gerencia a configuração do 2FA no processo de Configuração Inicial
      *
      * @access public
-     * @return void
+     * @return \Cake\Http\Response|null|void
      */
     public function configInicialTfa()
     {
         if ($this->executarConfigInicial() == false) {
-            $this->redirect(['controller' => 'Users', 'action' => 'login']);
+            return $this->redirect(['controller' => 'Users', 'action' => 'login']);
         }
 
-        /**
-         * @var \App\Model\Entity\User
-         */
+        /** @var \App\Model\Entity\User $user */
         $user = $this->Users
             ->find()
             ->orderByDesc('id')

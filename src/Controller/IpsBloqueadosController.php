@@ -13,6 +13,12 @@ use Cake\Event\EventInterface;
  */
 class IpsBloqueadosController extends AppController
 {
+    /**
+     * beforeFilter callback.
+     *
+     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
+     * @return void
+     */
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
@@ -53,7 +59,7 @@ class IpsBloqueadosController extends AppController
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(null, ['params' => ['mensagens' => $ipsBloqueado->getErrors()]]);
+            $this->Flash->error('', ['params' => ['mensagens' => $ipsBloqueado->getErrors()]]);
         }
 
         $this->viewBuilder()->setLayout('administrativo');
@@ -74,7 +80,7 @@ class IpsBloqueadosController extends AppController
         if ($this->IpsBloqueados->delete($ipsBloqueado)) {
             $this->Flash->success(__('Excluído com sucesso'));
         } else {
-            $this->Flash->error(null, ['params' => ['mensagens' => $ipsBloqueado->getErrors()]]);
+            $this->Flash->error('', ['params' => ['mensagens' => $ipsBloqueado->getErrors()]]);
         }
 
         return $this->redirect(['action' => 'index']);
