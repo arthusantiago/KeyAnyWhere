@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Entity;
 
+use App\Application;
 use App\Criptografia\Criptografia;
 use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Cake\ORM\Entity;
@@ -121,11 +122,18 @@ class User extends Entity
     /**
      * Verifica se o código do 2FA informado é válido.
      *
+     * Em ambiente de desenvolvimento o código não é realmente validado, para
+     * facilitar o login local sem precisar de um autenticador TOTP configurado.
+     *
      * @param string $secret
      * @return bool
      */
     public function valida2fa(string $secret): bool
     {
+        if (Application::isTheExecutionEnvironment(Application::DESENVOLVIMENTO)) {
+            return true;
+        }
+
         return (new Google2FA())->verifyKey($this->descripSecret2FA(), $secret);
     }
 
