@@ -45,11 +45,15 @@ class UsersController extends AppController
      * beforeFilter callback.
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
-     * @return \Cake\Http\Response|null|void
+     * @return void
      */
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
+        if ($event->isStopped()) {
+            // IP bloqueado: AppController já definiu a resposta.
+            return;
+        }
 
         // desabilitando o cache por segurança.
         $this->response = $this->response->withDisabledCache();
@@ -63,8 +67,11 @@ class UsersController extends AppController
         }
 
         if (array_search($caminho[1], self::SOMENTE_ROOT_ACESSA) !== false) {
-            $user = $this->Authentication->getResult()->getData();
-            if ($user->root == false) {
+            $user = $this->Authentication->getResult()?->getData();
+            // Sem usuário autenticado não há o que checar aqui: o AuthenticationComponent
+            // barra a requisição no Controller.startup (logo após este beforeFilter).
+            $ehRoot = $user instanceof User && $user->root;
+            if ($user !== null && !$ehRoot) {
                 $this->Flash->error('Você não tem permissão');
                 GerenciadorEventos::notificarEvento([
                     'evento' => 'C2-1',
@@ -72,7 +79,8 @@ class UsersController extends AppController
                     'usuario' => $user,
                 ]);
 
-                return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
+                $event->setResult($this->redirect(['controller' => 'Pages', 'action' => 'home']));
+                $event->stopPropagation();
             }
         }
     }
@@ -198,9 +206,12 @@ class UsersController extends AppController
         }
 
         if ($this->request->is('post')) {
+            // O campo pode faltar ou vir como array num POST forjado — tratamos como código
+            // vazio (inválido), para cair no fluxo normal de falha (C1-2) em vez de um TypeError.
+            $codigoTfa = $this->request->getData('2fa');
             if (
                 $this->validarUsarioSenha()
-                && $this->validarTFA($this->request->getData('2fa'))
+                && $this->validarTFA(is_string($codigoTfa) ? $codigoTfa : '')
             ) {
                 return $this->redirect(['controller' => 'Pages', 'action' => 'home']);
             }

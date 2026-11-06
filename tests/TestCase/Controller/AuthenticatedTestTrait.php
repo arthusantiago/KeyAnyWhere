@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Model\Entity\User;
+use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
+use RuntimeException;
 
 /**
  * Pré-carrega a sessão de testes de integração com uma identidade autenticada,
@@ -63,7 +65,7 @@ trait AuthenticatedTestTrait
      */
     private function garantirLinhaDeSessao(int $userId): void
     {
-        $connection = ConnectionManager::get('test');
+        $connection = $this->conexaoDeTeste();
         $usuarioExiste = (bool)$connection->execute(
             'SELECT 1 FROM users WHERE id = :id',
             ['id' => $userId],
@@ -109,7 +111,7 @@ trait AuthenticatedTestTrait
      */
     private function garantirUsuarioExiste(int $id): void
     {
-        ConnectionManager::get('test')->execute(
+        $this->conexaoDeTeste()->execute(
             'INSERT INTO users (id, username, email, password, tfa_ativo, root, created, modified) '
             . 'VALUES (:id, :username, :email, :password, false, false, NOW(), NOW()) '
             . 'ON CONFLICT (id) DO NOTHING',
@@ -120,5 +122,21 @@ trait AuthenticatedTestTrait
                 'password' => password_hash('SenhaFixture123!@#', PASSWORD_BCRYPT),
             ],
         );
+    }
+
+    /**
+     * Conexão 'test' tipada como Cake\Database\Connection (ConnectionManager::get() devolve
+     * só a interface genérica, que não declara execute()).
+     *
+     * @return \Cake\Database\Connection
+     */
+    private function conexaoDeTeste(): Connection
+    {
+        $connection = ConnectionManager::get('test');
+        if (!$connection instanceof Connection) {
+            throw new RuntimeException('A conexão "test" precisa ser uma Cake\\Database\\Connection.');
+        }
+
+        return $connection;
     }
 }

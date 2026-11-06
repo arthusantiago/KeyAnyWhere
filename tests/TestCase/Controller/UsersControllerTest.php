@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
+use App\Model\Entity\User;
+use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PragmaRX\Google2FA\Google2FA;
 
 /**
@@ -317,61 +320,246 @@ class UsersControllerTest extends TestCase
     }
 
     /**
-     * Login com email e senha corretos, seguido de um código 2FA válido,
-     * deve autenticar o usuário e redirecionar para a home.
+     * Cria um usuário (não-root) com 2FA ativo para os testes de login.
+     *
+     * A app.Users fixture já tem o usuário de id=1 com tfa_ativo, então
+     * UsersController::executarConfigInicial() não desvia o login para a configuração inicial.
+     *
+     * @return array{email: string, senha: string, secret: string}
+     */
+    private function criarUsuarioParaLogin(): array
+    {
+        $credenciais = [
+            'email' => 'usuario_login@example.com',
+            'senha' => self::gerarSenhaDeTeste(),
+            'secret' => (new Google2FA())->generateSecretKey(),
+        ];
+
+        $users = $this->getTableLocator()->get('Users');
+        $user = $users->newEntity([
+            'username' => 'usuario_login',
+            'email' => $credenciais['email'],
+            'password' => $credenciais['senha'],
+        ]);
+        if (!$user instanceof User) {
+            $this->fail('UsersTable::newEntity() deveria devolver App\\Model\\Entity\\User.');
+        }
+        // Campos protegidos por User::_accessible — atribuição direta, como faz o controller.
+        $user->tfa_ativo = true;
+        $user->tfa_secret = $credenciais['secret'];
+        $users->saveOrFail($user);
+
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
+
+        return $credenciais;
+    }
+
+    /**
+     * Código TOTP válido agora para o segredo informado.
+     *
+     * @param string $secret
+     * @return string
+     */
+    private static function codigo2faAtual(string $secret): string
+    {
+        return (new Google2FA())->getCurrentOtp($secret);
+    }
+
+    /**
+     * Faz o POST de login com o ambiente detectado como PRODUCAO, onde o 2FA é
+     * realmente verificado (em DESENVOLVIMENTO, User::valida2fa() aceita qualquer código).
+     *
+     * Com debug=false o HttpsEnforcerMiddleware passa a exigir HTTPS, por isso a
+     * requisição é simulada como HTTPS.
+     *
+     * @param array<string, mixed> $dados
+     * @return void
+     */
+    private function postLoginEmModoProducao(array $dados): void
+    {
+        $debugOriginal = Configure::read('debug');
+        Configure::write('debug', false);
+        $this->configRequest(['environment' => ['HTTPS' => 'on']]);
+
+        try {
+            $this->post('https://localhost/users/login', $dados);
+        } finally {
+            Configure::write('debug', $debugOriginal);
+        }
+    }
+
+    /**
+     * Identidade autenticada gravada na sessão pelo último request.
+     *
+     * Lê $_SESSION diretamente (como o assertSession() do Cake): o Server fecha a sessão
+     * ao fim do request e, em CLI, um novo Session::read() a reiniciaria vazia.
+     *
+     * @return \App\Model\Entity\User|null
+     */
+    private function identidadeNaSessao(): ?User
+    {
+        $identidade = $_SESSION['Auth'] ?? null;
+
+        return $identidade instanceof User ? $identidade : null;
+    }
+
+    /**
+     * Faz o próximo request reutilizar a sessão resultante do último request, como um
+     * navegador faria com o cookie de sessão.
+     *
+     * @return void
+     */
+    private function reutilizarSessaoDoUltimoRequest(): void
+    {
+        // session() mescla com o que já estava configurado; zeramos antes para que
+        // dados removidos no último request (ex.: 'Auth' no logout) não voltem.
+        $this->_session = [];
+        $this->session($_SESSION);
+    }
+
+    /**
+     * Login com email, senha e código 2FA válidos deve gravar a identidade do
+     * usuário na sessão e redirecionar para a home.
      *
      * @return void
      */
     public function testLoginComCredenciaisECodigo2faValidosAutentica(): void
     {
-        $google2fa = new Google2FA();
-        $secret = $google2fa->generateSecretKey();
-        $senha = self::gerarSenhaDeTeste();
+        $credenciais = $this->criarUsuarioParaLogin();
 
-        $users = $this->getTableLocator()->get('Users');
-        $user = $users->save($users->newEntity([
-            'username' => 'usuario_login',
-            'email' => 'usuario_login@example.com',
-            'password' => $senha,
-            'tfa_ativo' => true,
-        ]));
-        $user->tfa_secret = $secret;
-        $users->save($user);
-
-        $this->enableCsrfToken();
-        $this->enableSecurityToken();
         $this->post('/users/login', [
-            'email' => 'usuario_login@example.com',
-            'password' => $senha,
-            '2fa' => $google2fa->getCurrentOtp($secret),
+            'email' => $credenciais['email'],
+            'password' => $credenciais['senha'],
+            '2fa' => self::codigo2faAtual($credenciais['secret']),
         ]);
 
         $this->assertRedirect(['controller' => 'Pages', 'action' => 'home']);
+        $this->assertSame($credenciais['email'], $this->identidadeNaSessao()?->email);
     }
 
     /**
-     * Login com senha incorreta não deve autenticar o usuário.
+     * Login com senha incorreta não deve autenticar: fica na tela de login, com a
+     * mensagem de erro e sem identidade na sessão.
      *
      * @return void
      */
     public function testLoginComSenhaIncorretaNaoAutentica(): void
     {
-        $users = $this->getTableLocator()->get('Users');
-        $users->save($users->newEntity([
-            'username' => 'usuario_login2',
-            'email' => 'usuario_login2@example.com',
-            'password' => self::gerarSenhaDeTeste(),
-            'tfa_ativo' => true,
-        ]));
+        $credenciais = $this->criarUsuarioParaLogin();
 
-        $this->enableCsrfToken();
-        $this->enableSecurityToken();
         $this->post('/users/login', [
-            'email' => 'usuario_login2@example.com',
+            'email' => $credenciais['email'],
             'password' => self::gerarSenhaDeTeste(),
+            '2fa' => self::codigo2faAtual($credenciais['secret']),
         ]);
 
         $this->assertResponseOk();
+        $this->assertResponseContains('Credenciais de acesso incorretas');
+        $this->assertNull($this->identidadeNaSessao());
+    }
+
+    /**
+     * Login com email não cadastrado não deve autenticar.
+     *
+     * @return void
+     */
+    public function testLoginComEmailInexistenteNaoAutentica(): void
+    {
+        $credenciais = $this->criarUsuarioParaLogin();
+
+        $this->post('/users/login', [
+            'email' => 'nao.cadastrado@example.com',
+            'password' => $credenciais['senha'],
+            '2fa' => self::codigo2faAtual($credenciais['secret']),
+        ]);
+
+        $this->assertResponseOk();
+        $this->assertResponseContains('Credenciais de acesso incorretas');
+        $this->assertNull($this->identidadeNaSessao());
+    }
+
+    /**
+     * Em produção, senha correta com código 2FA válido deve autenticar.
+     *
+     * @return void
+     */
+    public function testLoginEmProducaoComCodigo2faValidoAutentica(): void
+    {
+        $credenciais = $this->criarUsuarioParaLogin();
+
+        $this->postLoginEmModoProducao([
+            'email' => $credenciais['email'],
+            'password' => $credenciais['senha'],
+            '2fa' => self::codigo2faAtual($credenciais['secret']),
+        ]);
+
+        $this->assertRedirect(['controller' => 'Pages', 'action' => 'home']);
+        $this->assertSame($credenciais['email'], $this->identidadeNaSessao()?->email);
+    }
+
+    /**
+     * Em produção, senha correta com código 2FA errado não deve autenticar — a identidade
+     * já validada pelo FormAuthenticator tem que ser descartada da sessão.
+     *
+     * @return void
+     */
+    public function testLoginEmProducaoComCodigo2faInvalidoNaoAutentica(): void
+    {
+        $credenciais = $this->criarUsuarioParaLogin();
+        // Um código diferente do atual (e com o mesmo formato de 6 dígitos).
+        $codigoErrado = str_pad(
+            (string)(((int)self::codigo2faAtual($credenciais['secret']) + 500000) % 1000000),
+            6,
+            '0',
+            STR_PAD_LEFT,
+        );
+
+        $this->postLoginEmModoProducao([
+            'email' => $credenciais['email'],
+            'password' => $credenciais['senha'],
+            '2fa' => $codigoErrado,
+        ]);
+
+        $this->assertResponseOk();
+        $this->assertResponseContains('Credenciais de acesso incorretas');
+        $this->assertNull($this->identidadeNaSessao());
+    }
+
+    /**
+     * Dados de POST com o campo 2fa ausente ou em formato inválido.
+     *
+     * @return array<string, array{array<string, mixed>}>
+     */
+    public static function campo2faAusenteOuInvalidoProvider(): array
+    {
+        return [
+            'campo ausente' => [[]],
+            'campo vazio' => [['2fa' => '']],
+            'campo como array' => [['2fa' => ['123456']]],
+        ];
+    }
+
+    /**
+     * Em produção, senha correta sem um código 2FA utilizável não deve autenticar nem
+     * quebrar com erro 500 (antes, um 2fa ausente gerava TypeError em validarTFA()).
+     *
+     * @param array<string, mixed> $campo2fa
+     * @return void
+     */
+    #[DataProvider('campo2faAusenteOuInvalidoProvider')]
+    public function testLoginEmProducaoSemCodigo2faValidoNaoAutentica(array $campo2fa): void
+    {
+        $credenciais = $this->criarUsuarioParaLogin();
+
+        $this->postLoginEmModoProducao([
+            'email' => $credenciais['email'],
+            'password' => $credenciais['senha'],
+        ] + $campo2fa);
+
+        $this->assertResponseOk();
+        $this->assertResponseContains('Credenciais de acesso incorretas');
+        $this->assertNull($this->identidadeNaSessao());
     }
 
     /**
@@ -386,7 +574,8 @@ class UsersControllerTest extends TestCase
     }
 
     /**
-     * logout, para um usuário autenticado, deve encerrar a sessão e redirecionar para o login.
+     * logout, para um usuário autenticado, deve remover a identidade da sessão e
+     * redirecionar para o login.
      *
      * @return void
      */
@@ -396,6 +585,39 @@ class UsersControllerTest extends TestCase
         $this->get('/users/logout');
 
         $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
+        $this->assertNull($this->identidadeNaSessao());
+    }
+
+    /**
+     * Fluxo completo com a sessão de verdade (sem loginAsUser()): login → acessa uma
+     * página protegida → logout → a mesma página volta a exigir autenticação.
+     *
+     * @return void
+     */
+    public function testFluxoCompletoLoginAcessoLogout(): void
+    {
+        $credenciais = $this->criarUsuarioParaLogin();
+
+        $this->post('/users/login', [
+            'email' => $credenciais['email'],
+            'password' => $credenciais['senha'],
+            '2fa' => self::codigo2faAtual($credenciais['secret']),
+        ]);
+        $this->assertRedirect(['controller' => 'Pages', 'action' => 'home']);
+
+        $this->reutilizarSessaoDoUltimoRequest();
+        $this->get('/categorias');
+        $this->assertResponseOk();
+
+        $this->reutilizarSessaoDoUltimoRequest();
+        $this->get('/users/logout');
+        $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
+        $this->assertNull($this->identidadeNaSessao());
+
+        $this->reutilizarSessaoDoUltimoRequest();
+        $this->get('/categorias');
+        // Nos testes o redirect de não-autenticado é desligado (Application::getAuthenticationService()).
+        $this->assertResponseCode(401);
     }
 
     /**

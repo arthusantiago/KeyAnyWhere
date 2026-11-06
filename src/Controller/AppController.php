@@ -61,15 +61,21 @@ class AppController extends Controller
     /**
      * beforeFilter callback.
      *
+     * Se o IP estiver bloqueado, a página de bloqueio é colocada como resultado do evento
+     * e a propagação é interrompida: Controller::startupProcess() devolve essa resposta
+     * direto, sem executar a action. Controllers filhos que sobrescrevem este método e têm
+     * lógica que não deve rodar para um IP bloqueado (ex.: redirecionamentos, eventos de
+     * auditoria) devem checar `$event->isStopped()` logo após `parent::beforeFilter($event)`.
+     *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
-     * @return \Cake\Http\Response|null|void
+     * @return void
      */
     public function beforeFilter(EventInterface $event)
     {
         if ($this->ipEstaBloqueado()) {
             $this->viewBuilder()->setLayout('layout_vazio');
-
-            return $this->render('/IpsBloqueados/ip_bloqueado');
+            $event->setResult($this->render('/IpsBloqueados/ip_bloqueado'));
+            $event->stopPropagation();
         }
     }
 
