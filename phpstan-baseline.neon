@@ -207,7 +207,7 @@ parameters:
 		-
 			message: '#^Cannot access property \$root on array\|ArrayAccess\|null\.$#'
 			identifier: property.nonObject
-			count: 2
+			count: 1
 			path: src/Controller/UsersController.php
 
 		-
@@ -219,7 +219,7 @@ parameters:
 		-
 			message: '#^Cannot call method getData\(\) on Authentication\\Authenticator\\ResultInterface\|null\.$#'
 			identifier: method.nonObject
-			count: 5
+			count: 4
 			path: src/Controller/UsersController.php
 
 		-
@@ -1861,12 +1861,6 @@ parameters:
 			path: src/View/Cell/CategoriasMenuCell.php
 
 		-
-			message: '#^Call to an undefined method Cake\\Datasource\\ConnectionInterface\:\:execute\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: tests/TestCase/Controller/CategoriasControllerTest.php
-
-		-
 			message: '#^Call to an undefined method Cake\\Datasource\\EntityInterface\:\:nomeDescrip\(\)\.$#'
 			identifier: method.notFound
 			count: 3
@@ -1906,12 +1900,6 @@ parameters:
 			message: '#^Access to an undefined property Cake\\Datasource\\EntityInterface\:\:\$categoria_id\.$#'
 			identifier: property.notFound
 			count: 2
-			path: tests/TestCase/Controller/EntradasControllerTest.php
-
-		-
-			message: '#^Call to an undefined method Cake\\Datasource\\ConnectionInterface\:\:execute\(\)\.$#'
-			identifier: method.notFound
-			count: 3
 			path: tests/TestCase/Controller/EntradasControllerTest.php
 
 		-
@@ -1975,12 +1963,6 @@ parameters:
 			path: tests/TestCase/Controller/ErrorControllerTest.php
 
 		-
-			message: '#^Call to an undefined method Cake\\Datasource\\ConnectionInterface\:\:execute\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: tests/TestCase/Controller/IpsBloqueadosControllerTest.php
-
-		-
 			message: '#^Cannot call method getStatusCode\(\) on Psr\\Http\\Message\\ResponseInterface\|null\.$#'
 			identifier: method.nonObject
 			count: 5
@@ -2002,12 +1984,6 @@ parameters:
 			message: '#^Access to an undefined property Cake\\Datasource\\EntityInterface\:\:\$analisado\.$#'
 			identifier: property.notFound
 			count: 4
-			path: tests/TestCase/Controller/LogsControllerTest.php
-
-		-
-			message: '#^Call to an undefined method Cake\\Datasource\\ConnectionInterface\:\:execute\(\)\.$#'
-			identifier: method.notFound
-			count: 3
 			path: tests/TestCase/Controller/LogsControllerTest.php
 
 		-
@@ -2073,7 +2049,7 @@ parameters:
 		-
 			message: '#^Call to an undefined method Cake\\Datasource\\ConnectionInterface\:\:execute\(\)\.$#'
 			identifier: method.notFound
-			count: 5
+			count: 2
 			path: tests/TestCase/Controller/UsersControllerTest.php
 
 		-
@@ -2095,12 +2071,6 @@ parameters:
 			path: tests/TestCase/Controller/UsersControllerTest.php
 
 		-
-			message: '#^Cannot access property \$tfa_secret on Cake\\Datasource\\EntityInterface\|false\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: tests/TestCase/Controller/UsersControllerTest.php
-
-		-
 			message: '#^Cannot call method getBody\(\) on Psr\\Http\\Message\\ResponseInterface\|null\.$#'
 			identifier: method.nonObject
 			count: 2
@@ -2115,12 +2085,6 @@ parameters:
 		-
 			message: '#^PHPDoc type array of property App\\Test\\TestCase\\Controller\\UsersControllerTest\:\:\$fixtures is not covariant with PHPDoc type array\<string\> of overridden property Cake\\TestSuite\\TestCase\:\:\$fixtures\.$#'
 			identifier: property.phpDocType
-			count: 1
-			path: tests/TestCase/Controller/UsersControllerTest.php
-
-		-
-			message: '#^Parameter \#1 \$entity of method Cake\\ORM\\Table\<array,Cake\\Datasource\\EntityInterface\>\:\:save\(\) expects Cake\\Datasource\\EntityInterface, Cake\\Datasource\\EntityInterface\|false given\.$#'
-			identifier: argument.type
 			count: 1
 			path: tests/TestCase/Controller/UsersControllerTest.php
 

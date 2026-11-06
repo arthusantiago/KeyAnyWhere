@@ -250,22 +250,20 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
         $authenticationService = new AuthenticationService($config);
 
-        // Load identifiers, ensure we check email and password fields
-        $authenticationService->loadIdentifier('Authentication.Password', [
-            'fields' => [
-                'username' => 'email',
-                'password' => 'password',
-            ],
-        ]);
+        $fields = [
+            'username' => 'email',
+            'password' => 'password',
+        ];
 
         // Load the authenticators, you want session first
         $authenticationService->loadAuthenticator('Authentication.Session');
-        // Configure form data check to pick email and password
+        // Configure form data check to pick email and password. O identifier é passado
+        // direto ao authenticator (loadIdentifier() está obsoleto desde authentication 3.3).
         $authenticationService->loadAuthenticator('Authentication.Form', [
-            'fields' => [
-                'username' => 'email',
-                'password' => 'password',
+            'identifier' => [
+                'Authentication.Password' => ['fields' => $fields],
             ],
+            'fields' => $fields,
             'loginUrl' => Router::url('/users/login'),
         ]);
 
