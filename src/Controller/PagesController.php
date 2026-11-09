@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace App\Controller;
 
-use App\Model\Table\IpsBloqueadosTable;
 use App\Model\Table\LogsTable;
 use App\Model\Table\SessionsTable;
 use Cake\Core\Configure;
@@ -41,10 +40,6 @@ class PagesController extends AppController
             ->find('countAtividadesSuspeitas')
             ->toArray();
 
-        $ipsBloqueados = (new IpsBloqueadosTable())
-            ->find('ultimosBloqueados')
-            ->toArray();
-
         $sessoes = (new SessionsTable())
             ->find('all')
             ->select(['expires', 'created', 'user_agent'])
@@ -59,6 +54,6 @@ class PagesController extends AppController
             }
         }
 
-        $this->set(compact('logs', 'ipsBloqueados', 'sessoesAtivas'));
+        $this->set(compact('logs', 'sessoesAtivas'));
     }
 }

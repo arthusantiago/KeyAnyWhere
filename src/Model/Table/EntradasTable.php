@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Auditoria\AuditavelTrait;
 use App\Model\Custom\ValidatorKaw;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -31,6 +32,8 @@ use Cake\Validation\Validator;
  */
 class EntradasTable extends Table
 {
+    use AuditavelTrait;
+
     /**
      * Initialize method
      *
@@ -46,6 +49,10 @@ class EntradasTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        // Mascara antes/depois: este app guarda segredos (credenciais) e a trilha de
+        // auditoria é imutável — guarda só o nome dos campos alterados.
+        $this->adicionarAuditoria('entrada', mascararAlteracoes: true);
 
         $this->belongsTo('Categorias', [
             'foreignKey' => 'categoria_id',

@@ -28,6 +28,7 @@ class SessionsKawMiddlewareTest extends TestCase
     protected array $fixtures = [
         'app.Users',
         'app.Sessions',
+        'app.Auditorias',
     ];
 
     /**

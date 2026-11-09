@@ -43,8 +43,7 @@ class GerenciadorEventos
         ],
         'C1-3' => [
             'nivel_severidade' => 'warning',
-            'mensagem' => 'Durante o login o usuário erro mais de 3 vezes uma das credenciais de acesso.'
-                . ' O seu IP foi bloqueado.',
+            'mensagem' => 'Durante o login o usuário errou mais de 3 vezes uma das credenciais de acesso.',
             'evento_gatilho' => ['C1-1', 'C1-2'],
         ],
 

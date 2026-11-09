@@ -3,11 +3,9 @@ declare(strict_types=1);
 
 namespace App\Log;
 
-use App\Model\Table\IpsBloqueadosTable;
 use App\Model\Table\LogsTable;
 use Cake\Core\Exception\CakeException;
 use Cake\I18n\DateTime;
-use Cake\Log\Log;
 
 /**
  * Classe que gerencia os eventos que requerem uma lógica mais elaborada em seu disparo.
@@ -90,6 +88,9 @@ class EventosComplexos
     /**
      * Evento descrito no catálogo src\Log\GerenciadorEventos::$catalogoEventos
      *
+     * Só detecção: registra o C1-3 quando o dia já passou de 3 erros de login. Não há mais
+     * reação automática (o bloqueio de IP foi removido em 2026-11-09).
+     *
      * @access private
      * @param \App\Log\Evento  $eventoOrigemLog
      * @return void
@@ -117,26 +118,6 @@ class EventosComplexos
             ->toArray();
 
         if (count($C1_1) >= 3 || count($C1_2) >= 3) {
-            $ipTable = new IpsBloqueadosTable();
-            $novoIp = $ipTable->newEmptyEntity();
-            $novoIp->ip = $eventoOrigemLog->getIpOrigem();
-
-            if ($ipTable->save($novoIp) == false) {
-                $mensagensErro = [];
-                $erros = $novoIp->getErrors();
-                array_walk_recursive(
-                    $erros,
-                    function ($msg, $tipoErro) use (&$mensagensErro): void {
-                        $mensagensErro[] = $msg;
-                    },
-                );
-
-                Log::error(
-                    'Erro ao salvar no DB o bloqueio do IP ' . $novoIp->ip
-                    . ' | Erros: ' . implode(',', $mensagensErro),
-                );
-            }
-
             GerenciadorEventos::notificarEvento([
                 'evento' => 'C1-3',
                 'request' => $eventoOrigemLog->getRequest(),

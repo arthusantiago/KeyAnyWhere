@@ -45,8 +45,8 @@
             </a>
         </li>
         <li>
-            <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'IpsBloqueados', 'action' => 'index']) ?>">
-                <i class="bi bi-shield-x"></i>IPs Bloqueados
+            <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Auditorias', 'action' => 'index']) ?>">
+                <i class="bi bi-clock-history"></i>Auditoria
             </a>
         </li>
     <?php endif; ?>

@@ -50,10 +50,6 @@ class UsersController extends AppController
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
-        if ($event->isStopped()) {
-            // IP bloqueado: AppController já definiu a resposta.
-            return;
-        }
 
         // desabilitando o cache por segurança.
         $this->response = $this->response->withDisabledCache();
