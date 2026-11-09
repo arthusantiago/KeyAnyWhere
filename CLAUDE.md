@@ -10,6 +10,8 @@ KeyAnyWhere (KAW) is a self-hosted credential/password manager built on CakePHP 
 
 PHP 8.4+ (`composer.json` requires `>=8.4`; CI runs 8.4). Same minimum as the paid edition — PHP 8.1 has had no security fixes since 2025-12-31.
 
+**`composer.json`/`composer.lock` are shared with the paid edition, so keep them identical there.** The paid edition receives this repo by `git merge`; it may differ only in `autoload`/`autoload-dev`/`scripts` (which don't enter the lock's `content-hash`), so dependency bumps here merge without conflict. That's why `firebase/php-jwt` is in `require` although the core doesn't use it: the paid edition's plugin needs it (Temporal client), and putting it here keeps the lock identical. Don't remove it as unused, and don't add private (non-Packagist) packages or `repositories`.
+
 Database: PostgreSQL only (no SQLite/MySQL support — the `default` and `test` datasources are hardcoded to `Cake\Database\Driver\Postgres`, and migrations use Postgres-specific SQL like `uuid_generate_v4()`).
 
 ```bash
