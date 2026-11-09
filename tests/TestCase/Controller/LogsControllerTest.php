@@ -5,6 +5,7 @@ namespace App\Test\TestCase\Controller;
 
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * App\Controller\LogsController Test Case
@@ -24,6 +25,7 @@ class LogsControllerTest extends TestCase
     protected array $fixtures = [
         'app.Logs',
         'app.Users',
+        'app.Auditorias',
     ];
 
     /**
@@ -154,5 +156,39 @@ class LogsControllerTest extends TestCase
         $this->loginAsUser();
         $this->get('/logs/analisado/9999');
         $this->assertResponseCode(404);
+    }
+
+    /**
+     * Rotas de Logs. Todas são somente root: o menu só mostra Logs na seção de root, e um
+     * usuário comum não pode ler os logs de segurança nem marcá-los como analisados.
+     *
+     * @return array<string, array{string}>
+     */
+    public static function rotasLogsProvider(): array
+    {
+        return [
+            'index' => ['/logs'],
+            'view' => ['/logs/view/1'],
+            'analisado' => ['/logs/analisado/1'],
+        ];
+    }
+
+    /**
+     * RN: um usuário autenticado não root é redirecionado para a home, sem executar a action.
+     *
+     * @param string $url
+     * @return void
+     */
+    #[DataProvider('rotasLogsProvider')]
+    public function testRotasDeLogsBloqueadasParaUsuarioNaoRoot(string $url): void
+    {
+        $logs = $this->getTableLocator()->get('Logs');
+        $analisadoAntes = $logs->get(1)->get('analisado');
+
+        $this->loginAsNonRootUser();
+        $this->get($url);
+
+        $this->assertRedirect(['controller' => 'Pages', 'action' => 'home']);
+        $this->assertSame($analisadoAntes, $logs->get(1)->get('analisado'), 'A action não deveria ter rodado.');
     }
 }

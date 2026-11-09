@@ -26,6 +26,7 @@ class EntradasControllerTest extends TestCase
         'app.Categorias',
         'app.Users',
         'app.InsecurePasswords',
+        'app.Auditorias',
     ];
 
     /**

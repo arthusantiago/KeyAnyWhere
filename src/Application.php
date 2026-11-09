@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace App;
 
+use App\Middleware\CsrfProtectionKawMiddleware;
 use App\Middleware\SecurityHeadersKawMiddleware;
 use App\Middleware\SessionsKawMiddleware;
 use Authentication\AuthenticationService;
@@ -28,7 +29,6 @@ use Cake\Datasource\FactoryLocator;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
 use Cake\Http\Middleware\BodyParserMiddleware;
-use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Middleware\HttpsEnforcerMiddleware;
 use Cake\Http\Middleware\SecurityHeadersMiddleware;
 use Cake\Http\MiddlewareQueue;
@@ -165,7 +165,8 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 'secure' => true,
                 'samesite' => 'Strict',
             ];
-            $csrf = new CsrfProtectionMiddleware($csrfProtecConfig);
+            // Renova, no GET, o cookie CSRF assinado com um SECURITY_SALT anterior (ver a classe).
+            $csrf = new CsrfProtectionKawMiddleware($csrfProtecConfig);
             $csrf->skipCheckCallback(function () {
                 // Skip CSRF checks during unit tests
                 return $this->isRunningUnitTests();

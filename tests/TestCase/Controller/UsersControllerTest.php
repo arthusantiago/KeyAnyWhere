@@ -30,7 +30,7 @@ class UsersControllerTest extends TestCase
         'app.Users',
         'app.Categorias',
         'app.Entradas',
-        'app.IpsBloqueados',
+        'app.Auditorias',
     ];
 
     /**

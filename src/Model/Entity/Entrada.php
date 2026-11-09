@@ -185,4 +185,28 @@ class Entrada extends Entity
     {
         return Criptografia::descriptografar($this->anotacoes);
     }
+
+    /**
+     * Campos criptografados usam um nonce aleatório a cada save, então o
+     * ciphertext muda mesmo quando o texto puro é o mesmo. Sem esse ajuste,
+     * o isModified() padrão compararia texto puro recebido com o ciphertext
+     * atual, sempre diferentes, e marcaria o campo como sujo mesmo sem
+     * mudança real (o formulário de edição reenvia todos os campos, e o diff
+     * salvo na auditoria listaria campos que não mudaram).
+     *
+     * @param string $field
+     * @param mixed $value
+     * @return bool
+     */
+    protected function isModified(string $field, mixed $value): bool
+    {
+        if (in_array($field, ['titulo', 'username', 'password', 'link', 'anotacoes'], true) && is_string($value)) {
+            $atual = $this->get($field);
+            if (is_string($atual) && Criptografia::descriptografar($atual) === $value) {
+                return false;
+            }
+        }
+
+        return parent::isModified($field, $value);
+    }
 }
