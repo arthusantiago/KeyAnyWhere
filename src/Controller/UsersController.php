@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Log\GerenciadorEventos;
+use App\Log\Seguranca;
 use App\Model\Entity\User;
 use Authentication\Authenticator\ResultInterface;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
@@ -69,11 +69,11 @@ class UsersController extends AppController
             $ehRoot = $user instanceof User && $user->root;
             if ($user !== null && !$ehRoot) {
                 $this->Flash->error('Você não tem permissão');
-                GerenciadorEventos::notificarEvento([
-                    'evento' => 'C2-1',
-                    'request' => $this->request,
-                    'usuario' => $user,
-                ]);
+                Seguranca::registrar(
+                    'warning',
+                    Seguranca::ACESSO_SOMENTE_ROOT,
+                    'O usuário tentou acessar um recurso que somente o root tem permissão',
+                );
 
                 $event->setResult($this->redirect(['controller' => 'Pages', 'action' => 'home']));
                 $event->stopPropagation();
@@ -363,11 +363,11 @@ class UsersController extends AppController
             if ($user->root) {
                 $user = $this->Users->get($request['idUser']);
             } else {
-                GerenciadorEventos::notificarEvento([
-                    'evento' => 'C2-1',
-                    'request' => $this->request,
-                    'usuario' => $user,
-                ]);
+                Seguranca::registrar(
+                    'warning',
+                    Seguranca::ACESSO_SOMENTE_ROOT,
+                    'O usuário tentou acessar um recurso que somente o root tem permissão',
+                );
 
                 return $this->response
                     ->withType('application/json; charset=UTF-8')
@@ -430,14 +430,12 @@ class UsersController extends AppController
 
         if ($usuarioSenhaCorreto == false) {
             if (array_search($resultLogin->getStatus(), $this::CREDENCIAL_LOGIN_INCORRETO) !== false) {
-                GerenciadorEventos::notificarEvento([
-                    'evento' => 'C1-1',
-                    'request' => $this->request,
-                    'usuario' => [
-                        'dados' => ['e-mail' => $this->request->getData('email')],
-                        'texto' => 'Credenciais utilizadas para logar: ',
-                    ],
-                ]);
+                Seguranca::registrar(
+                    'notice',
+                    Seguranca::LOGIN_CREDENCIAL_INVALIDA,
+                    'Durante o login o usuário errou o usuário ou a senha',
+                    ['email' => $this->request->getData('email')],
+                );
             }
         }
 
@@ -459,14 +457,12 @@ class UsersController extends AppController
             ->valida2fa($codigoTFA);
 
         if ($tfaValido == false) {
-            GerenciadorEventos::notificarEvento([
-                'evento' => 'C1-2',
-                'request' => $this->request,
-                'usuario' => [
-                    'dados' => ['e-mail' => $this->request->getData('email')],
-                    'texto' => 'Credenciais utilizadas para logar: ',
-                ],
-            ]);
+            Seguranca::registrar(
+                'notice',
+                Seguranca::LOGIN_2FA_INVALIDO,
+                'Durante o login o usuário errou o código do 2FA',
+                ['email' => $this->request->getData('email')],
+            );
         }
 
         return $tfaValido;

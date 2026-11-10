@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
+use App\Log\Seguranca;
 use App\Model\Entity\User;
+use App\Test\TestCase\Log\CapturaLogSegurancaTrait;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\IntegrationTestTrait;
@@ -20,6 +22,7 @@ class UsersControllerTest extends TestCase
 {
     use IntegrationTestTrait;
     use AuthenticatedTestTrait;
+    use CapturaLogSegurancaTrait;
 
     /**
      * Fixtures
@@ -952,5 +955,69 @@ class UsersControllerTest extends TestCase
         $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
         $recarregado = $users->get($user->id);
         $this->assertSame($secretOriginal, $recarregado->descripSecret2FA());
+    }
+
+    /**
+     * Login com senha errada registra `login_credencial_invalida` no escopo `seguranca`, com o e-mail
+     * digitado no contexto (não na mensagem).
+     *
+     * @return void
+     */
+    public function testLoginComSenhaIncorretaRegistraEventoDeSeguranca(): void
+    {
+        $credenciais = $this->criarUsuarioParaLogin();
+
+        $this->post('/users/login', [
+            'email' => $credenciais['email'],
+            'password' => self::gerarSenhaDeTeste(),
+            '2fa' => self::codigo2faAtual($credenciais['secret']),
+        ]);
+
+        $linha = $this->logSeguranca(Seguranca::LOGIN_CREDENCIAL_INVALIDA);
+        $this->assertSame('notice', $linha['nivel']);
+        $this->assertSame($credenciais['email'], $linha['contexto']['email']);
+        $this->assertStringNotContainsString($credenciais['email'], $linha['mensagem']);
+    }
+
+    /**
+     * Login com 2FA errado (fora do modo de desenvolvimento) registra `login_2fa_invalido`.
+     *
+     * @return void
+     */
+    public function testLoginComCodigo2faInvalidoRegistraEventoDeSeguranca(): void
+    {
+        $credenciais = $this->criarUsuarioParaLogin();
+        $codigoErrado = str_pad(
+            (string)(((int)self::codigo2faAtual($credenciais['secret']) + 500000) % 1000000),
+            6,
+            '0',
+            STR_PAD_LEFT,
+        );
+
+        $this->postLoginEmModoProducao([
+            'email' => $credenciais['email'],
+            'password' => $credenciais['senha'],
+            '2fa' => $codigoErrado,
+        ]);
+
+        $linha = $this->logSeguranca(Seguranca::LOGIN_2FA_INVALIDO);
+        $this->assertSame('notice', $linha['nivel']);
+    }
+
+    /**
+     * Um usuário comum numa action somente root registra `acesso_somente_root`, com o usuário no bloco
+     * `requisicao`.
+     *
+     * @return void
+     */
+    public function testNaoRootEmActionSomenteRootRegistraEventoDeSeguranca(): void
+    {
+        $this->loginAsNonRootUser();
+        $this->get('/users/add');
+
+        $this->assertRedirect(['controller' => 'Pages', 'action' => 'home']);
+        $linha = $this->logSeguranca(Seguranca::ACESSO_SOMENTE_ROOT);
+        $this->assertSame('warning', $linha['nivel']);
+        $this->assertSame('Users::add', $linha['requisicao']['rota']);
     }
 }

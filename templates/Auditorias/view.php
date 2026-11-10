@@ -2,6 +2,7 @@
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Auditoria $auditoria
+ * @var \App\Model\Entity\User $userLogado
  */
 
 // Só os nomes: o valor antes/depois é mascarado na gravação (o KAW guarda segredos).
@@ -47,10 +48,12 @@ $camposAlterados = implode(', ', array_map('ucfirst', array_keys((array)$auditor
                     <th><?=__('Usuário')?></th>
                     <td><?=h($auditoria->descricaoUsuario())?></td>
                 </tr>
+                <?php if ($userLogado->root): ?>
                 <tr>
                     <th><?=__('IP de origem')?></th>
                     <td><?=h($auditoria->ip_origem ?: '-')?></td>
                 </tr>
+                <?php endif; ?>
                 <tr>
                     <th><?=__('Data')?></th>
                     <td><?=h($auditoria->created)?></td>

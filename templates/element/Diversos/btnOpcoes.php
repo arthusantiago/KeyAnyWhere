@@ -32,21 +32,16 @@
                 <i class="bi bi-list-ol"></i>Categorias
             </a>
         </li>
+        <li>
+            <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Auditorias', 'action' => 'index']) ?>">
+                <i class="bi bi-clock-history"></i>Auditoria
+            </a>
+        </li>
         <?php if ($userLogado->root): ?>
         <li><h6 class="dropdown-header">Configurações</h6></li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'index']) ?>">
                 <i class="bi bi-people"></i>Usuários
-            </a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Logs', 'action' => 'index']) ?>">
-                <i class="bi bi-journal-text"></i>Logs
-            </a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Auditorias', 'action' => 'index']) ?>">
-                <i class="bi bi-clock-history"></i>Auditoria
             </a>
         </li>
     <?php endif; ?>

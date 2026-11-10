@@ -29,7 +29,6 @@ class AuditoriasControllerTest extends TestCase
         'app.Auditorias',
         'app.Users',
         'app.Sessions',
-        'app.Logs',
     ];
 
     /**
@@ -152,30 +151,51 @@ class AuditoriasControllerTest extends TestCase
     }
 
     /**
-     * RN: um usuário autenticado não root é redirecionado para a home.
+     * RN (D16): a Auditoria é aberta a todos os usuários logados, não só a root.
      *
      * @return void
      */
-    public function testIndexBloqueadoParaUsuarioNaoRoot(): void
+    public function testIndexAcessivelParaUsuarioNaoRoot(): void
     {
+        $this->criaRegistroAuditoria();
+
         $this->loginAsNonRootUser();
         $this->get('/auditorias');
 
-        $this->assertRedirect(['controller' => 'Pages', 'action' => 'home']);
+        $this->assertResponseOk();
+        $this->assertResponseContains('usuario.fixture');
     }
 
     /**
-     * RN: idem para view.
+     * Um usuário comum vê o detalhe, mas não o IP de origem (dado pessoal de quem fez a ação).
      *
      * @return void
      */
-    public function testViewBloqueadoParaUsuarioNaoRoot(): void
+    public function testViewDeNaoRootEscondeOIpDeOrigem(): void
     {
         $id = $this->criaRegistroAuditoria();
 
         $this->loginAsNonRootUser();
         $this->get('/auditorias/view/' . $id);
 
-        $this->assertRedirect(['controller' => 'Pages', 'action' => 'home']);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Titulo, Password');
+        $this->assertResponseNotContains('IP de origem');
+    }
+
+    /**
+     * O root continua vendo o IP de origem.
+     *
+     * @return void
+     */
+    public function testViewDeRootMostraOIpDeOrigem(): void
+    {
+        $id = $this->criaRegistroAuditoria();
+
+        $this->loginAsUser();
+        $this->get('/auditorias/view/' . $id);
+
+        $this->assertResponseOk();
+        $this->assertResponseContains('IP de origem');
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var mixed $logs
+ * @var iterable<\App\Model\Entity\Auditoria> $ultimasAlteracoes
  * @var mixed $sessoesAtivas
  * @var \App\Model\Entity\User $userLogado
  */
@@ -14,25 +14,21 @@
 </div>
 <div class='row'>
     <div class="col-sm mb-3">
-        <h3>Atividades suspeitas</h3>
-        <?php if ($logs): ?>
+        <h3>Últimas alterações</h3>
+        <?php if (!$ultimasAlteracoes->isEmpty()): ?>
             <ul class="list-group">
-                <?php foreach($logs as $log): ?>
+                <?php foreach($ultimasAlteracoes as $auditoria): ?>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <?php
-                            echo $log->stringNivelSeveridade() .
-                            $this->element('Logs/badge', ['param' => ['severidade' => $log->nivel_severidade, 'exibicao' => $log->quantidade]])
-                        ?>
+                        <span><?=h($auditoria->created . ' - ' . ucfirst($auditoria->contexto) . ' (' . $auditoria->acao . ') por ' . $auditoria->descricaoUsuario())?></span>
+                        <a class="link-secondary" href="<?=$this->Url->build(['controller' => 'Auditorias', 'action' => 'view', $auditoria->id])?>" title="Detalhes"><i class="bi bi-eye"></i></a>
                     </li>
                 <?php endforeach;?>
             </ul>
-            <?php if ($userLogado->root): ?>
-                <div class="text-center">
-                    <a class="link-secondary" href="<?=$this->Url->build(['controller' => 'logs', 'action' => 'index'])?>">Lista completa</a>
-                </div>
-            <?php endif; ?>
+            <div class="text-center">
+                <a class="link-secondary" href="<?=$this->Url->build(['controller' => 'Auditorias', 'action' => 'index'])?>">Lista completa</a>
+            </div>
         <?php else: ?>
-            <p>Aparentemente tranquilo. Continue atento &#128373;&#127997;</p>
+            <p>Nenhuma alteração registrada ainda.</p>
         <?php endif; ?>
     </div>
     <div class="col-sm mb-3">
