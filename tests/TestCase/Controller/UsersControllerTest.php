@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
+use App\Application;
 use App\Log\Seguranca;
 use App\Model\Entity\User;
 use App\Test\TestCase\Log\CapturaLogSegurancaTrait;
@@ -21,6 +22,7 @@ use PragmaRX\Google2FA\Google2FA;
 class UsersControllerTest extends TestCase
 {
     use IntegrationTestTrait;
+    use CsrfTestTrait;
     use AuthenticatedTestTrait;
     use CapturaLogSegurancaTrait;
 
@@ -352,7 +354,6 @@ class UsersControllerTest extends TestCase
         $user->tfa_secret = $credenciais['secret'];
         $users->saveOrFail($user);
 
-        $this->enableCsrfToken();
         $this->enableSecurityToken();
 
         return $credenciais;
@@ -384,6 +385,8 @@ class UsersControllerTest extends TestCase
         $debugOriginal = Configure::read('debug');
         Configure::write('debug', false);
         $this->configRequest(['environment' => ['HTTPS' => 'on']]);
+        // O nome do cookie CSRF depende do debug (ver Application::nomeCookieCsrf()).
+        $this->enableCsrfToken(Application::nomeCookieCsrf());
 
         try {
             $this->post('https://localhost/users/login', $dados);
@@ -858,7 +861,6 @@ class UsersControllerTest extends TestCase
     {
         $this->getTableLocator()->get('Users')->deleteAll([]);
 
-        $this->enableCsrfToken();
         $this->enableSecurityToken();
         $this->post('/users/config-inicial', [
             'username' => 'primeiro_root',
@@ -914,7 +916,6 @@ class UsersControllerTest extends TestCase
             'root' => true,
         ]));
 
-        $this->enableCsrfToken();
         $this->enableSecurityToken();
         $this->post('/users/config-inicial-tfa', ['id' => $user->id, 'tfa' => true]);
 

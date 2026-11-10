@@ -15,6 +15,7 @@ use Cake\TestSuite\TestCase;
 class PagesHomeTest extends TestCase
 {
     use IntegrationTestTrait;
+    use CsrfTestTrait;
     use AuthenticatedTestTrait;
 
     /**
