@@ -28,6 +28,9 @@ Thumbs.db
 #######################
 # PHPUnit
 .phpunit.cache
+# Configuração local das ferramentas (sobrepõe a .dist): PHPStan e phpcs
+/phpstan.neon
+/phpcs.xml
 tests.sqlite
 # vim
 *~
