@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Model\Custom;
 
+use App\Log\Seguranca;
 use App\Model\Custom\ValidatorKaw;
+use App\Test\TestCase\Log\CapturaLogSegurancaTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
@@ -15,6 +17,7 @@ use Cake\Validation\Validator;
  */
 class ValidatorKawTest extends TestCase
 {
+    use CapturaLogSegurancaTrait;
     use LocatorAwareTrait;
 
     protected array $fixtures = [
@@ -123,5 +126,23 @@ class ValidatorKawTest extends TestCase
         $errors = $categoria->getErrors();
 
         $this->assertArrayNotHasKey('nome', $errors);
+    }
+
+    /**
+     * XSS detectado registra `xss_detectado` (alert) com tabela, campo e ação no contexto; o conteúdo
+     * malicioso não vai para o log.
+     *
+     * @return void
+     */
+    public function testCheckXssRegistraEventoDeSeguranca(): void
+    {
+        $this->fetchTable('Categorias')->newEntity(['nome' => '<script>alert(1)</script>']);
+
+        $linha = $this->logSeguranca(Seguranca::XSS_DETECTADO);
+        $this->assertSame('alert', $linha['nivel']);
+        $this->assertSame('Categorias', $linha['contexto']['tabela']);
+        $this->assertSame('nome', $linha['contexto']['campo']);
+        $this->assertSame('criacao', $linha['contexto']['acao']);
+        $this->assertStringNotContainsString('<script>', json_encode($linha, JSON_THROW_ON_ERROR));
     }
 }

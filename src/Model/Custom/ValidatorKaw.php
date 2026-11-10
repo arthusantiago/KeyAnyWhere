@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Custom;
 
-use App\Log\GerenciadorEventos;
+use App\Log\Seguranca;
 use Cake\Validation\Validator;
 use voku\helper\AntiXSS;
 
@@ -30,20 +30,17 @@ class ValidatorKaw extends Validator
             $temXSS = $antiXss->isXssFound();
 
             if ($temXSS) {
-                /* Descobrindo o recurso acessado (controller/action/id) */
-                $recurso = $context['providers']['table']->getAlias() . '/';
-                $recurso .= $context['newRecord'] ? 'add/' : 'edit/';
-                $recurso .= $context['data']['id'] ?? null;
-
-                /* Mensagem complementar */
-                $texto = ' Houve a tentativa de salvar no campo "' . $context['field']
-                    . '" uma string possivelmente maliciosa.';
-
-                GerenciadorEventos::notificarEvento([
-                    'evento' => 'C3-1',
-                    'recurso' => $recurso,
-                    'mensagem' => $texto,
-                ]);
+                Seguranca::registrar(
+                    'alert',
+                    Seguranca::XSS_DETECTADO,
+                    'Houve a tentativa de salvar uma string possivelmente maliciosa (XSS)',
+                    [
+                        'tabela' => $context['providers']['table']->getAlias(),
+                        'campo' => $context['field'],
+                        'acao' => $context['newRecord'] ? 'criacao' : 'edicao',
+                        'id_entidade' => $context['data']['id'] ?? null,
+                    ],
+                );
             }
 
             return !$temXSS;

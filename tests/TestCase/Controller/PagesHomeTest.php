@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
+use App\Model\Table\AuditoriasTable;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -23,54 +24,73 @@ class PagesHomeTest extends TestCase
      */
     protected array $fixtures = [
         'app.Users',
-        'app.Logs',
         'app.Sessions',
         'app.Auditorias',
     ];
 
     /**
-     * O root vê as atividades suspeitas e o link para a lista completa de logs.
-     *
      * @return void
      */
-    public function testRootVeLinkParaListaCompletaDeLogs(): void
+    private function criaRegistroAuditoria(): void
     {
-        $this->loginAsUser();
-        $this->get('/');
-
-        $this->assertResponseOk();
-        $this->assertResponseContains('Atividades suspeitas');
-        $this->assertResponseContains('Lista completa');
+        $auditorias = $this->fetchTable(AuditoriasTable::class);
+        $auditorias->saveOrFail($auditorias->newEntity([
+            'contexto' => 'entrada',
+            'id_entidade' => 1,
+            'acao' => 'criacao',
+            'usuario_id' => 1,
+            'alteracoes' => ['titulo' => ['antes' => '', 'depois' => '']],
+        ]));
     }
 
     /**
-     * O usuário comum vê o resumo das atividades suspeitas, mas não o link para os logs:
-     * a tela de Logs é somente root.
+     * RN (D16): todos os usuários veem as últimas alterações da Auditoria, com o link para a lista
+     * completa e para o detalhe.
      *
      * @return void
      */
-    public function testUsuarioComumNaoVeLinkParaOsLogs(): void
+    public function testUsuarioComumVeUltimasAlteracoesComLinks(): void
     {
+        $this->criaRegistroAuditoria();
+
         $this->loginAsNonRootUser();
         $this->get('/');
 
         $this->assertResponseOk();
-        $this->assertResponseContains('Atividades suspeitas');
-        $this->assertResponseNotContains('Lista completa');
+        $this->assertResponseContains('Últimas alterações');
+        $this->assertResponseContains('Entrada (criacao) por usuario.fixture');
+        $this->assertResponseContains('/auditorias/view/');
+        $this->assertResponseContains('Lista completa');
     }
 
     /**
-     * A funcionalidade "IPs Bloqueados" foi removida (2026-11-09).
+     * Sem registros, a home diz isso em vez de uma lista vazia.
      *
      * @return void
      */
-    public function testHomeNaoMostraMaisIpsBloqueados(): void
+    public function testSemAlteracoesMostraAviso(): void
     {
         $this->loginAsUser();
         $this->get('/');
 
         $this->assertResponseOk();
+        $this->assertResponseContains('Nenhuma alteração registrada ainda.');
+    }
+
+    /**
+     * A home não mostra mais as "Atividades suspeitas" (sistema de eventos removido, D14) nem os IPs
+     * bloqueados (funcionalidade removida).
+     *
+     * @return void
+     */
+    public function testHomeSemAtividadesSuspeitasNemIpsBloqueados(): void
+    {
+        $this->loginAsUser();
+        $this->get('/');
+
+        $this->assertResponseOk();
+        $this->assertResponseNotContains('Atividades suspeitas');
         $this->assertResponseNotContains('IPs bloqueados');
-        $this->assertResponseNotContains('ips-bloqueados');
+        $this->assertResponseNotContains('/logs');
     }
 }

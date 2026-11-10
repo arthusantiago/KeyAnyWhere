@@ -3,16 +3,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Log\GerenciadorEventos;
-use App\Model\Entity\User;
-use Cake\Event\EventInterface;
-
 /**
  * Auditorias Controller
  *
  * Consulta somente leitura da trilha de auditoria de negócio (quem fez o quê, quando e
  * em quais campos). Os registros são criados só pelo AuditoriaBehavior, nunca por esta
- * controller. Todas as actions são restritas a usuários root.
+ * controller. Aberta a todos os usuários logados (decisão D16 do plano de reestruturação):
+ * os valores alterados são mascarados na gravação, e o IP de origem só aparece para root.
  *
  * @property \App\Model\Table\AuditoriasTable $Auditorias
  */
@@ -27,33 +24,6 @@ class AuditoriasController extends AppController
     {
         parent::initialize();
         $this->viewBuilder()->setLayout('administrativo');
-    }
-
-    /**
-     * beforeFilter callback.
-     *
-     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
-     * @return void
-     */
-    public function beforeFilter(EventInterface $event)
-    {
-        parent::beforeFilter($event);
-
-        $user = $this->Authentication->getResult()?->getData();
-        // Sem usuário autenticado não há o que checar aqui: o AuthenticationComponent
-        // barra a requisição no Controller.startup (logo após este beforeFilter).
-        $ehRoot = $user instanceof User && $user->root;
-        if ($user !== null && !$ehRoot) {
-            $this->Flash->error('Você não tem permissão');
-            GerenciadorEventos::notificarEvento([
-                'evento' => 'C2-1',
-                'request' => $this->request,
-                'usuario' => $user,
-            ]);
-
-            $event->setResult($this->redirect(['controller' => 'Pages', 'action' => 'home']));
-            $event->stopPropagation();
-        }
     }
 
     /**
