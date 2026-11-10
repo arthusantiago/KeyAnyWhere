@@ -1,0 +1,451 @@
+# Traduções do core do KeyAnyWhere para o espanhol (América Latina).
+# O texto em português (pt_BR) é o próprio código; aqui ficam só as frases do core.
+# As frases da edição paga ficam no domínio do plugin dela.
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+
+##################### Acoes do sistema e outros #####################
+msgid "Salvar"
+msgstr "Guardar"
+
+msgid "Editar"
+msgstr "Editar"
+
+msgid "Excluir"
+msgstr "Eliminar"
+
+msgid "Fechar"
+msgstr "Cerrar"
+
+msgid "Novo"
+msgstr "Nuevo"
+
+msgid "Home"
+msgstr "Inicio"
+
+msgid "Categorias"
+msgstr "Categorías"
+
+msgid "Busca"
+msgstr "Buscar"
+
+msgid "Minha Conta"
+msgstr "Mi cuenta"
+
+msgid "Configurações"
+msgstr "Configuración"
+
+msgid "Usuários"
+msgstr "Usuarios"
+
+msgid "Sair"
+msgstr "Salir"
+
+msgid "Cadastrando"
+msgstr "Registrando"
+
+msgid "Editando"
+msgstr "Editando"
+
+msgid "Nome"
+msgstr "Nombre"
+
+msgid "Ações"
+msgstr "Acciones"
+
+msgid "Usuário"
+msgstr "Usuario"
+
+msgid "Senha"
+msgstr "Contraseña"
+
+msgid "Você tem certeza que deseja excluir?"
+msgstr "¿Está seguro de que desea eliminar?"
+
+msgid "Cancelar"
+msgstr "Cancelar"
+
+msgid "Exibindo {0} registros de {1}"
+msgstr "Mostrando {0} registros de {1}"
+
+msgid "Primeira"
+msgstr "Primera"
+
+msgid "Última"
+msgstr "Última"
+
+msgid "Salvo com sucesso"
+msgstr "Guardado con éxito"
+
+msgid "Ocorreu um erro"
+msgstr "Ocurrió un error"
+
+msgid "Excluído com sucesso"
+msgstr "Eliminado con éxito"
+
+msgid "Você não tem permissão"
+msgstr "No tiene permiso"
+
+msgid "Dispositivo"
+msgstr "Dispositivo"
+
+msgid "Navegador"
+msgstr "Navegador"
+
+msgid "Criado em"
+msgstr "Creado en"
+
+msgid "Última atividade"
+msgstr "Última actividad"
+
+msgid "Este dispositivo"
+msgstr "Este dispositivo"
+
+msgid "Finalizar"
+msgstr "Cerrar"
+
+msgid "Configuração do segundo fator de autenticação"
+msgstr "Configuración del segundo factor de autenticación"
+
+msgid "Escaneie o QrCode com o aplicativo de 2FA de sua preferência, como"
+msgstr "Escanee el código QR con la aplicación de 2FA de su preferencia, como"
+
+msgid "Gerar novo QrCode"
+msgstr "Generar nuevo código QR"
+
+msgid "Exemplo"
+msgstr "Ejemplo"
+
+msgid "Buscar uma Entrada"
+msgstr "Buscar una Entrada"
+
+msgid "Entrar"
+msgstr "Ingresar"
+
+msgid "Listagem"
+msgstr "Listado"
+
+msgid "Configuração inicial"
+msgstr "Configuración inicial"
+
+msgid "Data"
+msgstr "Fecha"
+
+msgid "Detalhes"
+msgstr "Detalles"
+
+msgid "E-mail"
+msgstr "E-mail"
+
+msgid "Completar configuração"
+msgstr "Completar configuración"
+
+msgid "Dados invalidos enviados ao servidor"
+msgstr "Datos inválidos enviados al servidor"
+
+##################### Pagina de erro #####################
+
+msgid "Aconteceu algum problema ao acessar o que você queria"
+msgstr "Hubo un problema al acceder a lo que quería"
+
+msgid "Erro ao acessar a URL"
+msgstr "Error al acceder a la URL"
+
+msgid "Voltar a página inicial"
+msgstr "Regresar a la página de inicio"
+
+msgid "Erro interno do servidor"
+msgstr "Error Interno del Servidor"
+
+##################### Configurações gerais #####################
+
+msgid "Idioma"
+msgstr "Idioma"
+
+msgid "Fuso horário"
+msgstr "Huso horario"
+
+##################### Categorias #####################
+
+msgid "Nova categoria"
+msgstr "Nueva categoría"
+
+msgid "Nome da categoria"
+msgstr "Nombre de la categoría"
+
+##################### Entradas #####################
+
+msgid "Título"
+msgstr "Título"
+
+msgid "Entrada"
+msgstr "Entrada"
+
+msgid "Nova entrada"
+msgstr "Nueva entrada"
+
+msgid "Editando entrada"
+msgstr "Editando entrada"
+
+msgid "Gerador de senha"
+msgstr "Generador de contraseñas"
+
+msgid "Essa senha não é segura"
+msgstr "Esta contraseña no es segura"
+
+msgid "A localizamos em vazamentos de dados e pode facilmente ser hackeada"
+msgstr "La encontramos en filtraciones de datos y puede ser fácilmente hackeada"
+
+msgid "Escolha a categoria"
+msgstr "Seleccione la categoría"
+
+msgid "Anotações"
+msgstr "Notas"
+
+msgid "Copiar usuário"
+msgstr "Copiar usuario"
+
+msgid "Copiar senha"
+msgstr "Copiar contraseña"
+
+msgid "https://link-de-acesso.com.br"
+msgstr "https://enlace-de-acceso.com.br"
+
+msgid "Quantidade de dígitos"
+msgstr "Cantidad de dígitos"
+
+msgid "Senha gerada"
+msgstr "Contraseña generada"
+
+msgid "Utilizar esta senha"
+msgstr "Usar esta contraseña"
+
+##################### Usuarios #####################
+
+msgid "Usuário configurado com sucesso"
+msgstr "Usuario configurado con éxito"
+
+msgid "Credenciais de acesso incorretas"
+msgstr "Credenciales de acceso incorrectas"
+
+msgid "A senha criada precisa atender todos os requisitos abaixo"
+msgstr "La contraseña creada debe cumplir con todos los requisitos a continuación"
+
+msgid "No mínimo 12 caracteres"
+msgstr "Mínimo 12 caracteres"
+
+msgid "Precisa conter letras, números e caracteres especiais como"
+msgstr "Debe contener letras, números y caracteres especiales como"
+
+msgid "Novo usuário"
+msgstr "Nuevo usuario"
+
+msgid "Segurança"
+msgstr "Seguridad"
+
+msgid "Segundo fator de autenticação"
+msgstr "Segundo factor de autenticación"
+
+msgid "Editando o usuário"
+msgstr "Editando el usuario"
+
+msgid "E-mail utilizado para fazer login na ferramenta"
+msgstr "E-mail utilizado para iniciar sesión en la herramienta"
+
+msgid "Sessões"
+msgstr "Sesiones"
+
+msgid "Minha conta"
+msgstr "Mi cuenta"
+
+msgid "Sessão finalizada"
+msgstr "Sesión finalizada"
+
+msgid "A sessão não foi localizada para exclusão"
+msgstr "No se encontró la sesión para eliminar"
+
+msgid "Como a senha foi alterada, todas as suas sessões foram encerradas"
+msgstr "Como la contraseña fue cambiada, todas sus sesiones fueron cerradas."
+
+msgid "Como sua senha foi alterada, você precisa logar novamente"
+msgstr "Como su contraseña fue cambiada, necesita iniciar sesión nuevamente"
+
+msgid "A sessão expirou"
+msgstr "La sesión expiró"
+
+msgid "O seu tempo de sessão acabou. Você precisa logar novamente."
+msgstr "Su tiempo de sesión ha terminado. Necesita iniciar sesión nuevamente."
+
+##################### Auditoria #####################
+
+msgid "Visualizando"
+msgstr "Viendo"
+
+msgid "IP de origem"
+msgstr "IP de origen"
+
+msgid "Auditoria"
+msgstr "Auditoría"
+
+msgid "Ação"
+msgstr "Acción"
+
+msgid "Contexto"
+msgstr "Contexto"
+
+msgid "Registro"
+msgstr "Registro"
+
+msgid "Sem usuário autenticado"
+msgstr "Sin usuario autenticado"
+
+msgid "Usuário excluído (#{0})"
+msgstr "Usuario eliminado (#{0})"
+
+msgid "Campos alterados"
+msgstr "Campos modificados"
+
+##################### Minha segurança #####################
+
+msgid "Minha Segurança"
+msgstr "Mi seguridad"
+
+msgid "Últimas alterações"
+msgstr "Últimos cambios"
+
+msgid "Usuários ativos"
+msgstr "Usuarios activos"
+
+msgid "Lista completa"
+msgstr "Lista completa"
+
+msgid "Nenhuma alteração registrada ainda."
+msgstr "Aún no hay cambios registrados."
+
+##################### Configuracao inicial #####################
+
+msgid "Bem-vindo KeyAnyWhere!"
+msgstr "¡Bienvenido a KeyAnyWhere!"
+
+msgid "Neste tutorial de duas etapas vamos realizar a configuração inicial da ferramenta."
+msgstr "En este tutorial de dos pasos vamos realizar la configuración inicial de la herramienta."
+
+msgid "Usuário de acesso"
+msgstr "Usuario de acceso"
+
+msgid "Vamos criar o primeiro usuário do sistema, que também será o usuário <b>administrador</b>."
+msgstr "Vamos a crear el primer usuario del sistema, que también será el usuario <b>administrador</b>."
+
+msgid "A utilização do 2FA é obrigatória, por isso instale um aplicativo que execute essa função, como o"
+msgstr "El uso del 2FA es obligatorio, por eso instale una aplicación que cumpla esta función, como"
+
+msgid "Para ativar o Segundo Fator de Autenticação do usuário <strong>{0} ({1})</strong>, escaneie o QRCode com o aplicativo de 2FA escolhido"
+msgstr "Para activar el Segundo Factor de Autenticación del usuario <strong>{0} ({1})</strong>, escanee el código QR con la aplicación de 2FA elegida"
+
+msgid "Não se preocupe se não puder escanear o QRCode agora. Você poderá abrir e fechar esta tela a qualquer momento"
+msgstr "No te preocupes si no puedes escanear el código QR ahora. Podrás abrir y cerrar esta pantalla en cualquier momento"
+
+##################### validation da model #####################
+
+msgid "O campo {0} pode ter no máximo {1} caracteres"
+msgstr "El campo {0} puede tener como máximo {1} caracteres"
+
+msgid "O campo {0} precisa ser informado"
+msgstr "El campo {0} debe ser informado"
+
+msgid "O campo {0} não pode estar vazio"
+msgstr "El campo {0} no puede estar vacío"
+
+msgid "Uma string maliciosa do tipo XSS foi detectada no campo {0}"
+msgstr "Se detectó una cadena maliciosa de tipo XSS en el campo {0}"
+
+msgid "Já existe um cadastro para o valor informado no campo {0}"
+msgstr "Ya existe un registro para el valor informado en el campo {0}"
+
+msgid "O campo {0} precisa ter no mínimo {1} caracteres"
+msgstr "El campo {0} debe tener como mínimo {1} caracteres"
+
+msgid "O campo {0} precisa ser um número inteiro"
+msgstr "El campo {0} debe ser un número entero"
+
+msgid "O campo {0} precisa ser um valor booleano (true ou false)"
+msgstr "El campo {0} debe ser un valor booleano (true o false)"
+
+msgid "O campo {0} precisa ser um e-mail válido"
+msgstr "El campo {0} debe ser un correo electrónico válido"
+
+msgid "O campo {0} precisa ser uma data válida"
+msgstr "El campo {0} debe ser una fecha válida"
+
+msgid "O campo {0} precisa ser uma data e hora válidas"
+msgstr "El campo {0} debe ser una fecha y hora válidas"
+
+msgid "O campo {0} precisa ser um horário válido"
+msgstr "El campo {0} debe ser una hora válida"
+
+msgid "O campo {0} precisa ser um número decimal"
+msgstr "El campo {0} debe ser un número decimal"
+
+msgid "O campo {0} precisa ser um valor numérico"
+msgstr "El campo {0} debe ser un valor numérico"
+
+msgid "O campo {0} precisa ser uma URL válida"
+msgstr "El campo {0} debe ser una URL válida"
+
+msgid "O campo {0} precisa ser um UUID válido"
+msgstr "El campo {0} debe ser un UUID válido"
+
+msgid "O campo {0} precisa ser uma URL válida e conter o protocolo (http:// ou https://)"
+msgstr "El campo {0} debe ser una URL válida y contener el protocolo (http:// o https://)"
+
+msgid "O valor do campo {0} não é permitido"
+msgstr "El valor del campo {0} no está permitido"
+
+msgid "O valor do campo {0} não foi encontrado em {1}"
+msgstr "El valor del campo {0} no se encontró en {1}"
+
+msgid "O IP informado é inválido"
+msgstr "La IP informada es inválida"
+
+msgid "A senha não atende aos requisitos mínimos de segurança"
+msgstr "La contraseña no cumple con los requisitos mínimos de seguridad"
+
+msgid "A secret do 2FA coincidiu com outra. Tente novamente."
+msgstr "El secreto del 2FA coincidió con otro. Intenta nuevamente."
+
+##################### Configurações gerais e 2FA manual #####################
+msgid "Categoria"
+msgstr "Categoría"
+
+msgid "Configurações gerais"
+msgstr "Configuración general"
+
+msgid "Link"
+msgstr "Enlace"
+
+msgid "Datas e horários são exibidos e registrados neste fuso horário."
+msgstr "Las fechas y horas se muestran y registran en este huso horario."
+
+msgid "No entanto, <strong>clique no botão abaixo apenas depois de escanear o QRCode (ou cadastrar a chave manualmente)</strong>, pois eles <strong>não serão exibidos novamente</strong>"
+msgstr "Sin embargo, <strong>haga clic en el botón de abajo solo después de escanear el código QR (o registrar la clave manualmente)</strong>, ya que <strong>no se mostrarán de nuevo</strong>"
+
+msgid "Não consegue escanear o QrCode? Cadastre manualmente no aplicativo com os dados abaixo"
+msgstr "¿No puede escanear el código QR? Regístrelo manualmente en la aplicación con los datos de abajo"
+
+msgid "Chave"
+msgstr "Clave"
+
+msgid "Tipo de chave"
+msgstr "Tipo de clave"
+
+msgid "Baseada no horário"
+msgstr "Basada en el tiempo"
+
+msgid "Codinome"
+msgstr "Nombre de la cuenta"
+
+msgid "Nome do registro no aplicativo de 2FA"
+msgstr "Nombre del registro en la aplicación de 2FA"
