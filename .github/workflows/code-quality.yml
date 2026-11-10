@@ -9,9 +9,11 @@ jobs:
   phpcs:
     name: Code Style (phpcs)
     runs-on: ubuntu-latest
+    # Só no repositório do community: quem recebe este código por merge tem o próprio CI.
+    if: github.repository == 'arthusantiago/KeyAnyWhere'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -25,7 +27,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.composercache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -42,9 +44,11 @@ jobs:
   phpstan:
     name: Static Analysis (phpstan)
     runs-on: ubuntu-latest
+    # Só no repositório do community: quem recebe este código por merge tem o próprio CI.
+    if: github.repository == 'arthusantiago/KeyAnyWhere'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -58,7 +62,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.composercache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
