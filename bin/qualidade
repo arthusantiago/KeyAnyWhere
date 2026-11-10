@@ -117,8 +117,14 @@ $portoes['PHPStan sem erro novo'] = $codigo === 0 && $errosNovos === 0;
 $divida = ['total' => 0, 'fontes' => 0, 'arquivos' => []];
 if (isset($config['phpstanBaseline']) && is_file($raiz . '/' . $config['phpstanBaseline'])) {
     preg_match_all('/count: (\d+)\s+path: (.+)/', (string)file_get_contents($raiz . '/' . $config['phpstanBaseline']), $m);
+    // O PHPStan grava os caminhos relativos ao arquivo do baseline (ex.: o de um plugin, em
+    // plugins/<Plugin>/): aqui eles passam a ser relativos à raiz, como as fontes.
+    $pastaBaseline = dirname($config['phpstanBaseline']);
     foreach ($m[1] as $i => $quantidade) {
         $caminho = trim($m[2][$i]);
+        if ($pastaBaseline !== '.') {
+            $caminho = $pastaBaseline . '/' . $caminho;
+        }
         $divida['total'] += (int)$quantidade;
         foreach ($fontes as $fonte) {
             if (str_starts_with($caminho, $fonte . '/')) {
@@ -252,9 +258,21 @@ $metricas['arquitetura'] = [
 $cobertura = null;
 if (is_file($raiz . '/' . $config['cobertura'])) {
     $clover = simplexml_load_file($raiz . '/' . $config['cobertura']);
-    $m = $clover->project->metrics;
-    $cobertura = percentual((float)$m['coveredstatements'], (float)$m['statements']);
-    $ramos = (float)$m['conditionals'] > 0 ? percentual((float)$m['coveredconditionals'], (float)$m['conditionals']) : null;
+    // Soma só os arquivos das fontes: o relatório pode cobrir mais do que se mede aqui (ex.: o
+    // core e um plugin na mesma suíte).
+    $linhas = 0.0;
+    $cobertas = 0.0;
+    foreach ($clover->xpath('//file') ?: [] as $arquivoClover) {
+        $caminho = $relativo((string)$arquivoClover['name']);
+        foreach ($fontes as $fonte) {
+            if (str_starts_with($caminho, $fonte . '/')) {
+                $linhas += (float)$arquivoClover->metrics['statements'];
+                $cobertas += (float)$arquivoClover->metrics['coveredstatements'];
+                break;
+            }
+        }
+    }
+    $cobertura = percentual($cobertas, $linhas);
 }
 $metricas['cobertura'] = [
     'titulo' => 'Cobertura de linhas (PHPUnit)',
