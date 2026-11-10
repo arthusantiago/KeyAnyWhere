@@ -28,6 +28,8 @@ vendor/bin/phpunit --filter testLoginComCredenciaisECodigo2faValidosAutentica # 
 composer cs-check                   # phpcs (PSR-12 + CakePHP standard, must be 0 errors/0 warnings)
 composer cs-fix                     # phpcbf autofix
 composer stan                       # phpstan level 8 (see phpstan-baseline.neon for grandfathered errors)
+# phpstan.neon.dist / phpcs.xml.dist are the shared configs; a local phpstan.neon / phpcs.xml (git-ignored)
+# overrides them, e.g. to add a plugin's paths (`includes: [phpstan.neon.dist]`).
 composer check                      # test + cs-check + stan, run this before considering work done
 ```
 
