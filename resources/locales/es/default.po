@@ -134,14 +134,8 @@ msgstr "Configuración inicial"
 msgid "Data"
 msgstr "Fecha"
 
-msgid "Status"
-msgstr "Estado"
-
 msgid "Detalhes"
 msgstr "Detalles"
-
-msgid "Mensagem"
-msgstr "Mensaje"
 
 msgid "E-mail"
 msgstr "E-mail"
@@ -156,9 +150,6 @@ msgstr "Datos inválidos enviados al servidor"
 
 msgid "Aconteceu algum problema ao acessar o que você queria"
 msgstr "Hubo un problema al acceder a lo que quería"
-
-msgid "Erro"
-msgstr "Error"
 
 msgid "Erro ao acessar a URL"
 msgstr "Error al acceder a la URL"
@@ -270,9 +261,6 @@ msgstr "Sesiones"
 msgid "Minha conta"
 msgstr "Mi cuenta"
 
-msgid "Administrador"
-msgstr "Administrador"
-
 msgid "Sessão finalizada"
 msgstr "Sesión finalizada"
 
@@ -319,11 +307,6 @@ msgstr "Usuario eliminado (#{0})"
 
 msgid "Campos alterados"
 msgstr "Campos modificados"
-
-##################### Outros #####################
-
-msgid "Site"
-msgstr "Sitio"
 
 ##################### Minha segurança #####################
 
