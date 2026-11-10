@@ -238,7 +238,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         }
 
             $middlewareQueue->add($securityHeaders);
-            $middlewareQueue->add(new SessionsKawMiddleware($this));
+            $middlewareQueue->add(new SessionsKawMiddleware());
 
         return $middlewareQueue;
     }

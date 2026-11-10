@@ -79,10 +79,12 @@ class SecurityHeadersKawMiddlewareTest extends TestCase
 
         // Verify default policy directives
         $this->assertStringContainsString('default-src https:', $cspHeader);
-        $this->assertStringContainsString("img-src 'self'", $cspHeader);
+        $this->assertStringContainsString("img-src 'self' data:", $cspHeader);
         $this->assertStringContainsString("script-src 'self'", $cspHeader);
         $this->assertStringContainsString("style-src 'self'", $cspHeader);
         $this->assertStringContainsString("object-src 'none'", $cspHeader);
+        // Só scripts do próprio domínio (nenhuma CDN)
+        $this->assertMatchesRegularExpression("/script-src 'self';/", $cspHeader);
     }
 
     /**
