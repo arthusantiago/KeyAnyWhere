@@ -94,6 +94,35 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
     }
 
     /**
+     * Se a requisição é de uma rota de API (`/api/...`).
+     *
+     * As rotas de API autenticam por token (cabeçalho), não pelo cookie de sessão: por isso não passam
+     * pelo CSRF e não são redirecionadas para o login. O core ainda não tem API; a regra serve a qualquer
+     * API registrada por um plugin (ver config/plugins_local.php).
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @return bool
+     */
+    public static function ehRotaApi(ServerRequestInterface $request): bool
+    {
+        $caminho = $request->getUri()->getPath();
+
+        return $caminho === '/api' || str_starts_with($caminho, '/api/');
+    }
+
+    /**
+     * Regra do `skipCheckCallback()` do CSRF. O middleware guarda um único callback: toda regra nova de
+     * exceção ao CSRF entra aqui.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @return bool
+     */
+    public function pulaVerificacaoCsrf(ServerRequestInterface $request): bool
+    {
+        return $this->isRunningUnitTests() || self::ehRotaApi($request);
+    }
+
+    /**
      * Load all the application configuration and bootstrap logic.
      *
      * @return void
@@ -167,9 +196,9 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             ];
             // Renova, no GET, o cookie CSRF assinado com um SECURITY_SALT anterior (ver a classe).
             $csrf = new CsrfProtectionKawMiddleware($csrfProtecConfig);
-            $csrf->skipCheckCallback(function () {
-                // Skip CSRF checks during unit tests
-                return $this->isRunningUnitTests();
+            // Testes e rotas de API (ver pulaVerificacaoCsrf()).
+            $csrf->skipCheckCallback(function (ServerRequestInterface $request): bool {
+                return $this->pulaVerificacaoCsrf($request);
             });
             $middlewareQueue->add($csrf);
 
@@ -224,7 +253,11 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
     protected function bootstrapCli(): void
     {
         $this->addOptionalPlugin('Cake/Repl');
-        $this->addOptionalPlugin('Bake');
+        // Em produção (composer install --no-dev) a classe do Bake não existe, mas o pacote pode continuar
+        // listado no vendor/cakephp-plugins.php; carregá-lo assim gera um deprecated em todo bin/cake.
+        if (class_exists('Bake\BakePlugin')) {
+            $this->addPlugin('Bake');
+        }
 
         $this->addPlugin('Migrations');
 
@@ -239,15 +272,14 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
      */
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
     {
+        // Sem redirecionamento para o login nos testes e nas rotas de API: a API responde com o próprio
+        // erro (401/403), não com a tela de login da aplicação web.
         $config = [
             'queryParam' => 'redirect',
-            'unauthenticatedRedirect' => null,
+            'unauthenticatedRedirect' => $this->isRunningUnitTests() || self::ehRotaApi($request)
+                ? null
+                : Router::url('/users/login'),
         ];
-
-        // During unit tests, disable automatic redirect
-        if (!$this->isRunningUnitTests()) {
-            $config['unauthenticatedRedirect'] = Router::url('/users/login');
-        }
 
         $authenticationService = new AuthenticationService($config);
 
