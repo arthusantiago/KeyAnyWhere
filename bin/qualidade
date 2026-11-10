@@ -1,0 +1,379 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Índice de Qualidade: roda as ferramentas de análise, junta as métricas numa nota de 0 a 100 e
+ * confere os portões (o que reprova sozinho, seja qual for a nota).
+ *
+ * Uso, na raiz do projeto (lê ./qualidade.json, ou o arquivo de --config):
+ *   bin/qualidade                         mostra o relatório
+ *   bin/qualidade --comparar              também reprova se alguma métrica piorou em relação à referência
+ *   bin/qualidade --atualizar-referencia  grava as métricas atuais como referência (depois de uma melhora)
+ *   bin/qualidade --json                  saída em JSON
+ *   bin/qualidade --config=outro.json     usa outra configuração (ex.: a de um plugin, que mede só o
+ *                                         código dele); os caminhos dentro dela são relativos à raiz
+ *
+ * Cobertura e mutação são lidas dos relatórios (`composer test:cobertura`, `composer mutacao`),
+ * que precisam de um driver de cobertura (pcov ou xdebug); sem o relatório, a métrica fica
+ * "não medida" e a nota é a média das demais, renormalizada.
+ *
+ * Métricas:
+ *   tipos         % de arquivos sem dívida no PHPStan (baseline + @phpstan-ignore)
+ *   complexidade  % de métodos dentro dos limites de complexidade ciclomática e NPath (PDepend)
+ *   coesao        % de classes sem violação do PHPMD (tamanho, complexidade, acoplamento: SRP)
+ *   arquitetura   % de dependências permitidas pelo Deptrac (DIP)
+ *   cobertura     % de linhas executadas pelos testes
+ *   mutacao       MSI do Infection (% dos mutantes mortos pelos testes)
+ *
+ * Chaves opcionais do qualidade.json (para quem começa com dívida):
+ *   "namespace"      prefixo dos componentes da tabela de Martin (padrão: App)
+ *   "phpstanBaseline" baseline do PHPStan; cada erro dele conta como dívida
+ *   PHPMD: o phpmd.baseline.xml ao lado do ruleset (o PHPMD o usa sozinho) conta como dívida
+ *   Deptrac: as violações do baseline (skip_violations) contam como dívida
+ * A dívida não reprova, mas entra na nota e não pode crescer (catraca).
+ */
+
+$raiz = getcwd();
+$argumentos = array_slice($argv, 1);
+$configArquivo = $raiz . '/qualidade.json';
+foreach ($argumentos as $i => $argumento) {
+    if (str_starts_with($argumento, '--config=')) {
+        $configArquivo = $raiz . '/' . substr($argumento, strlen('--config='));
+        unset($argumentos[$i]);
+    }
+}
+$opcoes = array_flip($argumentos);
+if (!is_file($raiz . '/vendor/autoload.php')) {
+    fwrite(STDERR, "Rode na raiz do projeto, depois do composer install (vendor/autoload.php não encontrado em {$raiz}).\n");
+    exit(2);
+}
+if (!is_file($configArquivo)) {
+    fwrite(STDERR, "Configuração não encontrada: {$configArquivo}.\n");
+    exit(2);
+}
+$config = json_decode((string)file_get_contents($configArquivo), true, 512, JSON_THROW_ON_ERROR);
+$bin = $raiz . '/vendor/bin/';
+$temp = sys_get_temp_dir() . '/qualidade-' . getmypid();
+@mkdir($temp, 0700, true);
+
+require $raiz . '/vendor/autoload.php';
+
+/**
+ * @return array{0: int, 1: string}
+ */
+function rodar(string $comando): array
+{
+    exec($comando . ' 2>&1', $saida, $codigo);
+
+    return [$codigo, implode("\n", $saida)];
+}
+
+function percentual(float $parte, float $total): float
+{
+    return $total > 0 ? round(100 * $parte / $total, 1) : 100.0;
+}
+
+/**
+ * @param list<string> $fontes
+ * @return list<string>
+ */
+function arquivosPhp(string $raiz, array $fontes): array
+{
+    $arquivos = [];
+    foreach ($fontes as $fonte) {
+        if (!is_dir($raiz . '/' . $fonte)) {
+            continue;
+        }
+        $iterador = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($raiz . '/' . $fonte, FilesystemIterator::SKIP_DOTS));
+        foreach ($iterador as $arquivo) {
+            if ($arquivo->getExtension() === 'php') {
+                $arquivos[] = $arquivo->getPathname();
+            }
+        }
+    }
+    sort($arquivos);
+
+    return $arquivos;
+}
+
+$fontes = $config['fontes'];
+$listaFontes = implode(',', array_map(fn(string $f): string => escapeshellarg($raiz . '/' . $f), $fontes));
+$arquivos = arquivosPhp($raiz, $fontes);
+$relativo = fn(string $caminho): string => ltrim(str_replace($raiz, '', $caminho), '/');
+$limites = $config['limites'];
+$namespace = rtrim($config['namespace'] ?? 'App', '\\');
+
+$metricas = [];
+$portoes = [];
+
+// --- Tipos (PHPStan) ---------------------------------------------------------------------------
+[$codigo, $saida] = rodar(sprintf('%sphpstan analyse -c %s --no-progress --memory-limit=2G --error-format=json', $bin, escapeshellarg($config['phpstan'])));
+$stan = json_decode(substr($saida, (int)strpos($saida, '{')), true) ?: [];
+$errosNovos = (int)($stan['totals']['file_errors'] ?? 0) + (int)($stan['totals']['errors'] ?? 0);
+$portoes['PHPStan sem erro novo'] = $codigo === 0 && $errosNovos === 0;
+
+$divida = ['total' => 0, 'fontes' => 0, 'arquivos' => []];
+if (isset($config['phpstanBaseline']) && is_file($raiz . '/' . $config['phpstanBaseline'])) {
+    preg_match_all('/count: (\d+)\s+path: (.+)/', (string)file_get_contents($raiz . '/' . $config['phpstanBaseline']), $m);
+    foreach ($m[1] as $i => $quantidade) {
+        $caminho = trim($m[2][$i]);
+        $divida['total'] += (int)$quantidade;
+        foreach ($fontes as $fonte) {
+            if (str_starts_with($caminho, $fonte . '/')) {
+                $divida['fontes'] += (int)$quantidade;
+                $divida['arquivos'][$caminho] = true;
+            }
+        }
+    }
+}
+// `@phpstan-ignore` no código também é dívida: sem contá-lo, um erro calado em linha escaparia da
+// catraca, que só lê o baseline. Conta nas fontes e nos testes, como o baseline.
+foreach ([...$arquivos, ...arquivosPhp($raiz, ['tests'])] as $arquivo) {
+    $ignorados = preg_match_all('/@phpstan-ignore/', (string)file_get_contents($arquivo));
+    if ($ignorados > 0) {
+        $divida['total'] += $ignorados;
+        if (in_array($arquivo, $arquivos, true)) {
+            $divida['fontes'] += $ignorados;
+            $divida['arquivos'][$relativo($arquivo)] = true;
+        }
+    }
+}
+preg_match('/level:\s*(\d+)/', (string)file_get_contents($raiz . '/' . $config['phpstan']), $nivel);
+$metricas['tipos'] = [
+    'titulo' => 'Tipos (PHPStan nível ' . ($nivel[1] ?? '?') . ')',
+    'nota' => percentual(count($arquivos) - count($divida['arquivos']), count($arquivos)),
+    'detalhe' => sprintf(
+        '%d de %d arquivos sem erro; dívida (baseline + @phpstan-ignore): %d nas fontes, %d no total; erros novos: %d',
+        count($arquivos) - count($divida['arquivos']),
+        count($arquivos),
+        $divida['fontes'],
+        $divida['total'],
+        $errosNovos,
+    ),
+    'valores' => ['divida_fontes' => $divida['fontes'], 'divida_total' => $divida['total']],
+];
+
+// --- Complexidade e tamanho (PDepend) ----------------------------------------------------------
+rodar(sprintf('%spdepend --summary-xml=%s --jdepend-xml=%s %s', $bin, "$temp/resumo.xml", "$temp/jdepend.xml", $listaFontes));
+$resumo = simplexml_load_file("$temp/resumo.xml");
+$metodos = [];
+$classes = [];
+foreach ($resumo->package as $pacote) {
+    // iterator_to_array(..., false): o SimpleXML repete a chave (nome da tag) a cada elemento.
+    foreach ([...iterator_to_array($pacote->class, false), ...iterator_to_array($pacote->trait, false)] as $classe) {
+        $classes[(string)$classe['name']] = ['wmc' => (int)$classe['wmc'], 'eloc' => (int)$classe['eloc'], 'cbo' => (int)$classe['cbo']];
+        foreach ($classe->method as $metodo) {
+            $metodos[$classe['name'] . '::' . $metodo['name']] = ['cc' => (int)$metodo['ccn2'], 'npath' => (int)$metodo['npath']];
+        }
+    }
+}
+$dentro = array_filter($metodos, fn(array $m): bool => $m['cc'] <= $limites['complexidadeCiclomatica'] && $m['npath'] <= $limites['npath']);
+$ccs = array_column($metodos, 'cc');
+arsort($ccs);
+$maisComplexo = (string)array_key_first(array_map(fn(array $m): int => $m['cc'], array_filter($metodos, fn(array $m): bool => $m['cc'] === max($ccs ?: [0]))));
+$metricas['complexidade'] = [
+    'titulo' => 'Complexidade (métodos com CC ≤ ' . $limites['complexidadeCiclomatica'] . ' e NPath ≤ ' . $limites['npath'] . ')',
+    'nota' => percentual(count($dentro), count($metodos)),
+    'detalhe' => sprintf(
+        '%d de %d métodos; CC média %.2f, máxima %d (%s)',
+        count($dentro),
+        count($metodos),
+        $ccs ? array_sum($ccs) / count($ccs) : 0,
+        $ccs ? max($ccs) : 0,
+        $maisComplexo,
+    ),
+    'valores' => ['cc_media' => $ccs ? round(array_sum($ccs) / count($ccs), 2) : 0, 'cc_maxima' => $ccs ? max($ccs) : 0],
+];
+
+// --- Coesão e tamanho de classe, indicador de SRP (PHPMD) ---------------------------------------
+rodar(sprintf('%sphpmd %s json %s --reportfile %s', $bin, $listaFontes, escapeshellarg($config['phpmd']), "$temp/phpmd.json"));
+$phpmd = json_decode((string)@file_get_contents("$temp/phpmd.json"), true) ?: ['files' => []];
+// Com phpmd.baseline.xml ao lado do ruleset, o PHPMD só relata as violações novas; as do
+// baseline são dívida: entram na nota (a classe conta como violada) e não podem crescer.
+$violacoes = 0;
+$comViolacao = [];
+foreach ($phpmd['files'] as $arquivo) {
+    foreach ($arquivo['violations'] as $violacao) {
+        $violacoes++;
+        $comViolacao[$relativo($arquivo['file'])] = true;
+    }
+}
+$dividaPhpmd = 0;
+$baselinePhpmd = dirname($raiz . '/' . $config['phpmd']) . '/phpmd.baseline.xml';
+if (is_file($baselinePhpmd)) {
+    foreach (simplexml_load_file($baselinePhpmd)->violation ?? [] as $violacao) {
+        $dividaPhpmd++;
+        $comViolacao[ltrim(str_replace('\\', '/', (string)$violacao['file']), '/')] = true;
+    }
+}
+$excecoes = 0;
+foreach ($arquivos as $arquivo) {
+    $excecoes += substr_count((string)file_get_contents($arquivo), '@SuppressWarnings("PHPMD.');
+}
+$portoes['PHPMD sem violação'] = $violacoes === 0;
+$metricas['coesao'] = [
+    'titulo' => 'Coesão e tamanho (SRP, PHPMD)',
+    'nota' => percentual(count($classes) - count($comViolacao), count($classes)),
+    'detalhe' => sprintf(
+        '%d violações novas e %d no baseline, em %d de %d classes; %d exceções justificadas (@SuppressWarnings)',
+        $violacoes,
+        $dividaPhpmd,
+        count($comViolacao),
+        count($classes),
+        $excecoes,
+    ),
+    'valores' => ['violacoes' => $violacoes, 'divida' => $dividaPhpmd, 'excecoes' => $excecoes],
+];
+
+// --- Arquitetura, inversão de dependência (Deptrac) ---------------------------------------------
+rodar(sprintf('%sdeptrac analyse --config-file=%s --no-progress --formatter=json --output=%s', $bin, escapeshellarg($config['deptrac']), "$temp/deptrac.json"));
+$deptrac = json_decode((string)@file_get_contents("$temp/deptrac.json"), true)['Report'] ?? null;
+$proibidas = (int)($deptrac['Violations'] ?? 0);
+// Violações do baseline (skip_violations): não reprovam, mas são dívida e entram na nota.
+$dividaDeptrac = (int)($deptrac['Skipped violations'] ?? 0);
+$permitidas = (int)($deptrac['Allowed'] ?? 0);
+$portoes['Deptrac sem violação'] = $deptrac !== null && $proibidas === 0 && (int)$deptrac['Errors'] === 0;
+$metricas['arquitetura'] = [
+    'titulo' => 'Arquitetura (DIP, Deptrac)',
+    'nota' => $deptrac === null ? 0.0 : percentual($permitidas, $permitidas + $proibidas + $dividaDeptrac),
+    'detalhe' => $deptrac === null ? 'Deptrac não rodou' : sprintf(
+        '%d dependências permitidas, %d proibidas novas, %d proibidas no baseline, %d sem camada',
+        $permitidas,
+        $proibidas,
+        $dividaDeptrac,
+        (int)$deptrac['Uncovered'],
+    ),
+    'valores' => ['violacoes' => $proibidas, 'divida' => $dividaDeptrac],
+];
+
+// --- Cobertura (PHPUnit + pcov/xdebug) ----------------------------------------------------------
+$cobertura = null;
+if (is_file($raiz . '/' . $config['cobertura'])) {
+    $clover = simplexml_load_file($raiz . '/' . $config['cobertura']);
+    $m = $clover->project->metrics;
+    $cobertura = percentual((float)$m['coveredstatements'], (float)$m['statements']);
+    $ramos = (float)$m['conditionals'] > 0 ? percentual((float)$m['coveredconditionals'], (float)$m['conditionals']) : null;
+}
+$metricas['cobertura'] = [
+    'titulo' => 'Cobertura de linhas (PHPUnit)',
+    'nota' => $cobertura,
+    'detalhe' => $cobertura === null ? 'não medida: rode `composer test:cobertura` (precisa de pcov ou xdebug)' : sprintf('%.1f%% das linhas executadas pelos testes', $cobertura),
+    'valores' => ['linhas' => $cobertura],
+];
+
+// --- Mutação (Infection) ------------------------------------------------------------------------
+$msi = null;
+if (is_file($raiz . '/' . $config['mutacao'])) {
+    $infection = json_decode((string)file_get_contents($raiz . '/' . $config['mutacao']), true);
+    $msi = isset($infection['stats']['msi']) ? round((float)$infection['stats']['msi'], 1) : null;
+}
+$metricas['mutacao'] = [
+    'titulo' => 'Mutação (Infection, MSI)',
+    'nota' => $msi,
+    'detalhe' => $msi === null ? 'não medida: rode `composer mutacao` (precisa de pcov ou xdebug)' : sprintf('%.1f%% dos mutantes mortos pelos testes', $msi),
+    'valores' => ['msi' => $msi],
+];
+
+// --- Informativas: componentes (Martin) e interfaces (ISP) --------------------------------------
+$componentes = [];
+$jdepend = @simplexml_load_file("$temp/jdepend.xml");
+foreach ($jdepend ? $jdepend->Packages->Package : [] as $pacote) {
+    if (str_starts_with((string)$pacote['name'], $namespace . '\\')) {
+        $s = $pacote->Stats;
+        $componentes[substr((string)$pacote['name'], strlen($namespace) + 1)] = ['Ca' => (int)$s->Ca, 'Ce' => (int)$s->Ce, 'I' => (float)$s->I, 'A' => (float)$s->A, 'D' => (float)$s->D];
+    }
+}
+$interfaces = [];
+// O nikic/php-parser vem com o Infection e o Deptrac; sem ele, a contagem de interfaces fica de fora.
+$parser = class_exists(PhpParser\ParserFactory::class) ? (new PhpParser\ParserFactory())->createForHostVersion() : null;
+$busca = new PhpParser\NodeFinder();
+foreach ($parser === null ? [] : $arquivos as $arquivo) {
+    foreach ($busca->findInstanceOf($parser->parse((string)file_get_contents($arquivo)) ?? [], PhpParser\Node\Stmt\Interface_::class) as $interface) {
+        $interfaces[(string)$interface->name] = count($interface->getMethods());
+    }
+}
+$interfacesGordas = array_filter($interfaces, fn(int $n): bool => $n > $limites['metodosPorInterface']);
+
+// --- Nota ---------------------------------------------------------------------------------------
+$soma = 0.0;
+$pesoMedido = 0;
+foreach ($config['pesos'] as $chave => $peso) {
+    if ($metricas[$chave]['nota'] !== null) {
+        $soma += $metricas[$chave]['nota'] * $peso;
+        $pesoMedido += $peso;
+    }
+}
+$nota = $pesoMedido > 0 ? round($soma / $pesoMedido, 1) : 0.0;
+$naoMedidas = array_keys(array_filter($metricas, fn(array $m): bool => $m['nota'] === null));
+
+// --- Catraca: nenhuma métrica pode piorar -------------------------------------------------------
+$atual = ['nota' => $nota] + array_map(fn(array $m): ?float => $m['nota'], $metricas)
+    + ['divida_phpstan' => $divida['total'], 'divida_phpmd' => $dividaPhpmd, 'divida_deptrac' => $dividaDeptrac, 'excecoes_phpmd' => $excecoes];
+$referenciaArquivo = $raiz . '/' . $config['referencia'];
+$pioras = [];
+if (isset($opcoes['--comparar']) && is_file($referenciaArquivo)) {
+    $referencia = json_decode((string)file_get_contents($referenciaArquivo), true)['metricas'] ?? [];
+    $menorEhMelhor = ['divida_phpstan', 'divida_phpmd', 'divida_deptrac', 'excecoes_phpmd'];
+    foreach ($referencia as $chave => $antes) {
+        $agora = $atual[$chave] ?? null;
+        // A nota não entra: ela muda de composição quando uma métrica passa a ser medida (ex.:
+        // cobertura no CI); os componentes, comparados um a um, já impedem que ela caia.
+        if ($chave === 'nota' || $antes === null || $agora === null) {
+            continue;
+        }
+        $piorou = in_array($chave, $menorEhMelhor, true) ? $agora > $antes : $agora < $antes - $config['tolerancia'];
+        if ($piorou) {
+            $pioras[] = sprintf('%s: %s → %s', $chave, $antes, $agora);
+        }
+    }
+    $portoes['Nenhuma métrica pior que a referência'] = $pioras === [];
+}
+if (isset($opcoes['--atualizar-referencia'])) {
+    file_put_contents($referenciaArquivo, json_encode([
+        'descricao' => 'Referência da catraca do bin/qualidade: o CI reprova se uma métrica piorar. Atualizar com `composer qualidade:referencia` depois de uma melhora.',
+        'gerado_em' => date('Y-m-d'),
+        'metricas' => $atual,
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n");
+}
+
+$aprovado = !in_array(false, $portoes, true);
+
+// --- Saída --------------------------------------------------------------------------------------
+if (isset($opcoes['--json'])) {
+    echo json_encode(compact('nota', 'aprovado', 'portoes', 'metricas', 'componentes', 'interfaces', 'pioras'), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), "\n";
+    exit($aprovado ? 0 : 1);
+}
+
+echo "\n## Índice de Qualidade: {$nota} / 100", $naoMedidas ? ' (sem ' . implode(', ', $naoMedidas) . ')' : '', "\n\n";
+echo "| Métrica | Peso | Nota | Detalhe |\n|---|---:|---:|---|\n";
+foreach ($config['pesos'] as $chave => $peso) {
+    $m = $metricas[$chave];
+    printf("| %s | %d | %s | %s |\n", $m['titulo'], $peso, $m['nota'] === null ? '–' : number_format($m['nota'], 1), $m['detalhe']);
+}
+echo "\n### Portões (reprovam sozinhos)\n\n";
+foreach ($portoes as $portao => $ok) {
+    echo '- ', $ok ? '[x]' : '[ ] **FALHOU**', " {$portao}\n";
+}
+foreach ($pioras as $piora) {
+    echo "  - piorou: {$piora}\n";
+}
+echo "\n### Informativas\n\n";
+echo "Componentes (Martin: I = instabilidade, A = abstração, D = distância da sequência principal):\n\n";
+echo "| Componente | Ca | Ce | I | A | D |\n|---|---:|---:|---:|---:|---:|\n";
+foreach ($componentes as $nome => $c) {
+    printf("| %s | %d | %d | %.2f | %.2f | %.2f |\n", $nome, $c['Ca'], $c['Ce'], $c['I'], $c['A'], $c['D']);
+}
+printf(
+    "\nInterfaces (ISP): %d, com no máximo %d métodos: %d%s\n",
+    count($interfaces),
+    $limites['metodosPorInterface'],
+    count($interfaces) - count($interfacesGordas),
+    $interfacesGordas ? ' (acima: ' . implode(', ', array_keys($interfacesGordas)) . ')' : '',
+);
+echo "\n", $aprovado ? 'APROVADO' : 'REPROVADO', "\n";
+
+array_map('unlink', glob("$temp/*") ?: []);
+@rmdir($temp);
+exit($aprovado ? 0 : 1);

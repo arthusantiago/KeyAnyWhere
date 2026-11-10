@@ -1,0 +1,6 @@
+deptrac:
+  skip_violations:
+    App\Controller\ErrorController:
+      - App\Application
+    App\Model\Entity\User:
+      - App\Application

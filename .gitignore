@@ -58,3 +58,7 @@ nbproject/*
 # yarn
 yarn-debug.log
 yarn-error.log
+
+# Relatórios do bin/qualidade, cobertura e mutação
+/build/
+/.deptrac.cache

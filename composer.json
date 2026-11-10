@@ -31,8 +31,11 @@
         "cakephp/bake": "^3.0.0",
         "cakephp/cakephp-codesniffer": "^5.0",
         "cakephp/debug_kit": "^5.0.0",
+        "deptrac/deptrac": "^4.7",
         "dereuromark/cakephp-ide-helper": "^2.10",
+        "infection/infection": "^0.35",
         "josegonzalez/dotenv": "^4.0",
+        "phpmd/phpmd": "^3.0",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^10.1.0"
     },
@@ -68,6 +71,31 @@
         "cs-fix": "phpcbf --colors -p",
         "stan": "phpstan analyse",
         "test": "phpunit --colors=always",
+        "analise": [
+            "@stan",
+            "@md",
+            "@arquitetura"
+        ],
+        "stan:baseline": "phpstan analyse --generate-baseline --allow-empty-baseline",
+        "md": "phpmd analyze src --format text --ruleset phpmd.xml.dist",
+        "md:baseline": "phpmd analyze src --format text --ruleset phpmd.xml.dist --generate-baseline",
+        "arquitetura": "deptrac analyse --config-file=deptrac.yaml --no-progress",
+        "arquitetura:baseline": "deptrac analyse --config-file=deptrac.yaml --no-progress --formatter=baseline --output=deptrac.baseline.yaml",
+        "test:cobertura": [
+            "Composer\\Config::disableProcessTimeout",
+            "phpunit --coverage-clover build/cobertura.xml --coverage-xml build/cobertura-infection/coverage-xml --log-junit build/cobertura-infection/junit.xml --coverage-text --only-summary-for-coverage-text"
+        ],
+        "mutacao": [
+            "Composer\\Config::disableProcessTimeout",
+            "@test:cobertura",
+            "infection --configuration=infection.json5 --show-mutations=0 --no-progress --logger-github=false --only-covering-test-cases --coverage=build/cobertura-infection --skip-initial-tests"
+        ],
+        "mutacao:alteracoes": [
+            "Composer\\Config::disableProcessTimeout",
+            "infection --configuration=infection-alteracoes.json5 --show-mutations --no-progress --logger-github=false --only-covering-test-cases --git-diff-lines --git-diff-base=origin/main"
+        ],
+        "qualidade": "php bin/qualidade --comparar",
+        "qualidade:referencia": "php bin/qualidade --atualizar-referencia",
         "production-install": [
             "@composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-progress"
         ]
@@ -78,7 +106,21 @@
         "sort-packages": true,
         "allow-plugins": {
             "cakephp/plugin-installer": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "infection/extension-installer": true
         }
+    },
+    "scripts-descriptions": {
+        "analise": "PHPStan + PHPMD + Deptrac (só erro novo reprova; a dívida antiga fica nos baselines)",
+        "stan:baseline": "Regrava o baseline do PHPStan (só depois de corrigir dívida: ele só pode diminuir)",
+        "md": "PHPMD: complexidade, tamanho e acoplamento (SRP); as violações antigas ficam no phpmd.baseline.xml",
+        "md:baseline": "Regrava o phpmd.baseline.xml com as violações atuais (depois de corrigir uma; a catraca do bin/qualidade não deixa a dívida crescer)",
+        "arquitetura": "Deptrac: dependências entre camadas (DIP); as violações antigas ficam no deptrac.baseline.yaml",
+        "arquitetura:baseline": "Regrava o deptrac.baseline.yaml (depois de corrigir uma violação antiga)",
+        "test:cobertura": "Testes com cobertura em build/cobertura.xml (e em build/cobertura-infection/, o formato do Infection); precisa de pcov ou xdebug e do banco de teste",
+        "mutacao": "Testes com cobertura (test:cobertura) e Infection, que reaproveita essa cobertura; um processo só, porque os testes dividem o banco de teste",
+        "mutacao:alteracoes": "Infection só nas linhas alteradas desde a origin/main (git fetch antes), com os mutantes que escaparam na saída; relatórios em build/alteracoes/, fora da catraca",
+        "qualidade": "Índice de Qualidade (bin/qualidade); reprova se um portão falhar ou uma métrica piorar em relação a qualidade-referencia.json",
+        "qualidade:referencia": "Grava as métricas atuais como referência da catraca (depois de uma melhora)"
     }
 }

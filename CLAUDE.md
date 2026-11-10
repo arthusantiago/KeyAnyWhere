@@ -35,6 +35,20 @@ composer stan                       # phpstan level 8 (see phpstan-baseline.neon
 composer check                      # test + cs-check + stan, run this before considering work done
 ```
 
+### Code quality (`bin/qualidade`)
+
+```bash
+composer analise                    # PHPStan + PHPMD + Deptrac: only new errors fail; old debt lives in the baselines
+composer md                         # PHPMD (phpmd.xml.dist): size, complexity, coupling (SRP); old violations in phpmd.baseline.xml
+composer arquitetura                # Deptrac (deptrac.yaml): layer rules (DIP); old violations in deptrac.baseline.yaml
+composer mutacao                    # coverage (test:cobertura) + Infection on infection.json5's directories, 1 process (~10 min; needs pcov/xdebug and the test DB)
+composer mutacao:alteracoes         # Infection only on the lines changed since origin/main, escaped mutants in the output
+composer qualidade                  # bin/qualidade --comparar: quality index 0-100 + gates + ratchet against qualidade-referencia.json
+composer qualidade:referencia       # after improving a metric: write the new reference and commit it in the same PR
+```
+
+`bin/qualidade` (configured by `qualidade.json`; `--config=other.json` measures something else, e.g. a plugin's `src/`) scores coverage, mutation (MSI), types (files without PHPStan debt), complexity (PDepend: CC ≤ 10, NPath ≤ 200), cohesion (PHPMD) and architecture (Deptrac). Gates: no new PHPStan error, no new PHPMD violation, no new Deptrac violation. The ratchet (`--comparar`, CI job `Qualidade` in `code-quality.yml`) fails if any metric drops more than 0.5 point below `qualidade-referencia.json` or if the debt (PHPStan baseline + `@phpstan-ignore`, PHPMD baseline, Deptrac baseline, `@SuppressWarnings`) grows. Fix new issues instead of adding them to a baseline; when you fix old debt, regenerate the baseline (`composer stan:baseline`, `md:baseline`, `arquitetura:baseline`) and the reference. Deptrac layers: Controller/Console/Middleware → Table (incl. `Model\Custom`) → Entity, `Auditoria` used by Tables, `Nucleo` (`Criptografia`, `I18n`, `Log`) usable by every layer and depending on none of them, and `plugins/` may depend on the core but never the other way around. A new top-level namespace under `src/` needs a layer in `deptrac.yaml`.
+
 CI (`.github/workflows/tests.yml`, `code-quality.yml`, `security.yml`) runs against a real `postgres:18` service container — there is no way to run the test suite against SQLite.
 
 ## Architecture
