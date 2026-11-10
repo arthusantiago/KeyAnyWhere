@@ -41,8 +41,7 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/",
-            "Config\\": "config/"
+            "App\\": "src/"
         }
     },
     "autoload-dev": {
@@ -52,7 +51,13 @@
         }
     },
     "scripts": {
-        "post-install-cmd": "App\\Console\\Installer::postInstall",
+        "post-install-cmd": [
+            "App\\Console\\Installer::postInstall",
+            "ArthuSantiago\\BootstrapForCakePHP\\BootstrapAssets::setupAssets"
+        ],
+        "post-update-cmd": [
+            "ArthuSantiago\\BootstrapForCakePHP\\BootstrapAssets::setupAssets"
+        ],
         "post-create-project-cmd": "App\\Console\\Installer::postInstall",
         "check": [
             "@test",
@@ -63,8 +68,6 @@
         "cs-fix": "phpcbf --colors -p",
         "stan": "phpstan analyse",
         "test": "phpunit --colors=always",
-        "post-package-install": "Config\\Tools\\PreparaAssets::postPackageInstall",
-        "post-package-update":  "Config\\Tools\\PreparaAssets::postPackageUpdate",
         "production-install": [
             "@composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-progress"
         ]

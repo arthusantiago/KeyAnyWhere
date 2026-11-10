@@ -11,8 +11,8 @@
 	  <?= $this->Html->meta('icon', 'favicon.ico') ?>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php
-      echo $this->Html->css('minified/bootstrap-icons.min.css');
-      echo $this->Html->css('minified/bootstrap.min.css');
+      echo $this->Html->css('bootstrap-icons.min');
+      echo $this->Html->css('bootstrap.min');
       echo $this->Html->css('geral.css');
       echo $this->Html->css('responsivo.css');
     ?>
@@ -27,7 +27,7 @@
         <?= $this->fetch('content') ?>
     </div>
     <?php
-      echo $this->Html->script('minified/bootstrap.min.js');
+      echo $this->Html->script('bootstrap.min');
       echo $this->Html->script('ferramentas.js');
     ?>
   </body>
