@@ -27,12 +27,12 @@ use DateTimeZone;
  *
  * Config opcional 'ambienteEnvVar': mesma ideia, mas pro campo 'ambiente'.
  * Tem default 'APP_ENV' (não null) porque, diferente do tenant, APP_ENV é
- * usada pela edição paga e pelos outros produtos da Curie. Sem a variável, o campo
+ * é a convenção usada pela edição paga. Sem a variável, o campo
  * sai null. Passe null explicitamente pra desativar.
  *
  * Config opcional 'app': valor fixo (não nome de env var) pra identificar a
  * aplicação — não existe uma env var natural pra isso, então é só uma string
- * configurada uma vez em config/app.php (ex.: 'app' => 'oficinahub'). Sem
+ * configurada uma vez em config/app.php (ex.: 'app' => 'keyanywhere'). Sem
  * default — se não configurado, o campo 'app' não aparece no log.
  *
  * Config opcional 'fuso' (default 'America/Campo_Grande'): fuso do campo 'timestamp',

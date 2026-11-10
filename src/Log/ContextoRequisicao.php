@@ -19,9 +19,8 @@ use Psr\Http\Message\ServerRequestInterface;
  * externo (ex.: um agregador de logs). O caminho (sem query string) só aparece quando não
  * há rota, ex.: 404 de rota inexistente.
  *
- * Cópia do módulo Logs da curie-libs (decisão D15 do plano de reestruturação), sem a parte que lê
- * os cabeçalhos do Temporal: o core só depende de pacotes públicos. A edição paga usa a versão da
- * curie-libs, que tem esses cabeçalhos.
+ * Implementação própria do core (decisão D15 do plano de reestruturação): o core só depende de
+ * pacotes públicos.
  */
 final class ContextoRequisicao
 {

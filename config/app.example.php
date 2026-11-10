@@ -358,7 +358,7 @@ return [
      * Configures logging options
      */
     'Log' => [
-        // Um arquivo por nível, em JSON (App\Log\JsonFormatter), como nos outros produtos da Curie.
+        // Um arquivo por nível, em JSON (App\Log\JsonFormatter).
         // `scopes => null`: estes motores só recebem log sem escopo; o escopo `seguranca` tem o seu.
         'debug' => [
             'className' => FileLog::class,
