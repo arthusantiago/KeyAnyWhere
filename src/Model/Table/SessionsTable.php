@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Model\Custom\ValidatorKaw;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -48,6 +49,8 @@ class SessionsTable extends Table
         $this->belongsTo('Users', [
             'foreignKey' => 'user_id',
         ]);
+
+        $this->_validatorClass = ValidatorKaw::class;
     }
 
     /**
@@ -62,21 +65,36 @@ class SessionsTable extends Table
             ->allowEmptyString('data');
 
         $validator
-            ->integer('expires')
+            ->integer('expires', ValidatorKaw::mensagemErroPadrao('integer', ['expires']))
             ->allowEmptyString('expires');
 
         $validator
-            ->integer('user_id')
+            ->integer('user_id', ValidatorKaw::mensagemErroPadrao('integer', ['user_id']))
             ->allowEmptyString('user_id');
 
         $validator
             ->scalar('user_agent')
-            ->maxLength('user_agent', 256)
+            ->maxLength('user_agent', 256, ValidatorKaw::mensagemErroPadrao('maxLength', ['user_agent', 256]))
             ->allowEmptyString('user_agent');
 
         $validator
-            ->uuid('id_secundario', 'O campo id_secundario precisa ser do tipo UUID')
+            ->uuid('id_secundario', ValidatorKaw::mensagemErroPadrao('uuid', ['id_secundario']))
             ->allowEmptyString('id_secundario');
+
+        return $validator;
+    }
+
+    /**
+     * Validation rules for the session id.
+     *
+     * @param \Cake\Validation\Validator $validator Validator instance.
+     * @return \Cake\Validation\Validator
+     */
+    public function validationIdSession(Validator $validator): Validator
+    {
+        $validator
+            ->notEmptyString('id', ValidatorKaw::mensagemErroPadrao('notEmptyString', ['id']))
+            ->uuid('id', ValidatorKaw::mensagemErroPadrao('uuid', ['id']));
 
         return $validator;
     }
@@ -90,7 +108,14 @@ class SessionsTable extends Table
      */
     public function buildRules(RulesChecker $rules): RulesChecker
     {
-        $rules->add($rules->existsIn('user_id', 'Users'), ['errorField' => 'user_id']);
+        $rules->add(
+            $rules->existsIn(
+                'user_id',
+                'Users',
+                ValidatorKaw::mensagemErroPadrao('existsIn', ['user_id', 'Users']),
+            ),
+            ['errorField' => 'user_id'],
+        );
 
         return $rules;
     }

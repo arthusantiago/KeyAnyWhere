@@ -5,12 +5,17 @@ namespace App\Test\TestCase\Controller;
 
 use App\Application;
 use App\Log\Seguranca;
+use App\Middleware\CsrfProtectionKawMiddleware;
 use App\Model\Entity\User;
+use App\Model\Table\AuditoriasTable;
+use App\Model\Table\UsersTable;
 use App\Test\TestCase\Log\CapturaLogSegurancaTrait;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Http\Response;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PragmaRX\Google2FA\Google2FA;
 
@@ -195,6 +200,9 @@ class UsersControllerTest extends TestCase
 
         $this->assertResponseOk();
         $this->assertSame($totalAntes, $users->find()->count());
+        // Flash de erro sem texto: mensagem padrão e a lista dos erros de validação.
+        $this->assertResponseContains('Ocorreu um erro');
+        $this->assertResponseContains('E-mail');
     }
 
     /**
@@ -227,6 +235,8 @@ class UsersControllerTest extends TestCase
         $this->assertResponseSuccess();
         $recarregado = $users->get(1);
         $this->assertSame('usuario_renomeado', $recarregado->username);
+        // Flash sem texto: o element usa a mensagem padrão.
+        $this->assertResponseContains('Salvo com sucesso');
     }
 
     /**
@@ -307,6 +317,38 @@ class UsersControllerTest extends TestCase
         $this->assertRedirect(['controller' => 'Pages', 'action' => 'home']);
         $users = $this->getTableLocator()->get('Users');
         $this->assertTrue($users->exists(['id' => 1]));
+    }
+
+    /**
+     * Excluir um usuário que já fez alguma ação (aparece em auditorias.usuario_id) funciona,
+     * e a trilha mantém o autor. Com a FK `fk_auditorias_usuario_id` (ON DELETE RESTRICT), o
+     * DELETE falhava no banco e a exclusão terminava em erro 500.
+     *
+     * @return void
+     */
+    public function testDeleteDeUsuarioComRegistrosDeAuditoriaMantemATrilha(): void
+    {
+        $users = $this->fetchTable(UsersTable::class);
+        $usuario = $users->saveOrFail($users->newEntity([
+            'username' => 'usuario_com_historico',
+            'email' => 'historico@example.com',
+            'password' => self::gerarSenhaDeTeste(),
+        ]));
+        $auditorias = $this->fetchTable(AuditoriasTable::class);
+        $registro = $auditorias->saveOrFail($auditorias->newEntity([
+            'contexto' => 'entrada',
+            'id_entidade' => 1,
+            'acao' => 'criacao',
+            'usuario_id' => $usuario->id,
+            'alteracoes' => [],
+        ]));
+
+        $this->loginAsUser(['root' => true]);
+        $this->post('/users/delete', ['id' => $usuario->id]);
+
+        $this->assertRedirect(['action' => 'index']);
+        $this->assertFalse($users->exists(['id' => $usuario->id]));
+        $this->assertSame($usuario->id, $auditorias->get($registro->id)->get('usuario_id'));
     }
 
     /**
@@ -689,6 +731,12 @@ class UsersControllerTest extends TestCase
         $this->assertRedirect(['action' => 'login']);
         $sessions = $this->getTableLocator()->get('Sessions');
         $this->assertSame(0, $sessions->find()->where(['user_id' => 1])->count());
+
+        // Só o aviso de novo login: sem o `return` no redirect, a action seguia e somava a
+        // mensagem de sucesso.
+        $mensagens = $_SESSION['Flash']['flash'] ?? [];
+        $this->assertCount(1, $mensagens, 'Só o aviso de novo login deveria aparecer.');
+        $this->assertSame('flash/warning', $mensagens[0]['element']);
     }
 
     /**
@@ -779,7 +827,44 @@ class UsersControllerTest extends TestCase
         $this->post('/users/gera-qr-code2fa', ['idUser' => 1, 'novoQrCode' => false]);
 
         $this->assertResponseOk();
-        $this->assertStringStartsWith('data:image/svg+xml;base64,', (string)$this->_response->getBody());
+        $this->assertStringStartsWith('data:image/svg+xml;base64,', $this->respostaQrCode2fa()['qrCode']);
+    }
+
+    /**
+     * geraQrCode2fa deve devolver, em JSON, o QrCode (data URI) e os dados para cadastro
+     * manual do 2FA (chave agrupada de 4 em 4 e codinome) que correspondem ao secret persistido.
+     *
+     * @return void
+     */
+    public function testGeraQrCode2faRetornaQrCodeEDadosParaCadastroManual(): void
+    {
+        $this->loginAsUser(['root' => true]);
+        $this->post('/users/gera-qr-code2fa', ['idUser' => 1, 'novoQrCode' => 1]);
+
+        $this->assertResponseOk();
+        $this->assertContentType('application/json');
+        $dados = $this->respostaQrCode2fa();
+
+        $this->assertStringStartsWith('data:image/svg+xml;base64,', $dados['qrCode']);
+        $user = $this->getTableLocator()->get('Users')->get(1);
+        $this->assertInstanceOf(User::class, $user);
+        $secret = $user->descripSecret2FA();
+        $this->assertSame($secret, str_replace(' ', '', $dados['chave']));
+        $this->assertMatchesRegularExpression('/^([A-Z2-7]{4} )*[A-Z2-7]{1,4}$/', $dados['chave']);
+        $this->assertSame('KeyAnyWhere (' . $user->email . ')', $dados['codinome']);
+    }
+
+    /**
+     * Corpo JSON da resposta do geraQrCode2fa.
+     *
+     * @return array<string, mixed>
+     */
+    private function respostaQrCode2fa(): array
+    {
+        $dados = json_decode($this->_getBodyAsString(), true);
+        $this->assertIsArray($dados);
+
+        return $dados;
     }
 
     /**
@@ -832,13 +917,13 @@ class UsersControllerTest extends TestCase
         $this->post('/users/gera-qr-code2fa', ['idUser' => $outroUsuario->id, 'novoQrCode' => true]);
 
         $this->assertResponseOk();
-        $this->assertStringStartsWith('data:image/svg+xml;base64,', (string)$this->_response->getBody());
+        $this->assertStringStartsWith('data:image/svg+xml;base64,', $this->respostaQrCode2fa()['qrCode']);
     }
 
     /**
      * Com o sistema sem nenhum usuário, configInicial deve exibir o formulário
      * de bootstrap (não redirecionar para o login) — ver
-     * UsersController::executarConfigInicial() / configInicial().
+     * UsersTable::configInicialSistema() / UsersController::configInicial().
      *
      * @return void
      */
@@ -876,6 +961,119 @@ class UsersControllerTest extends TestCase
     }
 
     /**
+     * A criação do primeiro usuário acontece sem nenhuma identidade no request — antes a
+     * auditoria era descartada (usuario_id NOT NULL); agora é registrada com usuario_id nulo.
+     *
+     * @return void
+     */
+    public function testConfigInicialPostAuditaCriacaoSemUsuarioAutenticado(): void
+    {
+        $this->getTableLocator()->get('Users')->deleteAll([]);
+
+        $this->enableSecurityToken();
+        $this->post('/users/config-inicial', [
+            'username' => 'primeiro_root',
+            'email' => 'primeiro_root@example.com',
+            'password' => self::gerarSenhaDeTeste(),
+        ]);
+
+        $criado = $this->getTableLocator()->get('Users')->find()->where(['username' => 'primeiro_root'])->firstOrFail();
+        $registro = $this->getTableLocator()->get('Auditorias')->find()
+            ->where(['contexto' => 'user', 'id_entidade' => $criado->get('id')])
+            ->first();
+
+        $this->assertNotNull($registro, 'A criação do primeiro usuário deveria ser auditada.');
+        $this->assertSame('criacao', $registro->get('acao'));
+        $this->assertNull($registro->get('usuario_id'));
+    }
+
+    /**
+     * Instalação refeita no mesmo domínio (novo SECURITY_SALT): o navegador ainda tem o cookie
+     * CSRF antigo. O GET precisa emitir um cookie novo, senão o POST falha com
+     * "Missing or invalid CSRF cookie." (ver CsrfProtectionKawMiddleware).
+     *
+     * @return void
+     */
+    public function testConfigInicialComCookieCsrfDeOutroSaltRenovaCookieECriaUsuario(): void
+    {
+        $this->getTableLocator()->get('Users')->deleteAll([]);
+        $nomeCookie = Application::nomeCookieCsrf();
+        $cookieAntigo = $this->tokenCsrfAssinadoComOutroSalt();
+
+        $this->cookie($nomeCookie, $cookieAntigo);
+        $this->get('/users/config-inicial');
+
+        $this->assertResponseOk();
+        $this->assertInstanceOf(Response::class, $this->_response);
+        $cookieNovo = $this->_response->getCookie($nomeCookie);
+        $this->assertNotNull($cookieNovo, 'O GET deveria emitir um cookie CSRF novo no lugar do inválido.');
+        $this->assertNotSame($cookieAntigo, $cookieNovo['value']);
+
+        $this->cookie($nomeCookie, $cookieNovo['value']);
+        $this->enableSecurityToken();
+        $this->post('/users/config-inicial', [
+            'username' => 'primeiro_root',
+            'email' => 'primeiro_root@example.com',
+            'password' => self::gerarSenhaDeTeste(),
+        ]);
+
+        $this->assertRedirect(['controller' => 'Users', 'action' => 'configInicialTfa']);
+    }
+
+    /**
+     * POST com o cookie antigo continua rejeitado — a renovação acontece no GET, sem
+     * afrouxar a validação do POST.
+     *
+     * @return void
+     */
+    public function testConfigInicialPostComCookieCsrfDeOutroSaltEhRejeitado(): void
+    {
+        $this->getTableLocator()->get('Users')->deleteAll([]);
+
+        $this->cookie(Application::nomeCookieCsrf(), $this->tokenCsrfAssinadoComOutroSalt());
+        $this->enableSecurityToken();
+        $this->post('/users/config-inicial', [
+            'username' => 'primeiro_root',
+            'email' => 'primeiro_root@example.com',
+            'password' => self::gerarSenhaDeTeste(),
+        ]);
+
+        $this->assertResponseCode(403);
+        $this->assertSame(0, $this->getTableLocator()->get('Users')->find()->count());
+    }
+
+    /**
+     * Token CSRF assinado com outro SECURITY_SALT (o de uma instalação anterior).
+     *
+     * @return string
+     */
+    private function tokenCsrfAssinadoComOutroSalt(): string
+    {
+        $saltAtual = Security::getSalt();
+        Security::setSalt(str_repeat('salt-de-outra-instalacao', 4));
+
+        try {
+            return (new CsrfProtectionKawMiddleware())->createToken();
+        } finally {
+            Security::setSalt($saltAtual);
+        }
+    }
+
+    /**
+     * Com o sistema já configurado, configInicial redireciona para o login. O destino já saía
+     * certo antes do `return` (o Controller::redirect() mantém o primeiro Location), mas o
+     * resto da action rodava; este teste segura o destino se a ordem do código mudar.
+     *
+     * @return void
+     */
+    public function testConfigInicialComSistemaConfiguradoRedirecionaParaLogin(): void
+    {
+        $this->get('/users/config-inicial');
+
+        $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
+    }
+
+    /**
      * Com um usuário criado mas 2FA ainda não ativado, configInicialTfa deve
      * exibir o QR Code e gerar um novo tfa_secret para esse usuário.
      *
@@ -897,7 +1095,13 @@ class UsersControllerTest extends TestCase
 
         $this->assertResponseOk();
         $recarregado = $users->get($user->id);
+        $this->assertInstanceOf(User::class, $recarregado);
         $this->assertNotEmpty($recarregado->tfa_secret);
+
+        // Dados para cadastro manual, para quem não conseguir escanear o QrCode
+        $chave = trim(chunk_split($recarregado->descripSecret2FA(), 4, ' '));
+        $this->assertResponseContains($chave);
+        $this->assertResponseContains('KeyAnyWhere (usuario_bootstrap@example.com)');
     }
 
     /**

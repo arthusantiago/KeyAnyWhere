@@ -13,12 +13,6 @@ parameters:
 			path: src/Application.php
 
 		-
-			message: '#^Cannot call method getData\(\) on Authentication\\Authenticator\\ResultInterface\|null\.$#'
-			identifier: method.nonObject
-			count: 1
-			path: src/Controller/AppController.php
-
-		-
 			message: '#^Class App\\Controller\\CategoriasController has PHPDoc tag @method for method paginate\(\) parameter \#2 \$settings with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -133,12 +127,6 @@ parameters:
 			path: src/Controller/UsersController.php
 
 		-
-			message: '#^Access to an undefined property Cake\\Datasource\\EntityInterface\:\:\$tfa_ativo\.$#'
-			identifier: property.notFound
-			count: 1
-			path: src/Controller/UsersController.php
-
-		-
 			message: '#^Cannot access offset ''idUser'' on array\|object\|null\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
@@ -151,27 +139,9 @@ parameters:
 			path: src/Controller/UsersController.php
 
 		-
-			message: '#^Cannot access property \$email on array\|ArrayAccess\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: src/Controller/UsersController.php
-
-		-
 			message: '#^Cannot access property \$id on array\|ArrayAccess\|null\.$#'
 			identifier: property.nonObject
-			count: 4
-			path: src/Controller/UsersController.php
-
-		-
-			message: '#^Cannot access property \$root on array\|ArrayAccess\|null\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: src/Controller/UsersController.php
-
-		-
-			message: '#^Cannot call method descripSecret2FA\(\) on array\|ArrayAccess\|null\.$#'
-			identifier: method.nonObject
-			count: 1
+			count: 2
 			path: src/Controller/UsersController.php
 
 		-
@@ -205,18 +175,6 @@ parameters:
 			path: src/Controller/UsersController.php
 
 		-
-			message: '#^Function __ not found\.$#'
-			identifier: function.notFound
-			count: 12
-			path: src/Controller/UsersController.php
-
-		-
-			message: '#^Method App\\Controller\\UsersController\:\:finalizarSessao\(\) with return type void returns Cake\\Http\\Response\|null but should not return anything\.$#'
-			identifier: return.void
-			count: 1
-			path: src/Controller/UsersController.php
-
-		-
 			message: '#^Method App\\Controller\\UsersController\:\:geraNovoSecret2FA\(\) has invalid return type App\\Controller\\App\\Model\\Entity\\User\.$#'
 			identifier: class.notFound
 			count: 1
@@ -237,7 +195,7 @@ parameters:
 		-
 			message: '#^PHPDoc tag @return with type mixed is not subtype of native type bool\.$#'
 			identifier: return.phpDocType
-			count: 2
+			count: 1
 			path: src/Controller/UsersController.php
 
 		-
@@ -1449,7 +1407,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Cake\\Datasource\\EntityInterface\:\:\$tfa_secret\.$#'
 			identifier: property.notFound
-			count: 4
+			count: 3
 			path: tests/TestCase/Controller/UsersControllerTest.php
 
 		-
@@ -1480,12 +1438,6 @@ parameters:
 			message: '#^Cannot access property \$tfa_ativo on Cake\\Datasource\\EntityInterface\|false\.$#'
 			identifier: property.nonObject
 			count: 1
-			path: tests/TestCase/Controller/UsersControllerTest.php
-
-		-
-			message: '#^Cannot call method getBody\(\) on Psr\\Http\\Message\\ResponseInterface\|null\.$#'
-			identifier: method.nonObject
-			count: 2
 			path: tests/TestCase/Controller/UsersControllerTest.php
 
 		-

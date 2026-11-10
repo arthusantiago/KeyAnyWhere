@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace App\View;
 
+use App\View\Tools\ManipuladorMensagemValidatorTrait;
 use Cake\View\View;
 
 /**
@@ -27,6 +28,8 @@ use Cake\View\View;
  */
 class AppView extends View
 {
+    use ManipuladorMensagemValidatorTrait;
+
     /**
      * Initialization hook method.
      *

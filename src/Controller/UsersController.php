@@ -11,7 +11,6 @@ use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Cake\Event\EventInterface;
-use Cake\Validation\Validator;
 use PragmaRX\Google2FA\Google2FA;
 
 /**
@@ -41,6 +40,9 @@ class UsersController extends AppController
         ResultInterface::FAILURE_CREDENTIALS_INVALID,
     ];
 
+    /* Nome do emissor exibido no aplicativo de 2FA */
+    private const EMISSOR_2FA = 'KeyAnyWhere';
+
     /**
      * beforeFilter callback.
      *
@@ -56,11 +58,7 @@ class UsersController extends AppController
         $this->Authentication->addUnauthenticatedActions(self::ACTIONS_SEM_AUTENTICACAO);
         $this->FormProtection->setConfig('unlockedActions', ['geraQrCode2fa', 'finalizarSessao', 'delete']);
 
-        $caminho = array_values(array_filter(explode('/', $this->request->getPath())));
-        if (count($caminho) == 1) {
-            // O CakePHP mapeia '/users/' para '/users/index' mas não adiciona no request->getPath() a action 'index'
-            array_push($caminho, 'index');
-        }
+        $caminho = $this->normalizaRecurso();
 
         if (array_search($caminho[1], self::SOMENTE_ROOT_ACESSA) !== false) {
             $user = $this->Authentication->getResult()?->getData();
@@ -75,6 +73,7 @@ class UsersController extends AppController
                     'O usuário tentou acessar um recurso que somente o root tem permissão',
                 );
 
+                // CakePHP 5.2+: o redirect vai no resultado do evento, não no retorno do callback
                 $event->setResult($this->redirect(['controller' => 'Pages', 'action' => 'home']));
                 $event->stopPropagation();
             }
@@ -112,14 +111,11 @@ class UsersController extends AppController
             $user = $this->Users->patchEntity($user, $this->request->getData());
             $user->tfa_secret = $user->geraSecret2FA();
             if ($this->Users->save($user)) {
-                $this->Flash->success(__('Salvo com sucesso'));
+                $this->Flash->success('');
 
                 return $this->redirect(['action' => 'edit', $user->id]);
             }
-            $this->Flash->error(
-                __('Erro ao salvar o usuário.'),
-                ['params' => ['mensagens' => $user->getErrors()]],
-            );
+            $this->Flash->error('', ['params' => ['mensagens' => $user->getErrors()]]);
         }
 
         $this->viewBuilder()->setLayout('administrativo');
@@ -142,18 +138,13 @@ class UsersController extends AppController
             if ($this->Users->save($user)) {
                 if ($senhaAlterada) {
                     if ($this->finalizarTodasSessoes($user->id)) {
-                        $msg = sprintf(
-                            'Como a senha do usuário <b>%s</b> foi alterada,'
-                                . '<br> todas as suas sessões foram encerradas.',
-                            $user->username,
-                        );
-                        $this->Flash->warning(__($msg));
+                        $this->Flash->warning('Como a senha foi alterada, todas as suas sessões foram encerradas');
                     }
                 }
 
-                $this->Flash->success(__('Salvo com sucesso'));
+                $this->Flash->success('');
             } else {
-                $this->Flash->error(__('Erro ao salvar.'), ['params' => ['mensagens' => $user->getErrors()]]);
+                $this->Flash->error('', ['params' => ['mensagens' => $user->getErrors()]]);
             }
         }
 
@@ -178,7 +169,7 @@ class UsersController extends AppController
         $id = $this->request->getData('id');
         $user = $this->Users->get($id);
         if ($this->Users->delete($user)) {
-            $this->Flash->success(__('Excluído com sucesso'));
+            $this->Flash->success('Excluído com sucesso');
         } else {
             $this->Flash->error('', ['params' => ['mensagens' => $user->getErrors()]]);
         }
@@ -197,7 +188,7 @@ class UsersController extends AppController
         $this->request->allowMethod(['get', 'post']);
         $this->viewBuilder()->setLayout('login');
 
-        if ($this->executarConfigInicial()) {
+        if ($this->Users->configInicialSistema()) {
             return $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
         }
 
@@ -251,12 +242,12 @@ class UsersController extends AppController
             if ($this->Users->save($user)) {
                 if ($senhaAlterada) {
                     $this->finalizarTodasSessoes();
-                    $this->Flash->warning(__('Como sua senha foi alterada,<br> você precisa logar novamente.'));
+                    $this->Flash->warning('Como sua senha foi alterada, você precisa logar novamente');
 
                     return $this->redirect(['action' => 'login']);
                 }
 
-                $this->Flash->success(__('Salvo com sucesso'));
+                $this->Flash->success('');
             } else {
                 $this->Flash->error('', ['params' => ['mensagens' => $user->getErrors()]]);
             }
@@ -281,26 +272,23 @@ class UsersController extends AppController
      * Finaliza a sessão informada
      *
      * @access public
-     * @return void
+     * @return \Cake\Http\Response|null
      */
     public function finalizarSessao()
     {
         $this->request->allowMethod(['post', 'patch']);
         $idSession = $this->request->getData('id');
-
-        $validator = new Validator();
-        $validator
-            ->notEmptyString('id', 'O ID da sessão não pode estar vazio')
-            ->uuid('id', 'O ID da session precisa ser do tipo UUIDv4');
-        $erros = $validator->validate(['id' => $idSession]);
+        $erros = $this->Users->Sessions
+            ->getValidator('idSession')
+            ->validate(['id' => $idSession], false);
 
         if ($erros) {
-            $this->Flash->error('O ID informado apresenta erro: ', ['params' => ['mensagens' => $erros]]);
+            $this->Flash->error('', ['params' => ['mensagens' => $erros]]);
         } else {
             if ($this->Users->Sessions->deleteAll(['id_secundario' => $idSession])) {
-                $this->Flash->success(__('Sessão finalizada!'));
+                $this->Flash->success('Sessão finalizada');
             } else {
-                $this->Flash->error(__('A sessão não foi localizada para exclusão'));
+                $this->Flash->error('A sessão não foi localizada para exclusão');
             }
         }
 
@@ -337,17 +325,9 @@ class UsersController extends AppController
     {
         $this->request->allowMethod(['post']);
         $request = $this->request->getParsedBody();
-        $validator = new Validator();
-
-        $validator
-            ->requirePresence('idUser', true, 'O ID do usuário não foi informado')
-            ->notEmptyString('idUser', 'O ID do usuário não pode estar vazio')
-            ->integer('idUser', 'O ID do usuário precisa ser um inteiro')
-            ->requirePresence('novoQrCode', true, "A propriedade 'novoQrCode' não foi informada")
-            ->notEmptyString('novoQrCode', "A propriedade 'novoQrCode' não pode estar vazia")
-            ->boolean('novoQrCode', "A propriedade 'novoQrCode' precisa ser um boolean");
-
-        $erros = $validator->validate($request);
+        $erros = $this->Users
+            ->getValidator('qrCode2fa')
+            ->validate($request, false);
 
         if ($erros) {
             return $this->response
@@ -356,6 +336,7 @@ class UsersController extends AppController
                 ->withStringBody(json_encode($erros));
         }
 
+        /** @var \App\Model\Entity\User $user */
         $user = $this->Authentication->getResult()->getData();
 
         // Somente o usuário root pode gerar o QrCode para outro usuário.
@@ -379,26 +360,45 @@ class UsersController extends AppController
             $user = $this->geraNovoSecret2FA($user->id);
         }
 
-        $g2faUrl = (new Google2FA())->getQRCodeUrl(
-            'KeyAnyWhere',
-            $user->email,
-            $user->descripSecret2FA(),
-        );
+        $dados2fa = $this->dados2fa($user, 300);
+
+        // QrCode retornado como data URI (não como markup SVG bruto): o cliente insere isso via
+        // um <img src="..."> em vez de innerHTML, o que evita expor um sink de DOM XSS.
+        return $this->response
+            ->withType('application/json; charset=UTF-8')
+            ->withStringBody((string)json_encode([
+                'qrCode' => 'data:image/svg+xml;base64,' . base64_encode($dados2fa['svgQrCode']),
+                'chave' => $dados2fa['chave'],
+                'codinome' => $dados2fa['codinome'],
+            ]));
+    }
+
+    /**
+     * Monta os dados para cadastrar o 2FA do usuário no aplicativo autenticador:
+     * o QrCode (SVG) e, para quem não conseguir escanea-lo, a chave e o codinome para cadastro manual.
+     *
+     * @access private
+     * @param \App\Model\Entity\User $user Usuário dono do 2FA.
+     * @param int $tamanhoQrCode Tamanho, em pixels, do QrCode.
+     * @return array{svgQrCode: string, chave: string, codinome: string}
+     */
+    private function dados2fa(User $user, int $tamanhoQrCode): array
+    {
+        $secret = $user->descripSecret2FA();
+
+        $g2faUrl = (new Google2FA())->getQRCodeUrl(self::EMISSOR_2FA, $user->email, $secret);
 
         $render = new ImageRenderer(
-            new RendererStyle(300),
+            new RendererStyle($tamanhoQrCode),
             new SvgImageBackEnd(),
         );
 
-        $strSvgQrCode = (new Writer($render))->writeString($g2faUrl);
-
-        // Retornado como data URI (não como markup SVG bruto): o cliente insere isso via
-        // um <img src="..."> em vez de innerHTML, o que evita expor um sink de DOM XSS.
-        $dataUriSvgQrCode = 'data:image/svg+xml;base64,' . base64_encode($strSvgQrCode);
-
-        return $this->response
-            ->withType('text/plain; charset=UTF-8')
-            ->withStringBody($dataUriSvgQrCode);
+        return [
+            'svgQrCode' => (new Writer($render))->writeString($g2faUrl),
+            // Agrupada de 4 em 4 caracteres para facilitar a digitação; os apps de 2FA ignoram os espaços.
+            'chave' => trim(chunk_split($secret, 4, ' ')),
+            'codinome' => self::EMISSOR_2FA . ' (' . $user->email . ')',
+        ];
     }
 
     /**
@@ -469,33 +469,6 @@ class UsersController extends AppController
     }
 
     /**
-     * Método que verifica se é preciso executar a configuração inicial do sistema.
-     *
-     * @access private
-     * @return mixed
-     */
-    private function executarConfigInicial(): bool
-    {
-        $user = $this->Users
-            ->find()
-            ->orderByAsc('id')
-            ->limit(1)
-            ->first();
-
-        $result = false;
-
-        if (empty($user)) {
-            $result = true;
-        }
-
-        if (empty($user) == false && $user->tfa_ativo == false) {
-            $result = true;
-        }
-
-        return $result;
-    }
-
-    /**
      * Metodo que inicia a Configuração Inicial da ferramenta.
      * Esse processo deve ser executado ao acessar o KAW pela primeira vez.
      *
@@ -504,14 +477,13 @@ class UsersController extends AppController
      */
     public function configInicial()
     {
-        if ($this->executarConfigInicial() == false) {
+        if ($this->Users->configInicialSistema() == false) {
             return $this->redirect(['controller' => 'Users', 'action' => 'login']);
         }
 
         $user = $this->Users
             ->find()
             ->orderByDesc('id')
-            ->limit(1)
             ->first();
 
         if (empty($user) == false && $user->email) {
@@ -524,11 +496,11 @@ class UsersController extends AppController
             $user->root = true;
 
             if ($this->Users->save($user)) {
-                $this->Flash->success(__('Usuário criado com sucesso!'));
+                $this->Flash->success('');
 
                 return $this->redirect(['controller' => 'Users', 'action' => 'configInicialTfa']);
             } else {
-                $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $user->getErrors()]]);
+                $this->Flash->error('', ['params' => ['mensagens' => $user->getErrors()]]);
             }
         }
 
@@ -538,12 +510,16 @@ class UsersController extends AppController
     /**
      * Metodo que gerencia a configuração do 2FA no processo de Configuração Inicial
      *
+     * Acessível sem login (ACTIONS_SEM_AUTENTICACAO): com o sistema já configurado, o `return`
+     * do redirect é o que impede um visitante anônimo de gravar um tfa_secret novo para o
+     * último usuário.
+     *
      * @access public
      * @return \Cake\Http\Response|null|void
      */
     public function configInicialTfa()
     {
-        if ($this->executarConfigInicial() == false) {
+        if ($this->Users->configInicialSistema() == false) {
             return $this->redirect(['controller' => 'Users', 'action' => 'login']);
         }
 
@@ -551,7 +527,6 @@ class UsersController extends AppController
         $user = $this->Users
             ->find()
             ->orderByDesc('id')
-            ->limit(1)
             ->first();
 
         if (empty($user)) {
@@ -562,33 +537,27 @@ class UsersController extends AppController
             $user = $this->Users->get($this->request->getData('id'));
             $user->tfa_ativo = $this->request->getData('tfa');
             if ($this->Users->save($user)) {
-                $this->Flash->success(__('Usuário configurado com sucesso!'));
+                $this->Flash->success('Usuário configurado com sucesso');
 
                 return $this->redirect(['controller' => 'Users', 'action' => 'login']);
             } else {
-                $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $user->getErrors()]]);
+                $this->Flash->error('', ['params' => ['mensagens' => $user->getErrors()]]);
             }
         }
 
         $user->tfa_secret = $user->geraSecret2FA();
         if ($this->Users->save($user) == false) {
-            $this->Flash->error('Erro ao salvar', ['params' => ['mensagens' => $user->getErrors()]]);
+            $this->Flash->error('', ['params' => ['mensagens' => $user->getErrors()]]);
         }
 
-        $g2faUrl = (new Google2FA())->getQRCodeUrl(
-            'KeyAnyWhere',
-            $user->email,
-            $user->descripSecret2FA(),
-        );
-
-        $render = new ImageRenderer(
-            new RendererStyle(400),
-            new SvgImageBackEnd(),
-        );
-
-        $strSvgQrCode = (new Writer($render))->writeString($g2faUrl);
+        $dados2fa = $this->dados2fa($user, 400);
 
         $this->viewBuilder()->setLayout('config_inicial');
-        $this->set(compact('user', 'strSvgQrCode'));
+        $this->set([
+            'user' => $user,
+            'strSvgQrCode' => $dados2fa['svgQrCode'],
+            'chave2fa' => $dados2fa['chave'],
+            'codinome2fa' => $dados2fa['codinome'],
+        ]);
     }
 }

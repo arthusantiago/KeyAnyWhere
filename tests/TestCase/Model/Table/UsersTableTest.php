@@ -283,4 +283,46 @@ class UsersTableTest extends TestCase
         $this->assertTrue($resultado, 'Failed to delete user.');
         $this->assertFalse($this->Users->exists(['id' => $id]));
     }
+
+    /**
+     * RN: a configuração inicial roda enquanto não há usuário ou enquanto o primeiro usuário
+     * ainda não ativou o 2FA.
+     *
+     * @return void
+     * @uses \App\Model\Table\UsersTable::configInicialSistema()
+     */
+    public function testConfigInicialSistema(): void
+    {
+        // A fixture tem o usuário 1 com o 2FA ativo: sistema configurado.
+        $this->assertFalse($this->Users->configInicialSistema());
+
+        $primeiro = $this->Users->get(1);
+        $primeiro->tfa_ativo = false;
+        $this->Users->saveOrFail($primeiro);
+        $this->assertTrue($this->Users->configInicialSistema());
+
+        $this->Users->deleteAll([]);
+        $this->assertTrue($this->Users->configInicialSistema());
+    }
+
+    /**
+     * O validador do geraQrCode2fa exige o id do usuário (inteiro) e a flag `novoQrCode` (booleana).
+     *
+     * @return void
+     * @uses \App\Model\Table\UsersTable::validationQrCode2fa()
+     */
+    public function testValidationQrCode2fa(): void
+    {
+        $validador = $this->Users->getValidator('qrCode2fa');
+
+        $this->assertSame([], $validador->validate(['idUser' => 1, 'novoQrCode' => true], false));
+
+        $erros = $validador->validate([], false);
+        $this->assertArrayHasKey('idUser', $erros);
+        $this->assertArrayHasKey('novoQrCode', $erros);
+
+        $erros = $validador->validate(['idUser' => 'abc', 'novoQrCode' => 'talvez'], false);
+        $this->assertArrayHasKey('integer', $erros['idUser']);
+        $this->assertArrayHasKey('boolean', $erros['novoQrCode']);
+    }
 }
