@@ -14,41 +14,41 @@
     <ul class="dropdown-menu">
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Pages', 'action' => 'home']) ?>">
-                <i class="bi bi-house"></i>Home
-            </a>
-        </li>
-        <li id="btn-menu-opcao-busca">
-            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalBusca">
-                <i class="bi bi-search"></i>Busca
-            </a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'minhaConta']) ?>">
-                <i class="bi bi-person"></i>Minha Conta
+                <i class="bi bi-house"></i><?=__('Home')?>
             </a>
         </li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Categorias', 'action' => 'index']); ?>">
-                <i class="bi bi-list-ol"></i>Categorias
+                <i class="bi bi-list-ol"></i><?=__('Categorias')?>
+            </a>
+        </li>
+        <li id="btn-menu-opcao-busca">
+            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalBusca">
+                <i class="bi bi-search"></i><?=__('Busca')?>
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'minhaConta']) ?>">
+                <i class="bi bi-person"></i><?=__('Minha Conta')?>
             </a>
         </li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Auditorias', 'action' => 'index']) ?>">
-                <i class="bi bi-clock-history"></i>Auditoria
+                <i class="bi bi-clock-history"></i><?=__('Auditoria')?>
             </a>
         </li>
-        <?php if ($userLogado->root): ?>
-        <li><h6 class="dropdown-header">Configurações</h6></li>
+    <?php if ($userLogado->root): ?>
+        <li><h6 class="dropdown-header"><?=__('Configurações')?></h6></li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'index']) ?>">
-                <i class="bi bi-people"></i>Usuários
+                <i class="bi bi-people"></i><?=__('Usuários')?>
             </a>
         </li>
     <?php endif; ?>
         <li><hr class="dropdown-divider"></li>
         <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'logout']) ?>">
-                <i class="bi bi-box-arrow-right"></i>Sair
+                <i class="bi bi-box-arrow-right"></i><?=__('Sair')?>
             </a>
         </li>
     </ul>

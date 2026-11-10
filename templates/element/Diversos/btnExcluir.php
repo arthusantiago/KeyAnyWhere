@@ -44,5 +44,5 @@ switch ($tipo) {
 }
 ?>
 <a <?=$atributosHtmlBotao?> href="#" data-excluir-id="<?=$idRegistro?>" data-excluir-modal="modalExcluirRegistro">
-  <i class="bi bi-trash2"></i><?=$texto?>
+  <i class="bi bi-trash2"></i><?=__($texto)?>
 </a>

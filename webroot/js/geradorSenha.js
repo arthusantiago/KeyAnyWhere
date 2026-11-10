@@ -67,18 +67,3 @@ function aplicaSenha(event) {
 document
     .getElementById('btn-aplica-senha')
     .addEventListener("click", aplicaSenha);
-
-
-/**
- * Atualiza a label com a quantidade de caracteres da senha gerada
- *
- * @param Event event Evento que está acionando a function (manipulado)
- * @return	void
- */
-function atualizaLabel(event) {
-    document.getElementById('labelTamanho').innerHTML = 'Tamanho: ' + document.getElementById('tamanho').value + ' caracteres';
-}
-/* Aplicando o manipulador de evento no elemento HTML*/
-document
-    .getElementById('tamanho')
-    .addEventListener("change", atualizaLabel);

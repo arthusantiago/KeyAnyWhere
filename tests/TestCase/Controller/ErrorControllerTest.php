@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Controller\ErrorController;
+use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Http\ServerRequest;
+use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Exception;
 
@@ -16,6 +18,46 @@ use Exception;
  */
 class ErrorControllerTest extends TestCase
 {
+    use IntegrationTestTrait;
+
+    /**
+     * As páginas de erro usam o layout público `falha` (sem menu e sem dados da sessão).
+     *
+     * @return void
+     */
+    public function testInitializeUsaOLayoutFalha(): void
+    {
+        $controller = new ErrorController(new ServerRequest(['url' => '/']));
+        $controller->initialize();
+
+        $this->assertSame('falha', $controller->viewBuilder()->getLayout());
+    }
+
+    /**
+     * Em produção (debug desligado), uma URL inexistente mostra a página de erro com o layout `falha`.
+     * Antes, os templates de erro pediam um layout `error` que não existe em templates/layout.
+     *
+     * @return void
+     */
+    public function testUrlInexistenteEmProducaoRenderizaPaginaDeErro(): void
+    {
+        $debugOriginal = Configure::read('debug');
+        Configure::write('debug', false);
+        // Com debug desligado, o HttpsEnforcerMiddleware exige HTTPS.
+        $this->configRequest(['environment' => ['HTTPS' => 'on']]);
+
+        try {
+            $this->get('https://localhost/pagina-que-nao-existe');
+        } finally {
+            Configure::write('debug', $debugOriginal);
+        }
+
+        $this->assertResponseCode(404);
+        $this->assertResponseContains('Erro ao acessar a URL');
+        $this->assertResponseContains('Voltar a página inicial');
+        $this->assertResponseNotContains('dropdown-menu');
+    }
+
     /**
      * Test beforeFilter method - should be a no-op (does not call AppController::beforeFilter,
      * so the IP-block check does not run for error pages).

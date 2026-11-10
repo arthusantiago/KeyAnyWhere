@@ -5,9 +5,9 @@
 ?>
 <nav>
     <ul class="pagination justify-content-center">
-        <?=$this->Paginator->first('Primeira')?>
+        <?=$this->Paginator->first(__('Primeira'))?>
         <?=$this->Paginator->numbers(['modulus' => 4])?>
-        <?=$this->Paginator->last('Última')?>
+        <?=$this->Paginator->last(__('Última'))?>
     </ul>
-    <p class="text-center"><?= $this->Paginator->counter(__('Exibindo {{current}} registros de {{count}}')) ?></p>
+    <p class="text-center"><?=__('Exibindo {0} registros de {1}', [$this->Paginator->param('count'), $this->Paginator->param('totalCount')])?></p>
 </nav>

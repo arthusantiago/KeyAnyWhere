@@ -23,7 +23,7 @@
  *        'breadcrumb',
  *        [
  *            'caminho' => [
- *                ['Pages', 'index', 'Home'],
+ *                ['Pages', 'home', 'Home'],
  *               'Configurações',
  *                ['Users', 'index', 'Usuários'],
  *                'Novo'
@@ -44,10 +44,10 @@
 		<?php foreach ($caminho as $parte) : ?>
 			<?php if (is_array($parte)) : ?>
 				<li class="breadcrumb-item">
-					<a href="<?= $this->Url->build(["controller" => $parte[0], "action" => $parte[1]]) ?>"><?= $parte[2] ?></a>
+					<a href="<?= $this->Url->build(["controller" => $parte[0], "action" => $parte[1]]) ?>"><?=__($parte[2])?></a>
 				</li>
 			<?php else : ?>
-				<li class="breadcrumb-item"><?= $parte ?></li>
+				<li class="breadcrumb-item"><?=__($parte)?></li>
 			<?php endif; ?>
 		<?php endforeach; ?>
 	</ol>

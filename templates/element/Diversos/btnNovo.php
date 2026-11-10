@@ -22,6 +22,8 @@
   *		'controller' : Controlador
   *		'action' : Metodo do controlador.
   * 						 Se não for informado, é chamada a action 'add'
+  *   	'?' : Array com os parâmetros que podem ser passados via query string
+  *   			 Exemplo: '?' => ['categoria' => 1] --> entradas/add?categoria=1
   * 	'texto' : Texto localizado dentro do botão
   *
   *   Parâmetros opcionais:
@@ -41,22 +43,13 @@
 **/ 
 
 //Gerando a URL
-$url = null;
+$paramsUrl = [
+  'controller' => $parametros['controller'],
+  'action' => $parametros['action'] ?? 'add',
+  '?' =>  $parametros['?'] ?? []
+];
 
-if (isset($parametros['action']) == true && empty($parametros['action']) == false)
-{
-	$url = $this->Url->build([
-    'controller' => $parametros['controller'],
-    'action' => $parametros['action'],
-    'prefix' => false
-  ]);
-}else{
-	$url = $this->Url->build([
-		"controller" => $parametros['controller'],
-		"action" => 'add',
-    'prefix' => false
-	]);
-}
+$url = $this->Url->build($paramsUrl);
 
 // Gerando a string dos atributos
 $atributoHTML = ""; 
@@ -70,20 +63,9 @@ if (isset($parametros['atributo']) == true && empty($parametros['atributo']) == 
 }
 
 //Gerando o texto do botão
-$texto = 'Novo';
-
-if (isset($parametros['texto']) == true && empty($parametros['texto']) == false)
-{
-	$texto = $parametros['texto'];
-}
-
+$texto = $parametros['texto'] ?? 'Novo';
 ?>
 
-<a
-  href="<?=$url?>"
-	class="btn btn-sm btn-outline-success botoes"
-	role="button"
-  <?=$atributoHTML?>
->
-	<i class="bi bi-plus-lg"></i><?=$texto?>
+<a href="<?=$url?>" class="btn btn-sm btn-outline-success botoes"	role="button" <?=$atributoHTML?>>
+	<i class="bi bi-plus-lg"></i><?=__($texto)?>
 </a>
