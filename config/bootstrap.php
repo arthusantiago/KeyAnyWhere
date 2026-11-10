@@ -45,7 +45,10 @@ use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
 use Cake\Routing\Router;
 use Cake\Utility\Security;
+use Cake\I18n\DateTime;
+use Cake\ORM\TableRegistry;
 use App\Application;
+use App\I18n\Regional;
 
 /**
  * Load global functions.
@@ -236,4 +239,22 @@ ServerRequest::addDetector('tablet', function ($request) {
 // see https://book.cakephp.org/4/en/core-libraries/time.html#setting-the-default-locale-and-format-string
 // and https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax
 //\Cake\I18n\FrozenDate::setToStringFormat('dd.MM.yyyy');
-//\Cake\I18n\FrozenTime::setToStringFormat('dd.MM.yyyy HH:mm');
+DateTime::setToStringFormat('yyyy/MM/dd HH:mm:ss');
+
+/*
+ * Fuso horário e idioma escolhidos pelo root em "Configurações gerais" (tabela `configuracoes`).
+ * Sem a tabela (instalação nova, antes das migrations) ou sem valor gravado, valem o
+ * App.defaultTimezone e o App.defaultLocale do config/app.php.
+ */
+try {
+    $preferenciasRegionais = TableRegistry::getTableLocator()
+        ->get('Configuracoes')
+        ->preferenciasRegionais();
+} catch (\Exception $e) {
+    $preferenciasRegionais = [];
+} finally {
+    // A instância lida aqui fica presa à conexão daquele momento; a aplicação cria a sua depois.
+    TableRegistry::getTableLocator()->remove('Configuracoes');
+}
+Regional::aplicar($preferenciasRegionais);
+unset($preferenciasRegionais);

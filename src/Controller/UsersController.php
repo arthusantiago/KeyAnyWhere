@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\I18n\Regional;
 use App\Log\Seguranca;
 use App\Model\Entity\User;
 use Authentication\Authenticator\ResultInterface;
@@ -11,6 +12,7 @@ use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Cake\Event\EventInterface;
+use Cake\I18n\I18n;
 use PragmaRX\Google2FA\Google2FA;
 
 /**
@@ -481,6 +483,9 @@ class UsersController extends AppController
             return $this->redirect(['controller' => 'Users', 'action' => 'login']);
         }
 
+        // Antes do primeiro usuário ainda não há idioma escolhido: vale o do navegador.
+        I18n::setLocale(Regional::idiomaDoNavegador($this->request));
+
         $user = $this->Users
             ->find()
             ->orderByDesc('id')
@@ -522,6 +527,9 @@ class UsersController extends AppController
         if ($this->Users->configInicialSistema() == false) {
             return $this->redirect(['controller' => 'Users', 'action' => 'login']);
         }
+
+        // Antes do primeiro usuário ainda não há idioma escolhido: vale o do navegador.
+        I18n::setLocale(Regional::idiomaDoNavegador($this->request));
 
         /** @var \App\Model\Entity\User $user */
         $user = $this->Users

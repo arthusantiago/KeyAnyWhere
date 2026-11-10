@@ -40,6 +40,11 @@
     <?php if ($userLogado->root): ?>
         <li><h6 class="dropdown-header"><?=__('Configurações')?></h6></li>
         <li>
+            <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Configuracoes', 'action' => 'geral']) ?>">
+                <i class="bi bi-gear"></i><?=__('Configurações gerais')?>
+            </a>
+        </li>
+        <li>
             <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'index']) ?>">
                 <i class="bi bi-people"></i><?=__('Usuários')?>
             </a>
