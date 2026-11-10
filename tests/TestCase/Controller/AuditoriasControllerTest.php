@@ -152,7 +152,7 @@ class AuditoriasControllerTest extends TestCase
     }
 
     /**
-     * RN (D16): a Auditoria é aberta a todos os usuários logados, não só a root.
+     * RN: a Auditoria é aberta a todos os usuários logados, não só a root.
      *
      * @return void
      */

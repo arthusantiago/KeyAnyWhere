@@ -42,7 +42,7 @@ class ErrorLoggerTest extends TestCase
     }
 
     /**
-     * Cenário do log de produção (2026-10-12): CSRF inválido saía como `error`, com classe,
+     * Cenário real de log de produção: CSRF inválido saía como `error`, com classe,
      * stack trace, URL e Referer misturados num texto só.
      */
     public function testExcecao4xxViraWarningComCamposEstruturados(): void

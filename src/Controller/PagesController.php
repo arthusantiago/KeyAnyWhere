@@ -36,7 +36,7 @@ class PagesController extends AppController
      */
     public function home()
     {
-        // Últimas alterações da trilha de auditoria, para todos os usuários (decisão D16).
+        // Últimas alterações da trilha de auditoria, para todos os usuários.
         $ultimasAlteracoes = $this->fetchTable(AuditoriasTable::class)
             ->find()
             ->contain(['Users'])

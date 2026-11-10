@@ -140,7 +140,7 @@ class ApplicationTest extends TestCase
     }
 
     /**
-     * RN (plano de reestruturação, 4.4 item 8): só o que começa em `/api/` é rota de API.
+     * RN: só o que começa em `/api/` é rota de API.
      *
      * @param string $caminho
      * @param bool $esperado

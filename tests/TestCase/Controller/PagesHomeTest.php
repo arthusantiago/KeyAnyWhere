@@ -45,7 +45,7 @@ class PagesHomeTest extends TestCase
     }
 
     /**
-     * RN (D16): todos os usuários veem as últimas alterações da Auditoria, com o link para a lista
+     * RN: todos os usuários veem as últimas alterações da Auditoria, com o link para a lista
      * completa e para o detalhe.
      *
      * @return void
@@ -79,7 +79,7 @@ class PagesHomeTest extends TestCase
     }
 
     /**
-     * A home não mostra mais as "Atividades suspeitas" (sistema de eventos removido, D14) nem os IPs
+     * A home não mostra mais as "Atividades suspeitas" (sistema de eventos removido) nem os IPs
      * bloqueados (funcionalidade removida).
      *
      * @return void
