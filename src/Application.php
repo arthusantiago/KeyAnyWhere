@@ -94,6 +94,17 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
     }
 
     /**
+     * Nome do cookie CSRF. O prefixo `__Secure-` exige HTTPS, que o servidor de desenvolvimento não tem.
+     * Público para os testes de integração usarem o mesmo nome (ver tests/TestCase/Controller/CsrfTestTrait.php).
+     *
+     * @return string
+     */
+    public static function nomeCookieCsrf(): string
+    {
+        return self::isTheExecutionEnvironment(self::DESENVOLVIMENTO) ? 'Secure-csrfToken' : '__Secure-csrfToken';
+    }
+
+    /**
      * Se a requisição é de uma rota de API (`/api/...`).
      *
      * As rotas de API autenticam por token (cabeçalho), não pelo cookie de sessão: por isso não passam
@@ -114,12 +125,14 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
      * Regra do `skipCheckCallback()` do CSRF. O middleware guarda um único callback: toda regra nova de
      * exceção ao CSRF entra aqui.
      *
+     * Os testes não pulam a verificação: validam o CSRF como em produção (ver CsrfTestTrait).
+     *
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @return bool
      */
     public function pulaVerificacaoCsrf(ServerRequestInterface $request): bool
     {
-        return $this->isRunningUnitTests() || self::ehRotaApi($request);
+        return self::ehRotaApi($request);
     }
 
     /**
@@ -187,16 +200,14 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/4/en/controllers/middleware.html#cross-site-request-forgery-csrf-middleware
             $csrfProtecConfig = [
-                'cookieName' => self::isTheExecutionEnvironment(self::DESENVOLVIMENTO)
-                    ? 'Secure-csrfToken'
-                    : '__Secure-csrfToken',
+                'cookieName' => self::nomeCookieCsrf(),
                 'httponly' => true,
                 'secure' => true,
                 'samesite' => 'Strict',
             ];
             // Renova, no GET, o cookie CSRF assinado com um SECURITY_SALT anterior (ver a classe).
             $csrf = new CsrfProtectionKawMiddleware($csrfProtecConfig);
-            // Testes e rotas de API (ver pulaVerificacaoCsrf()).
+            // Só as rotas de API (ver pulaVerificacaoCsrf()).
             $csrf->skipCheckCallback(function (ServerRequestInterface $request): bool {
                 return $this->pulaVerificacaoCsrf($request);
             });

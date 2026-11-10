@@ -18,6 +18,7 @@ use Cake\TestSuite\TestCase;
 class AuditoriasControllerTest extends TestCase
 {
     use IntegrationTestTrait;
+    use CsrfTestTrait;
     use AuthenticatedTestTrait;
 
     /**

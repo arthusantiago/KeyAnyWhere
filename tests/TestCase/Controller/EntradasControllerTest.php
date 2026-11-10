@@ -14,6 +14,7 @@ use Cake\TestSuite\TestCase;
 class EntradasControllerTest extends TestCase
 {
     use IntegrationTestTrait;
+    use CsrfTestTrait;
     use AuthenticatedTestTrait;
 
     /**
