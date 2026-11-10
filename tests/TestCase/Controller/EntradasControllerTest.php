@@ -408,4 +408,25 @@ class EntradasControllerTest extends TestCase
         $body = json_decode((string)$this->_response->getBody(), true);
         $this->assertFalse($body['localizado']);
     }
+
+    /**
+     * O formulário de nova entrada já vem com a categoria do `?categoria=` escolhida; um valor que não é
+     * número não chega à página (o controller o converte em inteiro).
+     *
+     * @return void
+     */
+    public function testAddComCategoriaNaUrl(): void
+    {
+        $this->loginAsUser();
+
+        $this->get('/entradas/add?categoria=1');
+        $this->assertResponseOk();
+        $this->assertResponseContains('id="id-categoria-selecionada" value="1"');
+        $this->assertMatchesRegularExpression('/<option value="1"\s+selected>/', (string)$this->_response?->getBody());
+
+        $this->get('/entradas/add?categoria=' . rawurlencode('"><script>alert(1)</script>'));
+        $this->assertResponseOk();
+        $this->assertResponseNotContains('<script>alert(1)</script>');
+        $this->assertResponseContains('id="id-categoria-selecionada" value="0"');
+    }
 }

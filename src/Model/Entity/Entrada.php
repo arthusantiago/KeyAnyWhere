@@ -16,6 +16,7 @@ use Cake\ORM\Entity;
  * @property string|null $link
  * @property string $anotacoes
  * @property int $categoria_id
+ * @property int $posicao
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
  *
@@ -40,6 +41,7 @@ class Entrada extends Entity
         'link' => true,
         'anotacoes' => true,
         'categoria_id' => true,
+        'posicao' => false,
         'created' => true,
         'modified' => true,
         'user' => true,

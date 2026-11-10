@@ -79,12 +79,6 @@ parameters:
 			path: src/Controller/EntradasController.php
 
 		-
-			message: '#^Function __ not found\.$#'
-			identifier: function.notFound
-			count: 3
-			path: src/Controller/EntradasController.php
-
-		-
 			message: '#^PHPDoc tag @method for method App\\Controller\\EntradasController\:\:paginate\(\) return type contains generic interface Cake\\Datasource\\ResultSetInterface but does not specify its types\: TKey, TValue$#'
 			identifier: missingType.generics
 			count: 1
