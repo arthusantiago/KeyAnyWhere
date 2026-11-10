@@ -7,7 +7,7 @@
 <!doctype html>
 <html lang="pt-br">
     <head>
-        <title>KeyAnyWhere - Configuração inicial</title>
+        <title><?=__('Configuração inicial')?></title>
         <?= $this->Html->charset() ?>
         <?= $this->Html->meta('icon', 'favicon.ico') ?>
         <?= $this->Html->meta('csrfToken', $csrfToken); ?>
@@ -28,7 +28,18 @@
                 <div class="col-sm"><?=$this->Flash->render()?></div>
                 <div class="col-sm"></div>
             </div>
+            <div class="row">
+                <div class="col-sm mb-3 mt-4">
+                    <h1 class="text-center"><?=__('Bem-vindo KeyAnyWhere!')?></h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm mb-3">
+                    <p class="text-center"><?=__('Neste tutorial de duas etapas vamos realizar a configuração inicial da ferramenta.')?></p>
+                </div>
+            </div>
             <?= $this->fetch('content') ?>
+            <br><br><br>
         </div>
         <?php
             echo $this->Html->script('popper.min');

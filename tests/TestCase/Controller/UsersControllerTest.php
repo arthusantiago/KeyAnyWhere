@@ -160,6 +160,9 @@ class UsersControllerTest extends TestCase
         $this->loginAsUser(['root' => true]);
         $this->get('/users');
         $this->assertResponseOk();
+        // Paginação (element paginacao) e menu de opções (btnOpcoes) traduzidos
+        $this->assertResponseContains('Exibindo');
+        $this->assertResponseContains('Usuários');
     }
 
     /**
@@ -934,6 +937,9 @@ class UsersControllerTest extends TestCase
         $this->get('/users/config-inicial');
 
         $this->assertResponseOk();
+        // Cabeçalho das duas etapas, no layout config_inicial
+        $this->assertResponseContains('Bem-vindo KeyAnyWhere!');
+        $this->assertResponseContains('(1 de 2)');
     }
 
     /**

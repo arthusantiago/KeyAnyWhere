@@ -46,6 +46,7 @@
         <div class="col-sm"></div>
       </div>
      	<?=$this->fetch('content')?>
+      <br><br><br>
     </div>
     <?php
       echo $this->element('buscaModal');

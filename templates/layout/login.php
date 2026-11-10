@@ -18,13 +18,14 @@
     ?>
   </head>
   <body>
-	<div class="container">
-		<div class="row">
-          <div class="col-sm"></div>
-          <div class="col-sm"><?= $this->Flash->render()?></div>
-          <div class="col-sm"></div>
-        </div>
-        <?= $this->fetch('content') ?>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm"></div>
+        <div class="col-sm"><?= $this->Flash->render()?></div>
+        <div class="col-sm"></div>
+      </div>
+      <?= $this->fetch('content') ?>
+      <br><br><br>
     </div>
     <?php
       echo $this->Html->script('bootstrap.min');

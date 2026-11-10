@@ -32,6 +32,8 @@ class ErrorController extends AppController
      */
     public function initialize(): void
     {
+        // Páginas de erro com o layout público (templates/layout/falha.php): sem menu e sem dados da sessão.
+        $this->viewBuilder()->setLayout('falha');
         // Only add parent::initialize() if you are confident your appcontroller is safe.
     }
 
