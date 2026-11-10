@@ -73,10 +73,10 @@ class CategoriasTable extends Table
 
         $validator
             ->scalar('nome')
-            ->maxLength('nome', 88, 'O nome da categoria pode ter no máximo 88 caracteres')
-            ->requirePresence('nome', 'create', 'O nome da categoria precisa ser informado')
-            ->notEmptyString('nome', 'O nome da categoria precisa ser informado')
-            ->checkXSS('nome');
+            ->maxLength('nome', 88, ValidatorKaw::mensagemErroPadrao('maxLength', ['Nome', 88]))
+            ->requirePresence('nome', 'create', ValidatorKaw::mensagemErroPadrao('requirePresence', ['Nome']))
+            ->notEmptyString('nome', ValidatorKaw::mensagemErroPadrao('notEmptyString', ['Nome']))
+            ->checkXSS('nome', ValidatorKaw::mensagemErroPadrao('checkXSS', ['Nome']));
 
         return $validator;
     }

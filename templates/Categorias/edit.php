@@ -18,7 +18,7 @@
 
 <div class="row">
 	<div class="col-sm-auto mb-3">
-		<span class="titulo">Categoria <?= h($categoria->nomeDescrip()) ?></span>
+		<span class="titulo"><?=__('Categoria')?> <?= h($categoria->nomeDescrip()) ?></span>
 	</div>
 </div>
 
@@ -26,7 +26,7 @@
 <?php $this->Form->secure(['nome']); ?>
 <div class="row">
 	<div class="col-sm-4 mb-3">
-		<label for="nome">Nome da categoria</label>
+		<label for="nome"><?=__('Nome da categoria')?></label>
 		<input type="text" class="form-control inputs" id="nome" name="nome" value="<?= h($categoria->nomeDescrip()) ?>" maxlength="88">
 	</div>
 </div>
