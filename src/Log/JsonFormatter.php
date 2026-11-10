@@ -27,19 +27,19 @@ use DateTimeZone;
  *
  * Config opcional 'ambienteEnvVar': mesma ideia, mas pro campo 'ambiente'.
  * Tem default 'APP_ENV' (não null) porque, diferente do tenant, APP_ENV é
- * usada pela edição paga e pelos outros produtos da Curie. Sem a variável, o campo
+ * é a convenção mais comum. Sem a variável, o campo
  * sai null. Passe null explicitamente pra desativar.
  *
  * Config opcional 'app': valor fixo (não nome de env var) pra identificar a
  * aplicação — não existe uma env var natural pra isso, então é só uma string
- * configurada uma vez em config/app.php (ex.: 'app' => 'oficinahub'). Sem
+ * configurada uma vez em config/app.php (ex.: 'app' => 'keyanywhere'). Sem
  * default — se não configurado, o campo 'app' não aparece no log.
  *
  * Config opcional 'fuso' (default 'America/Campo_Grande'): fuso do campo 'timestamp',
  * fixado no formatter, e não no fuso padrão do PHP (que numa aplicação pode mudar por
  * tenant, como no KeyAnywhere). O 'timestamp' sai em RFC 3339 com milissegundos e o
- * deslocamento explícito (ex.: 2026-10-19T14:05:31.482-04:00), o formato que o Alloy usa
- * como horário do evento no Loki.
+ * deslocamento explícito (ex.: 2026-10-19T14:05:31.482-04:00), o formato que os agregadores
+ * de log (ex.: Loki) usam como horário do evento.
  *
  * Config opcional 'requisicao' (default true): adiciona o campo 'requisicao'
  * com id da requisição, método, rota, IP e usuário autenticado, tirados de

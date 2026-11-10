@@ -59,7 +59,7 @@ class PagesControllerTest extends TestCase
         $this->_csrfToken = false;
         $this->post('/pages/home', ['hello' => 'world']);
 
-        // Os testes validam o CSRF como em produção (decisão D13): a requisição para no middleware.
+        // Os testes validam o CSRF como em produção: a requisição para no middleware.
         $this->assertResponseCode(403);
     }
 

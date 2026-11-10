@@ -10,8 +10,7 @@ use App\Model\Entity\User;
 use Cake\Event\EventInterface;
 
 /**
- * Configurações gerais da instalação (somente root): fuso horário e idioma (decisão D6 do plano
- * de reestruturação). Os valores ficam na tabela `configuracoes` e são aplicados no
+ * Configurações gerais da instalação (somente root): fuso horário e idioma. Os valores ficam na tabela `configuracoes` e são aplicados no
  * config/bootstrap.php (`App\I18n\Regional`).
  *
  * @property \App\Model\Table\ConfiguracoesTable $Configuracoes

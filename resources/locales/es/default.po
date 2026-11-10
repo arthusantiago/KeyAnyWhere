@@ -1,6 +1,5 @@
 # Traduções do core do KeyAnyWhere para o espanhol (América Latina).
 # O texto em português (pt_BR) é o próprio código; aqui ficam só as frases do core.
-# As frases da edição paga ficam no domínio do plugin dela.
 msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"

@@ -42,7 +42,7 @@ class ErrorLoggerTest extends TestCase
     }
 
     /**
-     * Cenário do log de produção (2026-10-12): CSRF inválido saía como `error`, com classe,
+     * Cenário real de log de produção: CSRF inválido saía como `error`, com classe,
      * stack trace, URL e Referer misturados num texto só.
      */
     public function testExcecao4xxViraWarningComCamposEstruturados(): void
@@ -51,7 +51,7 @@ class ErrorLoggerTest extends TestCase
             'url' => '/users/config-inicial',
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_REFERER' => 'https://luna.oficinahub.com/users/redefinir-senha/token-secreto-123',
+                'HTTP_REFERER' => 'https://app.example.com/users/redefinir-senha/token-secreto-123',
             ],
         ]);
 
@@ -73,7 +73,7 @@ class ErrorLoggerTest extends TestCase
         $this->assertContainsOnly('string', $excecao['trace']);
 
         // Referer e URL não vão crus: o caminho pode carregar segredo.
-        $this->assertSame('https://luna.oficinahub.com', $registro['contexto']['referer_origem']);
+        $this->assertSame('https://app.example.com', $registro['contexto']['referer_origem']);
         $this->assertStringNotContainsString('token-secreto-123', (string)json_encode($registro));
     }
 
@@ -212,13 +212,13 @@ class ErrorLoggerTest extends TestCase
     {
         $request = new ServerRequest([
             'url' => '/clientes',
-            'environment' => ['REQUEST_METHOD' => 'GET', 'HTTP_REFERER' => 'https://luna.oficinahub.com/x/segredo'],
+            'environment' => ['REQUEST_METHOD' => 'GET', 'HTTP_REFERER' => 'https://app.example.com/x/segredo'],
         ]);
 
         $this->logger()->logError(new PhpError(E_USER_WARNING, 'algo'), $request);
 
         $contexto = $this->registros[0]['contexto'];
-        $this->assertSame('https://luna.oficinahub.com', $contexto['referer_origem']);
+        $this->assertSame('https://app.example.com', $contexto['referer_origem']);
         $this->assertSame('GET', $contexto['requisicao']['metodo']);
     }
 

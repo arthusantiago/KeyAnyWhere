@@ -8,7 +8,7 @@ namespace App\Controller;
  *
  * Consulta somente leitura da trilha de auditoria de negócio (quem fez o quê, quando e
  * em quais campos). Os registros são criados só pelo AuditoriaBehavior, nunca por esta
- * controller. Aberta a todos os usuários logados (decisão D16 do plano de reestruturação):
+ * controller. Aberta a todos os usuários logados:
  * os valores alterados são mascarados na gravação, e o IP de origem só aparece para root.
  *
  * @property \App\Model\Table\AuditoriasTable $Auditorias

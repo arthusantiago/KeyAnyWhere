@@ -6,7 +6,7 @@ use Migrations\BaseMigration;
 /**
  * Remove a tabela `ips_bloqueados`: a funcionalidade "IPs Bloqueados" (bloqueio automático
  * do IP após 3 erros de login no dia, tela de listagem/cadastro e página de bloqueio) deixou
- * de existir nas duas edições em 2026-11-09. O evento C1-3 continua sendo registrado no log
+ * de existir em 2026-11-09. O evento C1-3 continua sendo registrado no log
  * de segurança, só sem a reação de bloquear o IP.
  */
 class RemoveIpsBloqueados extends BaseMigration
