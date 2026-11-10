@@ -448,3 +448,9 @@ msgstr "Nombre de la cuenta"
 
 msgid "Nome do registro no aplicativo de 2FA"
 msgstr "Nombre del registro en la aplicación de 2FA"
+
+msgid "Outros"
+msgstr "Otros"
+
+msgid "Nesta instalação, o fuso horário e o idioma são definidos fora desta tela"
+msgstr "En esta instalación, el huso horario y el idioma se definen fuera de esta pantalla"

@@ -4,14 +4,18 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller;
 
 use App\Application;
+use App\Controller\UsersController;
 use App\Log\Seguranca;
 use App\Middleware\CsrfProtectionKawMiddleware;
 use App\Model\Entity\User;
 use App\Model\Table\AuditoriasTable;
 use App\Model\Table\UsersTable;
 use App\Test\TestCase\Log\CapturaLogSegurancaTrait;
+use ArrayObject;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
+use Cake\Event\EventInterface;
+use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -1230,5 +1234,134 @@ class UsersControllerTest extends TestCase
         $linha = $this->logSeguranca(Seguranca::ACESSO_SOMENTE_ROOT);
         $this->assertSame('warning', $linha['nivel']);
         $this->assertSame('Users::add', $linha['requisicao']['rota']);
+    }
+
+    /**
+     * Ouve um evento no gerenciador global (como um plugin faria) e devolve a lista de disparos.
+     *
+     * @param string $nome
+     * @return \ArrayObject<int, \Cake\Event\EventInterface<object>>
+     */
+    private function ouvirEvento(string $nome): ArrayObject
+    {
+        $disparos = new ArrayObject();
+        $ouvinte = function (EventInterface $event) use ($disparos): void {
+            $disparos->append($event);
+        };
+        EventManager::instance()->on($nome, $ouvinte);
+        $this->ouvintes[] = [$nome, $ouvinte];
+
+        return $disparos;
+    }
+
+    /**
+     * @var array<int, array{string, callable}>
+     */
+    private array $ouvintes = [];
+
+    /**
+     * @return void
+     */
+    protected function tearDown(): void
+    {
+        foreach ($this->ouvintes as [$nome, $ouvinte]) {
+            EventManager::instance()->off($nome, $ouvinte);
+        }
+        $this->ouvintes = [];
+        Configure::delete('Kaw.Login.elementos');
+        parent::tearDown();
+    }
+
+    /**
+     * As duas etapas da configuração inicial disparam eventos para os plugins; com o sistema já
+     * configurado, nenhum dispara.
+     *
+     * @return void
+     */
+    public function testConfigInicialDisparaEventosDasEtapas(): void
+    {
+        $inicio = $this->ouvirEvento(UsersController::EVENTO_CONFIG_INICIAL_INICIO);
+        $segundoFator = $this->ouvirEvento(UsersController::EVENTO_CONFIG_INICIAL_SEGUNDO_FATOR);
+
+        // Sistema configurado (fixture): nenhum evento
+        $this->get('/users/config-inicial');
+        $this->get('/users/config-inicial-tfa');
+        $this->assertCount(0, $inicio);
+        $this->assertCount(0, $segundoFator);
+
+        $users = $this->getTableLocator()->get('Users');
+        $users->deleteAll([]);
+        $this->get('/users/config-inicial');
+        $this->assertResponseOk();
+        $this->assertCount(1, $inicio);
+        $this->assertCount(0, $segundoFator);
+
+        $criado = $users->saveOrFail($users->newEntity([
+            'username' => 'primeiro_root',
+            'email' => 'primeiro_root@example.com',
+            'password' => self::gerarSenhaDeTeste(),
+        ]));
+        $this->get('/users/config-inicial-tfa');
+        $this->assertResponseOk();
+        $this->assertCount(1, $segundoFator);
+        $evento = $segundoFator[0];
+        $this->assertInstanceOf(EventInterface::class, $evento);
+        $this->assertSame($criado->get('id'), $evento->getData('user')->id);
+    }
+
+    /**
+     * Elements listados em `Kaw.Login.elementos` aparecem abaixo do formulário de login.
+     *
+     * @return void
+     */
+    public function testLoginRenderizaElementsConfigurados(): void
+    {
+        $this->get('/users/login');
+        $this->assertResponseNotContains('A sessão expirou');
+
+        Configure::write('Kaw.Login.elementos', ['Users/sessaoExpirada']);
+        $this->get('/users/login');
+
+        $this->assertResponseOk();
+        $this->assertResponseContains('A sessão expirou');
+    }
+
+    /**
+     * Itens de `Kaw.Menu.configuracoes` (só root) e `Kaw.Menu.outros` (com `somenteRoot`) no menu.
+     *
+     * @return void
+     */
+    public function testMenuComItensConfigurados(): void
+    {
+        Configure::write('Kaw.Menu', [
+            'configuracoes' => [
+                ['url' => '/item-de-configuracao', 'icone' => 'bi-sliders', 'rotulo' => 'Item de configuração'],
+            ],
+            'outros' => [
+                ['url' => '/item-para-todos', 'icone' => 'bi-headset', 'rotulo' => 'Item para todos'],
+                ['url' => '/item-so-root', 'rotulo' => 'Item só do root', 'somenteRoot' => true],
+            ],
+        ]);
+
+        try {
+            $this->loginAsUser(['root' => true]);
+            $this->get('/users/minha-conta');
+            $this->assertResponseContains('href="/item-de-configuracao"');
+            $this->assertResponseContains('Item para todos');
+            $this->assertResponseContains('Item só do root');
+            $this->assertResponseContains('Outros');
+
+            $this->loginAsNonRootUser();
+            $this->get('/users/minha-conta');
+            $this->assertResponseNotContains('Item de configuração');
+            $this->assertResponseContains('Item para todos');
+            $this->assertResponseNotContains('Item só do root');
+        } finally {
+            Configure::delete('Kaw.Menu');
+        }
+
+        // Sem itens, a seção "Outros" não aparece
+        $this->get('/users/minha-conta');
+        $this->assertResponseNotContains('dropdown-header">Outros');
     }
 }

@@ -47,6 +47,11 @@ CI (`.github/workflows/tests.yml`, `code-quality.yml`, `security.yml`) runs agai
 
 - `config/plugins.php` loads nothing itself (the core's plugins are added in `Application::bootstrap()`/`bootstrapCli()`) and merges `config/plugins_local.php` when it exists. That file is git-ignored here: it is where an installation adds its own plugins (`return ['MyPlugin' => []];`). Bake is loaded only when `Bake\BakePlugin` exists (no deprecation in a `--no-dev` install).
 - **API routes** (`Application::ehRotaApi()`: the path is `/api` or starts with `/api/`) authenticate by token, not by the session cookie, so they skip CSRF (`Application::pulaVerificacaoCsrf()`, the single `skipCheckCallback()` rule) and are never redirected to the login page (`unauthenticatedRedirect` is null for them). The core has no API yet; the rule is for APIs registered by plugins.
+- **Errors on API routes** are answered as JSON (`{"mensagem": ...}`, `templates/Error/error_api.php`, no layout) — also for an `/api/...` path with no route (`ErrorController::beforeRender()`).
+- **Menu items** from a plugin's `bootstrap()`: `Configure::write('Kaw.Menu.configuracoes', [...])` (root-only "Configurações" section) and `Kaw.Menu.outros` ("Outros" section, shown only when it has items). Item: `['url' => array|string, 'icone' => 'bi-...', 'rotulo' => 'Texto', 'dominio' => 'default', 'somenteRoot' => false]`; the label is translated with `__d($dominio, $rotulo)` (`element/Diversos/btnOpcoes.php`).
+- **Login page elements**: `Kaw.Login.elementos` lists elements rendered below the login form (e.g. a help link).
+- **"Configurações gerais" off**: `Kaw.Configuracoes.regionalEditavel = false` hides the screen from the menu and makes its actions redirect home — for an installation whose time zone and language are written to `configuracoes` by something else.
+- **First-run events** (global `EventManager`, e.g. a plugin's `events()`): `UsersController::EVENTO_CONFIG_INICIAL_INICIO` (`Kaw.ConfigInicial.inicio`, when the first step opens while the system isn't configured) and `EVENTO_CONFIG_INICIAL_SEGUNDO_FATOR` (`Kaw.ConfigInicial.segundoFator`, when the 2FA step opens, with the first user in `$event->getData('user')`). Both can fire more than once (on every visit), so listeners must be idempotent.
 
 ### Middleware queue order matters
 

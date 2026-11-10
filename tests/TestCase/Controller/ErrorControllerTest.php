@@ -132,4 +132,29 @@ class ErrorControllerTest extends TestCase
             'App\Controller\AppController',
         ));
     }
+
+    /**
+     * Caminho `/api/...` sem rota: o erro sai em JSON (`{"mensagem": ...}`), não na página HTML.
+     *
+     * @return void
+     */
+    public function testRotaDeApiInexistenteRespondeJson(): void
+    {
+        $debugOriginal = Configure::read('debug');
+        Configure::write('debug', false);
+        $this->configRequest(['environment' => ['HTTPS' => 'on']]);
+
+        try {
+            $this->get('https://localhost/api/v1/nao-existe');
+        } finally {
+            Configure::write('debug', $debugOriginal);
+        }
+
+        $this->assertResponseCode(404);
+        $this->assertContentType('application/json');
+        $corpo = json_decode($this->_getBodyAsString(), true);
+        $this->assertIsArray($corpo);
+        $this->assertArrayHasKey('mensagem', $corpo);
+        $this->assertResponseNotContains('<html');
+    }
 }
