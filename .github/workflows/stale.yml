@@ -8,6 +8,8 @@ jobs:
   stale:
 
     runs-on: ubuntu-latest
+    # Só no repositório do community: quem recebe este código por merge tem o próprio CI.
+    if: github.repository == 'arthusantiago/KeyAnyWhere'
     
     steps:
     - uses: actions/stale@v1

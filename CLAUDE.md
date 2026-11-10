@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**Local plugins:** if this checkout has plugins under `plugins/` (loaded by `config/plugins_local.php`), read the `CLAUDE.md` (and `README.md`) of each one before working: they describe what the installation adds on top of this core, and their rules apply there.
+
 ## Project overview
 
 KeyAnyWhere (KAW) is a self-hosted credential/password manager built on CakePHP 5. This is the **open-source community edition** — there is a closed-source paid (hosted) edition; feature-wise both editions are meant to be identical. The paid edition adds only what depends on its hosting infrastructure (licensing, billing, an integration API, multi-tenancy). Do not assume paid-only concepts (Licencas, ApiCredenciais, API controllers) exist here — check `src/` before referencing them. **The core must only depend on public packages** — never on private ones. This repository is the single source of the core; the paid edition receives it by merge, so core changes are made here first.
