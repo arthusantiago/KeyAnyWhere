@@ -22,6 +22,7 @@ class ConfiguracoesControllerTest extends TestCase
     use CsrfTestTrait;
     use AuthenticatedTestTrait;
     use CapturaLogSegurancaTrait;
+    use ConfiguracaoKawIsoladaTrait;
 
     /**
      * @var array<string>
@@ -167,7 +168,7 @@ class ConfiguracoesControllerTest extends TestCase
             $this->get('/users/minha-conta');
             $this->assertResponseNotContains('/configuracoes/geral');
         } finally {
-            Configure::delete('Kaw.Configuracoes.regionalEditavel');
+            Configure::write('Kaw.Configuracoes.regionalEditavel', true);
         }
     }
 }

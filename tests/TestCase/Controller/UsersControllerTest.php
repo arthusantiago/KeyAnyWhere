@@ -34,6 +34,7 @@ class UsersControllerTest extends TestCase
     use CsrfTestTrait;
     use AuthenticatedTestTrait;
     use CapturaLogSegurancaTrait;
+    use ConfiguracaoKawIsoladaTrait;
 
     /**
      * Fixtures
@@ -1268,7 +1269,6 @@ class UsersControllerTest extends TestCase
             EventManager::instance()->off($nome, $ouvinte);
         }
         $this->ouvintes = [];
-        Configure::delete('Kaw.Login.elementos');
         parent::tearDown();
     }
 
@@ -1357,7 +1357,7 @@ class UsersControllerTest extends TestCase
             $this->assertResponseContains('Item para todos');
             $this->assertResponseNotContains('Item só do root');
         } finally {
-            Configure::delete('Kaw.Menu');
+            Configure::write('Kaw.Menu', ['configuracoes' => [], 'outros' => []]);
         }
 
         // Sem itens, a seção "Outros" não aparece
