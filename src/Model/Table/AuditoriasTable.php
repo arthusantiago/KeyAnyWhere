@@ -70,26 +70,30 @@ class AuditoriasTable extends Table implements RegistradorAuditoriaInterface
 
         $validator
             ->scalar('contexto')
-            ->maxLength('contexto', 100, 'O contexto pode ter no máximo 100 caracteres')
-            ->requirePresence('contexto', 'create', 'O contexto precisa ser informado')
-            ->notEmptyString('contexto', 'O contexto precisa ser informado')
-            ->checkXSS('contexto');
+            ->maxLength('contexto', 100, ValidatorKaw::mensagemErroPadrao('maxLength', ['Contexto', 100]))
+            ->requirePresence('contexto', 'create', ValidatorKaw::mensagemErroPadrao('requirePresence', ['Contexto']))
+            ->notEmptyString('contexto', ValidatorKaw::mensagemErroPadrao('notEmptyString', ['Contexto']))
+            ->checkXSS('contexto', ValidatorKaw::mensagemErroPadrao('checkXSS', ['Contexto']));
 
         $validator
-            ->integer('id_entidade', 'O registro precisa ser um número inteiro')
-            ->requirePresence('id_entidade', 'create', 'O registro precisa ser informado')
-            ->notEmptyString('id_entidade', 'O registro precisa ser informado');
+            ->integer('id_entidade', ValidatorKaw::mensagemErroPadrao('integer', ['Registro']))
+            ->requirePresence(
+                'id_entidade',
+                'create',
+                ValidatorKaw::mensagemErroPadrao('requirePresence', ['Registro']),
+            )
+            ->notEmptyString('id_entidade', ValidatorKaw::mensagemErroPadrao('notEmptyString', ['Registro']));
 
         $validator
             ->scalar('acao')
-            ->maxLength('acao', 50, 'A ação pode ter no máximo 50 caracteres')
-            ->requirePresence('acao', 'create', 'A ação precisa ser informada')
-            ->notEmptyString('acao', 'A ação precisa ser informada')
-            ->checkXSS('acao');
+            ->maxLength('acao', 50, ValidatorKaw::mensagemErroPadrao('maxLength', ['Ação', 50]))
+            ->requirePresence('acao', 'create', ValidatorKaw::mensagemErroPadrao('requirePresence', ['Ação']))
+            ->notEmptyString('acao', ValidatorKaw::mensagemErroPadrao('notEmptyString', ['Ação']))
+            ->checkXSS('acao', ValidatorKaw::mensagemErroPadrao('checkXSS', ['Ação']));
 
         $validator
-            ->integer('usuario_id', 'O usuário precisa ser um número inteiro')
-            ->requirePresence('usuario_id', 'create', 'O usuário precisa ser informado')
+            ->integer('usuario_id', ValidatorKaw::mensagemErroPadrao('integer', ['Usuário']))
+            ->requirePresence('usuario_id', 'create', ValidatorKaw::mensagemErroPadrao('requirePresence', ['Usuário']))
             ->allowEmptyString('usuario_id');
 
         $validator
@@ -97,9 +101,9 @@ class AuditoriasTable extends Table implements RegistradorAuditoriaInterface
 
         $validator
             ->scalar('ip_origem')
-            ->maxLength('ip_origem', 45, 'O IP de origem pode ter no máximo 45 caracteres')
+            ->maxLength('ip_origem', 45, ValidatorKaw::mensagemErroPadrao('maxLength', ['IP de origem', 45]))
             ->allowEmptyString('ip_origem')
-            ->checkXSS('ip_origem');
+            ->checkXSS('ip_origem', ValidatorKaw::mensagemErroPadrao('checkXSS', ['IP de origem']));
 
         return $validator;
     }

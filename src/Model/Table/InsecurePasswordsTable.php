@@ -57,10 +57,10 @@ class InsecurePasswordsTable extends Table
     {
         $validator
             ->scalar('password')
-            ->maxLength('password', 100)
-            ->requirePresence('password', 'create')
-            ->notEmptyString('password')
-            ->checkXSS('password');
+            ->maxLength('password', 100, ValidatorKaw::mensagemErroPadrao('maxLength', ['password', 100]))
+            ->requirePresence('password', 'create', ValidatorKaw::mensagemErroPadrao('requirePresence', ['password']))
+            ->notEmptyString('password', ValidatorKaw::mensagemErroPadrao('notEmptyString', ['password']))
+            ->checkXSS('password', ValidatorKaw::mensagemErroPadrao('checkXSS', ['password']));
 
         return $validator;
     }
@@ -77,7 +77,7 @@ class InsecurePasswordsTable extends Table
         $rules->add(
             $rules->isUnique(
                 ['password'],
-                'Esta senha já está cadastrada',
+                ValidatorKaw::mensagemErroPadrao('isUnique', ['password']),
             ),
             ['errorField' => 'password'],
         );

@@ -3,89 +3,118 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use Authentication\AuthenticationServiceProviderInterface;
-use Cake\I18n\DateTime;
+use Authentication\IdentityInterface;
+use Cake\Datasource\EntityInterface;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Table;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * SessionsKawMiddleware adiciona a sessão salva no banco de dados, algumas informações utilizadas no sistema.
+ * Completa o registro da sessão no banco (tabela `sessions`) com o usuário autenticado e o
+ * user-agent, usados na lista de sessões de "Minha conta"; nas requisições sem usuário, apaga as
+ * sessões vencidas.
  *
- * ATENÇÃO
- * Esse middleware deve ser adicionado a fila depois do AuthenticationMiddleware, caso contrário um erro será gerado.
+ * ATENÇÃO: deve entrar na fila depois do AuthenticationMiddleware. O usuário vem do atributo
+ * `identity` que ele grava na request; sem ele, toda requisição é tratada como anônima.
  *
- * @global
+ * Não guarda nada da requisição em propriedades: a mesma instância atende requisições seguidas.
  */
 class SessionsKawMiddleware implements MiddlewareInterface
 {
     use LocatorAwareTrait;
 
     /**
-     * É esperado que seja um objeto \App\Application que implementa o AuthenticationServiceProviderInterface.
-     *
-     * @var \Authentication\AuthenticationServiceProviderInterface $subject
+     * Atributo em que o AuthenticationMiddleware grava o usuário (configuração padrão dele).
      */
-    private ?AuthenticationServiceProviderInterface $subject = null;
+    private const ATRIBUTO_IDENTIDADE = 'identity';
 
     /**
-     * Tabela do banco de dados que armazena as sessões
-     *
-     * @var string $table
+     * @param string $tabela Tabela dos registros de sessão.
      */
-    private string $table = 'sessions';
-
-    /**
-     * Constructor
-     *
-     * @param \Authentication\AuthenticationServiceProviderInterface $subject
-     * @param string $table
-     */
-    public function __construct(AuthenticationServiceProviderInterface $subject, string $table = '')
+    public function __construct(private string $tabela = 'sessions')
     {
-        $this->subject = $subject;
-
-        if ($table) {
-            $this->table = $table;
-        }
     }
 
     /**
-     * @param \Cake\Http\ServerRequest $request The request.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
-     * @return \Cake\Http\ServerRequest A response.
+     * @return \Psr\Http\Message\ResponseInterface A response.
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $modelSessions = $this->getTableLocator()->get($this->table);
-        $resultAutenticacao = $this->subject
-            ->getAuthenticationService($request)
-            ->authenticate($request);
+        $sessoes = $this->getTableLocator()->get($this->tabela);
+        $identidade = $request->getAttribute(self::ATRIBUTO_IDENTIDADE);
 
-        if ($resultAutenticacao->isValid()) {
-            $idSession = $request->getSession()->id();
-            $pkField = $modelSessions->getPrimaryKey();
-            $sessionDb = $modelSessions
-                ->find()
-                ->where([$pkField => $idSession])
-                ->first();
-
-            if ($sessionDb && (!$sessionDb->user_id || !$sessionDb->user_agent)) {
-                $userAutenticado = $resultAutenticacao->getData();
-                $sessionDb->user_id = $userAutenticado->id;
-                $sessionDb->user_agent = $request->getHeaders()['User-Agent'][0];
-                $modelSessions->save($sessionDb);
-            }
+        if ($identidade instanceof IdentityInterface && $request instanceof ServerRequest) {
+            $this->completarSessao($sessoes, $request, $identidade);
         } else {
-            $dataHora = DateTime::now();
-            $dataHora = $dataHora->subDays(1, 1);
-            $modelSessions->deleteAll([
-                'created <= ' => $dataHora->i18nFormat('yyyy-MM-dd 01:00:00'),
-            ]);
+            $this->apagarSessoesVencidas($sessoes);
         }
 
         return $handler->handle($request);
+    }
+
+    /**
+     * Grava usuário e user-agent só quando faltam: uma sessão já preenchida não é regravada.
+     *
+     * @param \Cake\ORM\Table $sessoes
+     * @param \Cake\Http\ServerRequest $request
+     * @param \Authentication\IdentityInterface $identidade
+     * @return void
+     */
+    private function completarSessao(Table $sessoes, ServerRequest $request, IdentityInterface $identidade): void
+    {
+        $sessao = $this->sessaoSalvaNoBanco($sessoes, $request);
+
+        if ($sessao->get('user_id') && $sessao->get('user_agent')) {
+            return;
+        }
+
+        $sessao->set('user_id', $sessao->get('user_id') ?: $identidade->getIdentifier());
+        $sessao->set('user_agent', $sessao->get('user_agent') ?: $request->getHeaderLine('User-Agent'));
+        $sessoes->save($sessao);
+    }
+
+    /**
+     * Registro da sessão atual. Se o handler de sessão do PHP ainda não o gravou (ele grava só no
+     * fechamento da sessão, no fim da requisição; acontece logo após o login, quando o
+     * Authentication.Session renova o id da sessão na própria requisição), devolve uma entidade
+     * nova com a chave primária preenchida.
+     *
+     * @param \Cake\ORM\Table $sessoes
+     * @param \Cake\Http\ServerRequest $request
+     * @return \Cake\Datasource\EntityInterface
+     */
+    private function sessaoSalvaNoBanco(Table $sessoes, ServerRequest $request): EntityInterface
+    {
+        $idSessao = $request->getSession()->id();
+        $chave = $sessoes->getPrimaryKey();
+        $chave = is_array($chave) ? (string)$chave[0] : $chave;
+
+        $sessao = $sessoes->find()->where([$chave => $idSessao])->first();
+        if ($sessao instanceof EntityInterface) {
+            return $sessao;
+        }
+
+        $sessao = $sessoes->newEmptyEntity();
+        $sessao->set($chave, $idSessao);
+
+        return $sessao;
+    }
+
+    /**
+     * Pelo `expires`, o mesmo critério do `Cake\Http\Session\DatabaseSession::gc()`: a sessão vence
+     * quando passa do tempo de inatividade, não um dia depois de criada.
+     *
+     * @param \Cake\ORM\Table $sessoes
+     * @return void
+     */
+    private function apagarSessoesVencidas(Table $sessoes): void
+    {
+        $sessoes->deleteAll(['expires <' => time()]);
     }
 }
