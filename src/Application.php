@@ -258,11 +258,12 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
         // Load the authenticators, you want session first
         $authenticationService->loadAuthenticator('Authentication.Session');
-        // Configure form data check to pick email and password. O identifier é passado
-        // direto ao authenticator (loadIdentifier() está obsoleto desde authentication 3.3).
+        // Configure form data check to pick email and password. O identifier é passado direto ao
+        // authenticator; no cakephp/authentication 4, a configuração dele exige `className`.
         $authenticationService->loadAuthenticator('Authentication.Form', [
             'identifier' => [
-                'Authentication.Password' => ['fields' => $fields],
+                'className' => 'Authentication.Password',
+                'fields' => $fields,
             ],
             'fields' => $fields,
             'loginUrl' => Router::url('/users/login'),
