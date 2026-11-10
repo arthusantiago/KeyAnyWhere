@@ -40,3 +40,10 @@
   </div>
 </div>
 <?= $this->Form->end(['data-type' => 'hidden']); ?>
+<?php
+// Um plugin pode acrescentar elements abaixo do formulário (ex.: um link de ajuda), listados em
+// `Kaw.Login.elementos` (no bootstrap() dele).
+foreach ((array)\Cake\Core\Configure::read('Kaw.Login.elementos', []) as $elemento) {
+    echo $this->element($elemento);
+}
+?>

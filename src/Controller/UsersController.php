@@ -11,6 +11,7 @@ use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
+use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\I18n\I18n;
 use PragmaRX\Google2FA\Google2FA;
@@ -41,6 +42,20 @@ class UsersController extends AppController
         ResultInterface::FAILURE_IDENTITY_NOT_FOUND,
         ResultInterface::FAILURE_CREDENTIALS_INVALID,
     ];
+
+    /**
+     * Evento disparado ao abrir a primeira etapa da configuração inicial (criação do primeiro
+     * usuário), enquanto o sistema não está configurado. Pode disparar mais de uma vez (a cada
+     * acesso à etapa): quem ouve precisa ser idempotente. Uso típico: um plugin preparar o que a
+     * instalação precisa antes do primeiro login.
+     */
+    public const EVENTO_CONFIG_INICIAL_INICIO = 'Kaw.ConfigInicial.inicio';
+
+    /**
+     * Evento disparado ao abrir a segunda etapa da configuração inicial (ativação do 2FA), já com o
+     * primeiro usuário criado (`$event->getData('user')`). Também pode disparar mais de uma vez.
+     */
+    public const EVENTO_CONFIG_INICIAL_SEGUNDO_FATOR = 'Kaw.ConfigInicial.segundoFator';
 
     /* Nome do emissor exibido no aplicativo de 2FA */
     private const EMISSOR_2FA = 'KeyAnyWhere';
@@ -495,6 +510,8 @@ class UsersController extends AppController
             return $this->redirect(['controller' => 'Users', 'action' => 'configInicialTfa']);
         }
 
+        $this->getEventManager()->dispatch(new Event(self::EVENTO_CONFIG_INICIAL_INICIO, $this));
+
         if ($this->request->is('post')) {
             $user = $this->Users->newEmptyEntity();
             $user = $this->Users->patchEntity($user, $this->request->getData());
@@ -540,6 +557,10 @@ class UsersController extends AppController
         if (empty($user)) {
             return $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
         }
+
+        $this->getEventManager()->dispatch(
+            new Event(self::EVENTO_CONFIG_INICIAL_SEGUNDO_FATOR, $this, ['user' => $user]),
+        );
 
         if ($this->request->is('post')) {
             $user = $this->Users->get($this->request->getData('id'));

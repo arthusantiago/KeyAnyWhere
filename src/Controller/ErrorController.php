@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace App\Controller;
 
+use App\Application;
 use Cake\Event\EventInterface;
 
 /**
@@ -58,6 +59,14 @@ class ErrorController extends AppController
         parent::beforeRender($event);
 
         $this->viewBuilder()->setTemplatePath('Error');
+
+        // Rotas de API respondem o erro em JSON (`{"mensagem": ...}`), sem a página HTML. Vale também
+        // para um caminho `/api/...` sem rota (404), que não tem prefixo nos parâmetros da requisição.
+        if (Application::ehRotaApi($this->request)) {
+            $this->viewBuilder()->setLayout('layout_vazio');
+            $this->viewBuilder()->setTemplate('error_api');
+            $this->response = $this->response->withType('json');
+        }
     }
 
     /**

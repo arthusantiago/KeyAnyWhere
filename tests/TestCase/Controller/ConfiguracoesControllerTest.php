@@ -7,6 +7,7 @@ use App\Log\Seguranca;
 use App\Model\Entity\Configuracao;
 use App\Model\Table\ConfiguracoesTable;
 use App\Test\TestCase\Log\CapturaLogSegurancaTrait;
+use Cake\Core\Configure;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -141,5 +142,32 @@ class ConfiguracoesControllerTest extends TestCase
         $this->get('/configuracoes/geral');
 
         $this->assertResponseContains('/configuracoes/geral');
+    }
+
+    /**
+     * Com `Kaw.Configuracoes.regionalEditavel = false` (o fuso e o idioma vêm de outro lugar), a tela
+     * some do menu, o GET volta para a home e o POST não grava.
+     *
+     * @return void
+     */
+    public function testTelaDesligadaPorConfiguracao(): void
+    {
+        Configure::write('Kaw.Configuracoes.regionalEditavel', false);
+        try {
+            $this->loginAsUser(['root' => true]);
+            $this->get('/configuracoes/geral');
+            $this->assertRedirect(['controller' => 'Pages', 'action' => 'home']);
+            $this->assertFlashElement('flash/warning');
+
+            $this->enableSecurityToken();
+            $this->post('/configuracoes/geral', ['fusoHorario' => 'America/Sao_Paulo', 'idioma' => 'es']);
+            $this->assertRedirect(['controller' => 'Pages', 'action' => 'home']);
+            $this->assertSame([], $this->configuracoes()->preferenciasRegionais());
+
+            $this->get('/users/minha-conta');
+            $this->assertResponseNotContains('/configuracoes/geral');
+        } finally {
+            Configure::delete('Kaw.Configuracoes.regionalEditavel');
+        }
     }
 }

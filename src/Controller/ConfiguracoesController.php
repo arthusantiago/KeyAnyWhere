@@ -7,11 +7,16 @@ use App\I18n\Regional;
 use App\Log\Seguranca;
 use App\Model\Entity\Configuracao;
 use App\Model\Entity\User;
+use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 
 /**
  * Configurações gerais da instalação (somente root): fuso horário e idioma. Os valores ficam na tabela `configuracoes` e são aplicados no
  * config/bootstrap.php (`App\I18n\Regional`).
+ *
+ * Uma instalação em que o fuso e o idioma vêm de outro lugar (ex.: um plugin que os grava em
+ * `configuracoes`) desliga a tela com `Kaw.Configuracoes.regionalEditavel = false`: ela some do menu
+ * e as actions redirecionam para a home.
  *
  * @property \App\Model\Table\ConfiguracoesTable $Configuracoes
  */
@@ -49,6 +54,14 @@ class ConfiguracoesController extends AppController
             );
 
             // CakePHP 5.2+: o redirect vai no resultado do evento, não no retorno do callback
+            $event->setResult($this->redirect(['controller' => 'Pages', 'action' => 'home']));
+            $event->stopPropagation();
+
+            return;
+        }
+
+        if (!Configure::read('Kaw.Configuracoes.regionalEditavel', true)) {
+            $this->Flash->warning('Nesta instalação, o fuso horário e o idioma são definidos fora desta tela');
             $event->setResult($this->redirect(['controller' => 'Pages', 'action' => 'home']));
             $event->stopPropagation();
         }
