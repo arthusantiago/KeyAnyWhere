@@ -1,0 +1,36 @@
+{
+    // `composer mutacao:alteracoes`: a mutação só das linhas adicionadas e alteradas desde a
+    // origin/main (--git-diff-lines), para usar durante o desenvolvimento e antes do PR. Mesma
+    // configuração do infection.json5 (mantenha as duas iguais), com os relatórios em
+    // build/alteracoes/: o MSI de uma parte do código não vale para a catraca do bin/qualidade,
+    // que lê o build/infection.json da medição completa (`composer mutacao`).
+    "$schema": "vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": [
+            "src/Auditoria",
+            "src/Criptografia",
+            "src/I18n",
+            "src/Log",
+            "src/Model/Custom",
+            "src/Model/Entity"
+        ]
+    },
+    // Um processo só: os testes dividem o mesmo banco de teste, e mutantes em paralelo
+    // disputariam as fixtures.
+    "threads": 1,
+    "timeout": 30,
+    // Pasta temporária do próprio projeto: com a padrão (/tmp/infection), duas execuções ao
+    // mesmo tempo em projetos diferentes apagam a cobertura uma da outra.
+    "tmpDir": "build/alteracoes/infection-tmp",
+    "logs": {
+        "text": "build/alteracoes/infection.log",
+        "json": "build/alteracoes/infection.json",
+        "summary": "build/alteracoes/infection-resumo.log"
+    },
+    "mutators": {
+        "@default": true,
+        // Os casts ((string), (int), (bool), (array), (float)) só geravam mutantes equivalentes:
+        // num valor que já é do tipo, tirar o cast não muda nada que um teste possa ver.
+        "@cast": false
+    }
+}

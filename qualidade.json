@@ -1,0 +1,28 @@
+{
+    "descricao": "Configuração do bin/qualidade: Índice de Qualidade do core (src/). Métricas e uso: comentário no início do bin/qualidade e a seção Code quality do CLAUDE.md.",
+    "fontes": [
+        "src"
+    ],
+    "namespace": "App",
+    "phpstan": "phpstan.neon.dist",
+    "phpstanBaseline": "phpstan-baseline.neon",
+    "phpmd": "phpmd.xml.dist",
+    "deptrac": "deptrac.yaml",
+    "cobertura": "build/cobertura.xml",
+    "mutacao": "build/infection.json",
+    "referencia": "qualidade-referencia.json",
+    "limites": {
+        "complexidadeCiclomatica": 10,
+        "npath": 200,
+        "metodosPorInterface": 5
+    },
+    "pesos": {
+        "cobertura": 20,
+        "mutacao": 20,
+        "tipos": 20,
+        "complexidade": 15,
+        "coesao": 10,
+        "arquitetura": 15
+    },
+    "tolerancia": 0.5
+}

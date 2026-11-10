@@ -1,0 +1,96 @@
+# Regras de dependência entre as camadas do core (Deptrac): `composer arquitetura`.
+# Métrica "arquitetura" do bin/qualidade: % de dependências permitidas (DIP).
+#
+# Sentido permitido: Controller/Console/Middleware → Table → Entity. A camada de baixo não conhece
+# a de cima: uma Entity que busca dados numa Table, ou uma Table que chama um Controller, é
+# violação. O Nucleo (criptografia, idioma/fuso, logs) não depende das camadas da aplicação e
+# todas podem usá-lo.
+#
+# Plugins locais (plugins/) podem depender do core, mas o core não depende deles.
+#
+# Dívida: as violações que já existiam ficam no deptrac.baseline.yaml (importado abaixo). Só
+# violação nova reprova; corrigir uma antiga e rodar `composer arquitetura:baseline`.
+
+imports:
+  - deptrac.baseline.yaml
+
+deptrac:
+  paths:
+    - ./src
+    - ./plugins
+
+  layers:
+    - name: Aplicacao
+      collectors:
+        - type: classLike
+          value: '^App\\Application$'
+    - name: Controller
+      collectors:
+        - type: classLike
+          value: '^App\\Controller\\.*'
+    - name: View
+      collectors:
+        - type: classLike
+          value: '^App\\View\\(?!Cell\\).*'
+    # View Cells são mini-controllers do CakePHP: buscam os próprios dados nas Tables.
+    - name: Cell
+      collectors:
+        - type: classLike
+          value: '^App\\View\\Cell\\.*'
+    - name: Console
+      collectors:
+        - type: classLike
+          value: '^App\\(Command|Console)\\.*'
+    - name: Middleware
+      collectors:
+        - type: classLike
+          value: '^App\\Middleware\\.*'
+    # O ValidatorKaw é usado pelas Tables (`_validatorClass`).
+    - name: Table
+      collectors:
+        - type: classLike
+          value: '^App\\Model\\(Table|Behavior|Custom)\\.*'
+    - name: Entity
+      collectors:
+        - type: classLike
+          value: '^App\\Model\\Entity\\.*'
+    # Trilha de auditoria: behavior e traits que as Tables usam; grava na AuditoriasTable.
+    - name: Auditoria
+      collectors:
+        - type: classLike
+          value: '^App\\Auditoria\\.*'
+    - name: Nucleo
+      collectors:
+        - type: classLike
+          value: '^App\\(Criptografia|I18n|Log)\\.*'
+    - name: Plugins
+      collectors:
+        - type: directory
+          value: 'plugins/.*'
+    # Dependências externas (CakePHP, PSR, bibliotecas do Composer): não analisadas, só
+    # reconhecidas. Toda camada pode usá-las; a regra aqui é sobre as camadas do core.
+    - name: Externas
+      collectors:
+        - type: bool
+          must:
+            - type: classLike
+              value: '^(?!App\\).+'
+          must_not:
+            - type: directory
+              value: 'plugins/.*'
+
+  ruleset:
+    # Application monta a aplicação (middlewares, rotas, autenticação): pode usar as camadas do core.
+    Aplicacao: [Controller, View, Cell, Console, Middleware, Table, Entity, Auditoria, Nucleo, Externas]
+    # O Controller lê o que um middleware deixou na requisição.
+    Controller: [Middleware, Table, Entity, View, Nucleo, Externas]
+    Console: [Table, Entity, Nucleo, Externas]
+    Middleware: [Table, Entity, Nucleo, Externas]
+    View: [Entity, Nucleo, Externas]
+    Cell: [View, Table, Entity, Nucleo, Externas]
+    Table: [Entity, Auditoria, Nucleo, Externas]
+    Auditoria: [Table, Entity, Nucleo, Externas]
+    Entity: [Nucleo, Externas]
+    Nucleo: [Externas]
+    # Um plugin estende o core: pode usar tudo.
+    Plugins: [Aplicacao, Controller, View, Cell, Console, Middleware, Table, Entity, Auditoria, Nucleo, Externas]
