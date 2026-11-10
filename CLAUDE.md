@@ -41,6 +41,11 @@ CI (`.github/workflows/tests.yml`, `code-quality.yml`, `security.yml`) runs agai
 
 `Application::isRunningUnitTests()` checks for `PHPUNIT_TESTSUITE`/`PHPUNIT_COMPOSER_INSTALL` constants and is used to disable the authentication redirect and skip CSRF checks during tests — integration tests never actually exercise real CSRF token validation.
 
+### Local plugins and API routes (extension points)
+
+- `config/plugins.php` loads nothing itself (the core's plugins are added in `Application::bootstrap()`/`bootstrapCli()`) and merges `config/plugins_local.php` when it exists. That file is git-ignored here: it is where an installation adds its own plugins (`return ['MyPlugin' => []];`). Bake is loaded only when `Bake\BakePlugin` exists (no deprecation in a `--no-dev` install).
+- **API routes** (`Application::ehRotaApi()`: the path is `/api` or starts with `/api/`) authenticate by token, not by the session cookie, so they skip CSRF (`Application::pulaVerificacaoCsrf()`, the single `skipCheckCallback()` rule) and are never redirected to the login page (`unauthenticatedRedirect` is null for them). The core has no API yet; the rule is for APIs registered by plugins.
+
 ### Middleware queue order matters
 
 In `Application::middleware()`: ErrorHandler → Asset → Routing → BodyParser → Authentication → CSRF → HttpsEnforcer → SecurityHeadersKaw → **SessionsKawMiddleware** (must run after Authentication). `SessionsKawMiddleware` reads the current PHP session's row from the `sessions` table (populated by CakePHP's `DatabaseSession` handler) and stamps `user_id`/`user_agent` onto it once authenticated, or purges sessions older than a day when unauthenticated. In integration tests, that row doesn't exist unless you insert it yourself (see `AuthenticatedTestTrait`).

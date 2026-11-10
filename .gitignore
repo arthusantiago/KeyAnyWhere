@@ -2,6 +2,7 @@
 ##########################
 /config/app_local.php
 /config/app.php
+/config/plugins_local.php
 /config/.env
 /config/Migrations/schema-dump-default.lock
 /config/Migrations/schema-dump-test.lock
