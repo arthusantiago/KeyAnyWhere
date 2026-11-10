@@ -14,7 +14,7 @@
         <span class="titulo"><?=h($categoria->nomeDescrip())?></span>
     </div>
     <div class="col-sm mb-3 text-end">
-        <?=$this->element('Diversos/btnNovo', ['parametros' => ['controller' => 'entradas', 'texto' => 'Entrada']])?>
+        <?=$this->element('Diversos/btnNovo', ['parametros' => ['controller' => 'entradas', 'texto' => 'Entrada', '?' => ['categoria' => $categoria->id]]])?>
     </div>
 </div>
 
@@ -22,8 +22,8 @@
     <table class="table table-borderless table-striped table-hover">
         <thead>
             <tr class="text-center titulo-coluna-tabela">
-                <th>Titulo</th>
-                <th>Opções</th>
+                <th><?=__('Título')?></th>
+                <th><?=__('Ações')?></th>
             </tr>
         </thead>
         <tbody>
@@ -40,18 +40,18 @@
                     <?php endif; ?>
                     <td>
                         <div class="btn-group btn-group-sm botoes" role="group">
-                            <button type="button" class="btn btn-outline-secondary btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user">
-                                <i class="bi bi-person-fill"></i>Usuário
+                            <button type="button" class="btn btn-outline-secondary btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="user" title="Copiar usuário">
+                                <i class="bi bi-person-fill"></i><?=__('Usuário')?>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary  btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password">
-                                <i class="bi bi-key-fill"></i>Senha
+                            <button type="button" class="btn btn-outline-secondary  btn-clipboard" data-clipboard-entrada-id="<?=$entrada->id?>" data-clipboard-tipo="password" title="Copiar senha">
+                                <i class="bi bi-key-fill"></i><?=__('Senha')?>
                             </button>
                             <div class="btn-group" role="group">
                                 <button id="btnGroupDrop" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"></button>
                                 <ul class="dropdown-menu">
                                     <li>
                                         <a class="dropdown-item" href="<?=$this->Url->build(['controller' => 'Entradas', 'action' => 'edit', $entrada->id])?>">
-                                            <i class="bi bi-pencil-fill"></i>Editar
+                                            <i class="bi bi-pencil-fill"></i><?=__('Editar')?>
                                         </a>
                                     </li>
                                     <li><?=$this->element('Diversos/btnExcluir', ['idRegistro' => $entrada->id])?></li>

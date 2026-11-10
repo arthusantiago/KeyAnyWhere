@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
+use App\Model\Entity\Auditoria;
+use App\Model\Entity\Categoria;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -266,5 +268,45 @@ class CategoriasControllerTest extends TestCase
         $this->loginAsUser();
         $this->get('/categorias/listagem-entradas/9999');
         $this->assertResponseCode(404);
+    }
+
+    /**
+     * Test add method
+     *
+     * @return void
+     * @uses \App\Controller\CategoriasController::add()
+     */
+    public function testAdd(): void
+    {
+        $this->testAddGetRequestRequiresAuthentication();
+    }
+
+    /**
+     * add() chama reordenar() logo após o save de criação, o que resalva todas as
+     * categorias (inclusive a recém-criada) para recalcular 'posicao'. Esse resave
+     * não pode gerar um segundo registro de auditoria (uma 'edicao' logo após a
+     * 'criacao') para a categoria criada.
+     *
+     * @return void
+     */
+    public function testAddNaoDuplicaRegistroDeAuditoria(): void
+    {
+        $this->loginAsUser();
+        $this->post('/categorias/add', ['nome' => 'Categoria Sem Auditoria Duplicada']);
+
+        $this->assertResponseSuccess();
+        $categorias = $this->getTableLocator()->get('Categorias');
+        $criada = $categorias->find()->orderByDesc('id')->first();
+        $this->assertInstanceOf(Categoria::class, $criada, 'Categoria não foi criada.');
+
+        $auditorias = $this->getTableLocator()->get('Auditorias');
+        $registros = $auditorias->find()
+            ->where(['contexto' => 'categoria', 'id_entidade' => $criada->id])
+            ->all();
+
+        $this->assertCount(1, $registros, 'A criação da categoria gerou mais de um registro de auditoria.');
+        $registro = $registros->first();
+        $this->assertInstanceOf(Auditoria::class, $registro);
+        $this->assertSame('criacao', $registro->acao);
     }
 }

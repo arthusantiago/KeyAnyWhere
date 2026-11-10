@@ -1309,12 +1309,6 @@ parameters:
 			path: src/Model/Table/UsersTable.php
 
 		-
-			message: '#^Method App\\View\\Cell\\CategoriasMenuCell\:\:queryCategorias\(\) return type with generic class Cake\\ORM\\Query\\SelectQuery does not specify its types\: TSubject$#'
-			identifier: missingType.generics
-			count: 1
-			path: src/View/Cell/CategoriasMenuCell.php
-
-		-
 			message: '#^PHPDoc type array of property App\\View\\Cell\\CategoriasMenuCell\:\:\$_validCellOptions is not covariant with PHPDoc type array\<string\> of overridden property Cake\\View\\Cell\:\:\$_validCellOptions\.$#'
 			identifier: property.phpDocType
 			count: 1
