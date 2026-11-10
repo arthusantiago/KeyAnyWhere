@@ -10,7 +10,7 @@
         'breadcrumb',
         [
           'caminho' => [
-            ['Pages', 'index', 'Home'],
+            ['Pages', 'home', 'Home'],
             'Configurações',
             ['Users', 'index', 'Usuários'],
             'Editando'
@@ -21,7 +21,7 @@
 </div>
 <div class="row">
     <div class="col-sm-auto mb-3">
-        <span class="titulo">Editando o usuário</span>
+      <span class="titulo"><?=__('Editando o usuário') . ' ' . $user->username ?></span>
     </div>
 </div>
 <?= $this->Form->create($user) ?>
@@ -32,12 +32,14 @@
   ]); ?>
   <div class="row">
       <div class="col-sm mb-3">
-          <label for="username">Nome do Usuário</label>
+          <label for="username"><?=__('Nome')?></label>
           <input type="text" class="form-control inputs" id="username" name="username" autocomplete="nickname" maxlength="50" value="<?=h($user->username)?>" required>
       </div>
       <div class="col-sm mb-3">
-          <label for="email">E-mail (login e rec. de senha)</label>
-          <input type="email" class="form-control inputs" id="email" name="email" autocomplete="email" value="<?=h($user->email)?>" maxlength="100" required>
+        <label for="email"><?=__('E-mail')?>
+          <?=$this->element('tooltip', ['texto' => 'E-mail utilizado para fazer login na ferramenta']);?>
+        </label>
+        <input type="email" class="form-control inputs" id="email" name="email" autocomplete="email" value="<?=h($user->email)?>" maxlength="100" required>
       </div>
   </div>
   <div class="row">
@@ -55,13 +57,13 @@
 <hr>
 <div class="row">
   <div class="col-sm-auto mb-3">
-      <span class="titulo">Segurança</span>
+      <span class="titulo"><?=__('Segurança')?></span>
   </div>
 </div>
 <div class="row">
   <div class="col-sm-auto mb-3">
     <button type="button" class="btn btn-outline-secondary btn-gerar-qrcode" data-bs-toggle="modal" data-bs-target="#TFAModal" data-qrcode-user-id="<?=$user->id?>">
-      Autenticação de Dois Fatores
+      <?=__('Segundo fator de autenticação')?>
     </button>
   </div>
 </div>
@@ -70,7 +72,7 @@
 
 <div class="row">
   <div class="col-sm-auto mb-3">
-    <span class="titulo">Sessões</span>
+    <span class="titulo"><?=__('Sessões')?></span>
   </div>
 </div>
 <div class="row">

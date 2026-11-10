@@ -202,7 +202,7 @@ function obterQrCode2FA(event)
 	});
 
 	let parametros = 		{
-		'headers': {'Accept': 'text/plain'},
+		'headers': {'Accept': 'application/json'},
 		'body': body,
 	};
 
@@ -213,18 +213,24 @@ function obterQrCode2FA(event)
 		if (!response.ok) {
 			throw new Error(response.status + ' - '+ response.statusText);
 		}
-		return response.text();
+		return response.json();
 	})
-	.then(function (dataUriQrCode) {
+	.then(function (dados2FA) {
 		let container = document.getElementById('imagemQrCode');
+
 		while (container.firstChild) {
 			container.removeChild(container.firstChild);
 		}
 
 		let img = document.createElement('img');
-		img.src = dataUriQrCode;
+		img.src = dados2FA.qrCode;
 		img.alt = 'QR Code 2FA';
 		container.appendChild(img);
+
+		// Dados para cadastro manual (textContent, nunca innerHTML)
+		document.getElementById('chave2FA').textContent = dados2FA.chave;
+		document.getElementById('codinome2FA').textContent = dados2FA.codinome;
+		document.getElementById('dadosManuais2FA').classList.remove('d-none');
 	})
 	.catch(function (error) {
 		alert('Ocorreu um erro \n\n' + error.message);

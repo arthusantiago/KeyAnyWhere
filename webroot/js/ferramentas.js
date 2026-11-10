@@ -76,3 +76,10 @@ if (document.querySelector("#btnCancelarModalExcluir")) {
 		.querySelector("#btnCancelarModalExcluir")
 		.addEventListener("click", limparModalExcluir);
 }
+
+/*
+ * Ativando os popover do Bootstrap
+ */
+const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+

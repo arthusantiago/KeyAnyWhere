@@ -48,11 +48,29 @@ class AppController extends Controller
 
         $userLogado = null;
         if ($this->getRequest()->getAttribute('authentication')) {
-            $userLogado = $this->Authentication->getResult()->getData();
+            $userLogado = $this->Authentication->getResult()?->getData();
         }
         $sessionTimeout = Configure::read('Session.timeout');
         $csrfToken = $this->request->getAttribute('csrfToken');
 
         $this->set(compact('userLogado', 'sessionTimeout', 'csrfToken'));
+    }
+
+    /**
+     * Metodo que normalizar o recurso acessado.
+     * O CakePHP mapeia '/users/' para '/users/index', mas não adiciona no request->getPath() a action 'index'
+     * resultando na string '/users' ao invés de '/users/index'.
+     *
+     * @access protected
+     * @return array<int, string>
+     */
+    protected function normalizaRecurso(): array
+    {
+        $caminho = array_values(array_filter(explode('/', $this->request->getPath())));
+        if (count($caminho) == 1) {
+            array_push($caminho, 'index');
+        }
+
+        return $caminho;
     }
 }

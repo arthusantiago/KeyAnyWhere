@@ -8,12 +8,12 @@
     <table class="table table-borderless table-striped table-hover">
         <thead>
             <tr class="text-center titulo-coluna-tabela">
-                <th scope="col">Dispositivo</th>
-                <th scope="col">Navegador</th>
-                <th scope="col">Criado em</th>
-                <th scope="col">Última atividade</th>
+                <th scope="col"><?=__('Dispositivo')?></th>
+                <th scope="col"><?=__('Navegador')?></th>
+                <th scope="col"><?=__('Criado em')?></th>
+                <th scope="col"><?=__('Última atividade')?></th>
                 <th scope="col"></th>
-                <th scope="col">Ações</th>
+                <th scope="col"><?=__('Ações')?></th>
             </tr>
         </thead>
         <tbody>
@@ -23,7 +23,11 @@
                     <td><?= h($session->navegador) ?></td>
                     <td><?= h($session->created) ?></td>
                     <td><?= h($session->modified) ?></td>
-                    <td><?= $session->esteDispositivo ? '<span class="badge bg-secondary">Este dispositivo</span>' : '' ?></td>
+                    <td>
+                        <?php if($session->esteDispositivo): ?>
+                            <span class="badge bg-secondary"><?=__('Este dispositivo')?></span>
+                        <?php endif; ?>
+                    </td>
                     <td>
                     <?php if (!$session->esteDispositivo) {
                         echo $this->element('Diversos/btnExcluir', ['idRegistro' => $session->id_secundario, 'texto' => 'Finalizar', 'tipo' => 'button']);
