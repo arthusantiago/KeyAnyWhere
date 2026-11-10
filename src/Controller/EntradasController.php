@@ -5,7 +5,7 @@ namespace App\Controller;
 
 use Cake\Event\EventInterface;
 use Cake\Routing\Router;
-use Cake\Validation\Validator;
+use function Cake\I18n\__;
 
 /**
  * Entradas Controller
@@ -15,6 +15,9 @@ use Cake\Validation\Validator;
  */
 class EntradasController extends AppController
 {
+    private string $contentType = 'application/json; charset=UTF-8';
+    private string $msgHttpCode400 = 'Dados invalidos enviados ao servidor';
+
     /**
      * beforeFilter callback.
      *
@@ -37,11 +40,14 @@ class EntradasController extends AppController
     public function add()
     {
         $entrada = $this->Entradas->newEmptyEntity();
+        // Categoria já escolhida no formulário (botão de nova entrada da listagem da categoria).
+        $categoria_selecionada = (int)$this->request->getQuery('categoria', 0);
         if ($this->request->is('post')) {
             $entrada = $this->Entradas->patchEntity($entrada, $this->request->getData());
 
             if ($this->Entradas->save($entrada)) {
                 $this->Flash->success(__('Salvo com sucesso'));
+                $this->Entradas->reordenar($entrada->categoria_id);
 
                 return $this->redirect(['action' => 'edit', $entrada->id]);
             }
@@ -52,7 +58,7 @@ class EntradasController extends AppController
         ->find('all')
         ->orderBy(['posicao']);
 
-        $this->set(compact('entrada', 'categorias'));
+        $this->set(compact('entrada', 'categorias', 'categoria_selecionada'));
     }
 
     /**
@@ -69,6 +75,7 @@ class EntradasController extends AppController
             $entrada = $this->Entradas->patchEntity($entrada, $this->request->getData());
             if ($this->Entradas->save($entrada)) {
                 $this->Flash->success(__('Salvo com sucesso'));
+                $this->Entradas->reordenar($entrada->categoria_id);
             } else {
                 $this->Flash->error('', ['params' => ['mensagens' => $entrada->getErrors()]]);
             }
@@ -114,23 +121,14 @@ class EntradasController extends AppController
     {
         $this->request->allowMethod(['post']);
         $request = $this->request->getParsedBody();
-        $validator = new Validator();
-
-        $validator
-            ->requirePresence('id', true, 'O ID da entrada precisa ser informado')
-            ->notEmptyString('id', 'O ID não pode estar vazio')
-            ->integer('id', 'O ID precisa ser um inteiro')
-            ->requirePresence('type', true, 'O type precisa ser informado')
-            ->notEmptyString('type', 'O type não pode estar vazio')
-            ->maxLength('type', 8, 'O type pode ter no maximo 8 caracteres')
-            ->inList('type', ['password', 'user'], 'O valor de type não é permitido');
-
-        $erros = $validator->validate($request);
+        $erros = $this->Entradas
+            ->getValidator('clipboard')
+            ->validate($request, false);
 
         if ($erros) {
             return $this->response
-                ->withType('application/json; charset=UTF-8')
-                ->withStatus(400, 'Dados invalidos enviados ao servidor')
+                ->withType($this->contentType)
+                ->withStatus(400, __($this->msgHttpCode400))
                 ->withStringBody(json_encode($erros));
         }
 
@@ -143,7 +141,7 @@ class EntradasController extends AppController
         }
 
         return $this->response
-            ->withType('application/json; charset=UTF-8')
+            ->withType($this->contentType)
             ->withStringBody(json_encode($response));
     }
 
@@ -160,18 +158,14 @@ class EntradasController extends AppController
     {
         $this->request->allowMethod(['post']);
         $request = $this->request->getParsedBody();
-        $validator = new Validator();
-
-        $validator
-            ->requirePresence('stringBusca', true, 'A propriedade contendo a string não foi informada')
-            ->notEmptyString('stringBusca', 'A string para busca não informado');
-
-        $erros = $validator->validate($request);
+        $erros = $this->Entradas
+            ->getValidator('busca')
+            ->validate($request, false);
 
         if ($erros) {
             return $this->response
-                ->withType('application/json; charset=UTF-8')
-                ->withStatus(400, 'Dados invalidos enviados ao servidor')
+                ->withType($this->contentType)
+                ->withStatus(400, __($this->msgHttpCode400))
                 ->withStringBody(json_encode($erros));
         }
 
@@ -205,7 +199,7 @@ class EntradasController extends AppController
         }
 
         return $this->response
-            ->withType('application/json; charset=UTF-8')
+            ->withType($this->contentType)
             ->withStringBody(json_encode($resultado));
     }
 
@@ -221,18 +215,14 @@ class EntradasController extends AppController
     {
         $this->request->allowMethod(['post']);
         $request = $this->request->getParsedBody();
-        $validator = new Validator();
-
-        $validator
-            ->requirePresence('password', true, 'A propriedade contendo a string não foi informada')
-            ->notEmptyString('password', 'O password não pode estar vazio');
-
-        $erros = $validator->validate($request);
+        $erros = $this->Entradas
+            ->getValidator('senhaInsegura')
+            ->validate($request, false);
 
         if ($erros) {
             return $this->response
-                ->withType('application/json; charset=UTF-8')
-                ->withStatus(400, 'Dados invalidos enviados ao servidor')
+                ->withType($this->contentType)
+                ->withStatus(400, __($this->msgHttpCode400))
                 ->withStringBody(json_encode($erros));
         }
 
@@ -245,7 +235,7 @@ class EntradasController extends AppController
         $resultado['localizado'] = $password ? true : false;
 
         return $this->response
-            ->withType('application/json; charset=UTF-8')
+            ->withType($this->contentType)
             ->withStringBody(json_encode($resultado));
     }
 }

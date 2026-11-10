@@ -30,8 +30,9 @@ class EntradasFixture extends AppFixture
                 'link' => Criptografia::criptografar('https://exemplo.com'),
                 'anotacoes' => Criptografia::criptografar('Anotações de teste para a entrada.'),
                 'categoria_id' => 1,
-                'created' => 1643082487,
-                'modified' => 1643082487,
+                'created' => 1757988482,
+                'modified' => 1757988482,
+                'posicao' => 1,
             ],
         ];
         parent::init();
