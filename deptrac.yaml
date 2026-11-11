@@ -62,7 +62,12 @@ deptrac:
     - name: Nucleo
       collectors:
         - type: classLike
-          value: '^App\\(Criptografia|I18n|Log)\\.*'
+          value: '^App\\(Criptografia|I18n|Log)\\(?!Engine\\).*'
+    # Engines de log que gravam no banco (ex.: eventos de segurança): usam as Tables.
+    - name: LogBanco
+      collectors:
+        - type: classLike
+          value: '^App\\Log\\Engine\\.*'
     - name: Plugins
       collectors:
         - type: directory
@@ -81,7 +86,7 @@ deptrac:
 
   ruleset:
     # Application monta a aplicação (middlewares, rotas, autenticação): pode usar as camadas do core.
-    Aplicacao: [Controller, View, Cell, Console, Middleware, Table, Entity, Auditoria, Nucleo, Externas]
+    Aplicacao: [Controller, View, Cell, Console, Middleware, Table, Entity, Auditoria, Nucleo, LogBanco, Externas]
     # O Controller lê o que um middleware deixou na requisição.
     Controller: [Middleware, Table, Entity, View, Nucleo, Externas]
     Console: [Table, Entity, Nucleo, Externas]
@@ -92,5 +97,6 @@ deptrac:
     Auditoria: [Table, Entity, Nucleo, Externas]
     Entity: [Nucleo, Externas]
     Nucleo: [Externas]
+    LogBanco: [Table, Entity, Nucleo, Externas]
     # Um plugin estende o core: pode usar tudo.
-    Plugins: [Aplicacao, Controller, View, Cell, Console, Middleware, Table, Entity, Auditoria, Nucleo, Externas]
+    Plugins: [Aplicacao, Controller, View, Cell, Console, Middleware, Table, Entity, Auditoria, Nucleo, LogBanco, Externas]

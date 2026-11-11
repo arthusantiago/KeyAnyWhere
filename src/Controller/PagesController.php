@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace App\Controller;
 
+use App\Model\Entity\User;
 use App\Model\Table\AuditoriasTable;
+use App\Model\Table\EventosSegurancaTable;
 use App\Model\Table\SessionsTable;
 use Cake\Core\Configure;
 
@@ -45,6 +47,12 @@ class PagesController extends AppController
             ->limit(10)
             ->all();
 
+        // Últimos eventos de segurança: os da própria conta (o root vê todos).
+        $usuario = $this->Authentication->getResult()?->getData();
+        $ultimosEventos = $usuario instanceof User
+            ? $this->fetchTable(EventosSegurancaTable::class)->find('visiveisPara', usuario: $usuario)->limit(5)->all()
+            : [];
+
         $sessoes = (new SessionsTable())
             ->find('all')
             ->select(['expires', 'created', 'user_agent'])
@@ -59,6 +67,6 @@ class PagesController extends AppController
             }
         }
 
-        $this->set(compact('ultimasAlteracoes', 'sessoesAtivas'));
+        $this->set(compact('ultimasAlteracoes', 'ultimosEventos', 'sessoesAtivas'));
     }
 }
