@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Model\Table\AuditoriasTable;
+use App\Model\Table\EventosSegurancaTable;
 use App\Model\Table\SessionsTable;
 use Cake\Core\Configure;
 
@@ -45,6 +46,9 @@ class PagesController extends AppController
             ->limit(10)
             ->all();
 
+        // Últimos eventos de segurança, de todos os usuários.
+        $ultimosEventos = $this->fetchTable(EventosSegurancaTable::class)->find('recentes')->limit(5)->all();
+
         $sessoes = (new SessionsTable())
             ->find('all')
             ->select(['expires', 'created', 'user_agent'])
@@ -59,6 +63,6 @@ class PagesController extends AppController
             }
         }
 
-        $this->set(compact('ultimasAlteracoes', 'sessoesAtivas'));
+        $this->set(compact('ultimasAlteracoes', 'ultimosEventos', 'sessoesAtivas'));
     }
 }

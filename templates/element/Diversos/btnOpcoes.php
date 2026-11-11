@@ -61,6 +61,11 @@ $itemDoMenu = function (array $item): string {
                 <i class="bi bi-clock-history"></i><?=__('Auditoria')?>
             </a>
         </li>
+        <li>
+            <a class="dropdown-item" href="<?= $this->Url->build(['controller' => 'EventosSeguranca', 'action' => 'index']) ?>">
+                <i class="bi bi-shield-exclamation"></i><?=__('Eventos de segurança')?>
+            </a>
+        </li>
     <?php if ($userLogado->root): ?>
         <li><h6 class="dropdown-header"><?=__('Configurações')?></h6></li>
         <?php if (Configure::read('Kaw.Configuracoes.regionalEditavel', true)): ?>
