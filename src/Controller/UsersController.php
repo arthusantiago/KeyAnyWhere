@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\I18n\Regional;
 use App\Log\Seguranca;
 use App\Model\Entity\User;
+use App\Service\AutorizadorConfigInicialInterface;
 use Authentication\Authenticator\ResultInterface;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\ImageRenderer;
@@ -13,8 +14,10 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
+use Cake\Http\Exception\ForbiddenException;
 use Cake\I18n\I18n;
 use PragmaRX\Google2FA\Google2FA;
+use function Cake\I18n\__;
 
 /**
  * Users Controller
@@ -490,12 +493,17 @@ class UsersController extends AppController
      * Esse processo deve ser executado ao acessar o KAW pela primeira vez.
      *
      * @access public
+     * @param \App\Service\AutorizadorConfigInicialInterface $autorizador Injetado pelo container.
      * @return \Cake\Http\Response|null|void
      */
-    public function configInicial()
+    public function configInicial(AutorizadorConfigInicialInterface $autorizador)
     {
         if ($this->Users->configInicialSistema() == false) {
             return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+        }
+
+        if (!$autorizador->autoriza($this->request)) {
+            throw new ForbiddenException(__('A configuração inicial não foi autorizada.'));
         }
 
         // Antes do primeiro usuário ainda não há idioma escolhido: vale o do navegador.
@@ -537,12 +545,17 @@ class UsersController extends AppController
      * último usuário.
      *
      * @access public
+     * @param \App\Service\AutorizadorConfigInicialInterface $autorizador Injetado pelo container.
      * @return \Cake\Http\Response|null|void
      */
-    public function configInicialTfa()
+    public function configInicialTfa(AutorizadorConfigInicialInterface $autorizador)
     {
         if ($this->Users->configInicialSistema() == false) {
             return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+        }
+
+        if (!$autorizador->autoriza($this->request)) {
+            throw new ForbiddenException(__('A configuração inicial não foi autorizada.'));
         }
 
         // Antes do primeiro usuário ainda não há idioma escolhido: vale o do navegador.

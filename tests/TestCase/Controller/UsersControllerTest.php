@@ -10,6 +10,7 @@ use App\Middleware\CsrfProtectionKawMiddleware;
 use App\Model\Entity\User;
 use App\Model\Table\AuditoriasTable;
 use App\Model\Table\UsersTable;
+use App\Service\AutorizadorConfigInicialInterface;
 use App\Test\TestCase\Log\CapturaLogSegurancaTrait;
 use ArrayObject;
 use Cake\Core\Configure;
@@ -17,6 +18,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
@@ -1363,5 +1365,52 @@ class UsersControllerTest extends TestCase
         // Sem itens, a seção "Outros" não aparece
         $this->get('/users/minha-conta');
         $this->assertResponseNotContains('dropdown-header">Outros');
+    }
+
+    /**
+     * A configuração inicial pergunta ao AutorizadorConfigInicialInterface do container; recusada, as
+     * duas etapas respondem 403 e não disparam os eventos.
+     *
+     * @return void
+     */
+    public function testConfigInicialRecusadaPeloAutorizador(): void
+    {
+        $this->mockService(AutorizadorConfigInicialInterface::class, function () {
+            return new class implements AutorizadorConfigInicialInterface {
+                public function autoriza(ServerRequest $request): bool
+                {
+                    return $request->getQuery('token') === 'certo';
+                }
+            };
+        });
+        $inicio = $this->ouvirEvento(UsersController::EVENTO_CONFIG_INICIAL_INICIO);
+        $this->getTableLocator()->get('Users')->deleteAll([]);
+
+        $this->get('/users/config-inicial');
+        $this->assertResponseCode(403);
+        $this->assertCount(0, $inicio);
+
+        $this->get('/users/config-inicial?token=certo');
+        $this->assertResponseOk();
+        $this->assertCount(1, $inicio);
+    }
+
+    /**
+     * Elements listados em `Kaw.Layout.avisos` aparecem nas páginas dos layouts default e administrativo.
+     *
+     * @return void
+     */
+    public function testAvisosDoLayoutConfigurados(): void
+    {
+        $this->loginAsUser();
+        $this->get('/users/minha-conta');
+        $this->assertResponseNotContains('Utilizar esta senha');
+
+        Configure::write('Kaw.Layout.avisos', ['geradorSenha']);
+        $this->get('/users/minha-conta');
+        $this->assertResponseContains('Utilizar esta senha');
+
+        $this->get('/');
+        $this->assertResponseContains('Utilizar esta senha');
     }
 }

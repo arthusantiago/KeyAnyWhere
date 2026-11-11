@@ -163,4 +163,27 @@ class SecurityHeadersKawMiddlewareTest extends TestCase
         $this->assertInstanceOf(SecurityHeadersKawMiddleware::class, $result);
         $this->assertSame($middleware, $result);
     }
+
+    /**
+     * Fontes extras (`Kaw.Seguranca.csp`) somam às da diretiva padrão; diretiva nova entra só com elas.
+     *
+     * @return void
+     */
+    public function testFontesExtrasDoCsp(): void
+    {
+        $middleware = new SecurityHeadersKawMiddleware();
+        $middleware->setContentSecurityPolicy([
+            'script-src' => ['https://js.stripe.com', "'self'"],
+            'frame-src' => ['https://js.stripe.com'],
+        ]);
+
+        $request = new ServerRequest();
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->method('handle')->willReturn(new Response());
+        $csp = $middleware->process($request, $handler)->getHeaderLine('Content-Security-Policy');
+
+        $this->assertStringContainsString("script-src 'self' https://js.stripe.com;", $csp);
+        $this->assertStringContainsString('frame-src https://js.stripe.com', $csp);
+        $this->assertStringContainsString("img-src 'self' data:", $csp);
+    }
 }

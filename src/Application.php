@@ -19,6 +19,10 @@ namespace App;
 use App\Middleware\CsrfProtectionKawMiddleware;
 use App\Middleware\SecurityHeadersKawMiddleware;
 use App\Middleware\SessionsKawMiddleware;
+use App\Service\AutorizadorConfigInicialInterface;
+use App\Service\AutorizadorConfigInicialLivre;
+use App\Service\VerificadorSenhaInseguraInterface;
+use App\Service\VerificadorSenhaInseguraTabela;
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
@@ -234,7 +238,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
         if (self::isTheExecutionEnvironment()) {
             $securityHeaders->setXFrameOptions(SecurityHeadersMiddleware::DENY);
-            $securityHeaders->setContentSecurityPolicy();
+            $securityHeaders->setContentSecurityPolicy((array)Configure::read('Kaw.Seguranca.csp', []));
         }
 
             $middlewareQueue->add($securityHeaders);
@@ -252,6 +256,10 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
      */
     public function services(ContainerInterface $container): void
     {
+        // Implementações padrão; o services() de um plugin pode trocá-las
+        // ($container->extend(Interface::class)->setConcrete(...)).
+        $container->add(VerificadorSenhaInseguraInterface::class, VerificadorSenhaInseguraTabela::class);
+        $container->add(AutorizadorConfigInicialInterface::class, AutorizadorConfigInicialLivre::class);
     }
 
     /**

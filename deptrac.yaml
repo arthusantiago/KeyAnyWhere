@@ -46,6 +46,11 @@ deptrac:
         - type: classLike
           value: '^App\\Middleware\\.*'
     # O ValidatorKaw é usado pelas Tables (`_validatorClass`).
+    # Serviços com interface no container (trocáveis por um plugin): usam as Tables.
+    - name: Service
+      collectors:
+        - type: classLike
+          value: '^App\\Service\\.*'
     - name: Table
       collectors:
         - type: classLike
@@ -86,17 +91,18 @@ deptrac:
 
   ruleset:
     # Application monta a aplicação (middlewares, rotas, autenticação): pode usar as camadas do core.
-    Aplicacao: [Controller, View, Cell, Console, Middleware, Table, Entity, Auditoria, Nucleo, LogBanco, Externas]
+    Aplicacao: [Controller, View, Cell, Console, Middleware, Service, Table, Entity, Auditoria, Nucleo, LogBanco, Externas]
     # O Controller lê o que um middleware deixou na requisição.
-    Controller: [Middleware, Table, Entity, View, Nucleo, Externas]
+    Controller: [Middleware, Service, Table, Entity, View, Nucleo, Externas]
     Console: [Table, Entity, Nucleo, Externas]
     Middleware: [Table, Entity, Nucleo, Externas]
     View: [Entity, Nucleo, Externas]
     Cell: [View, Table, Entity, Nucleo, Externas]
+    Service: [Table, Entity, Nucleo, Externas]
     Table: [Entity, Auditoria, Nucleo, Externas]
     Auditoria: [Table, Entity, Nucleo, Externas]
     Entity: [Nucleo, Externas]
     Nucleo: [Externas]
     LogBanco: [Table, Entity, Nucleo, Externas]
     # Um plugin estende o core: pode usar tudo.
-    Plugins: [Aplicacao, Controller, View, Cell, Console, Middleware, Table, Entity, Auditoria, Nucleo, LogBanco, Externas]
+    Plugins: [Aplicacao, Controller, View, Cell, Console, Middleware, Service, Table, Entity, Auditoria, Nucleo, LogBanco, Externas]
