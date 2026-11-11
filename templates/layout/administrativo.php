@@ -45,6 +45,10 @@
         <div class="col-sm"><?=$this->Flash->render()?></div>
         <div class="col-sm"></div>
       </div>
+      <?php // Avisos de plugins (Kaw.Layout.avisos: lista de elements), acima do conteúdo. ?>
+      <?php foreach ((array)\Cake\Core\Configure::read('Kaw.Layout.avisos', []) as $aviso): ?>
+        <?=$this->element($aviso)?>
+      <?php endforeach; ?>
      	<?=$this->fetch('content')?>
       <br><br><br>
     </div>

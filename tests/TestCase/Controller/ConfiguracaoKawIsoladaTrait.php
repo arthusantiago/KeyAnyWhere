@@ -33,6 +33,8 @@ trait ConfiguracaoKawIsoladaTrait
             'Menu' => ['configuracoes' => [], 'outros' => []],
             'Login' => ['elementos' => []],
             'Configuracoes' => ['regionalEditavel' => true],
+            'Layout' => ['avisos' => []],
+            'Seguranca' => ['csp' => []],
         ]);
     }
 

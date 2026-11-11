@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Service\VerificadorSenhaInseguraInterface;
 use Cake\Event\EventInterface;
 use Cake\Routing\Router;
 use function Cake\I18n\__;
@@ -209,9 +210,10 @@ class EntradasController extends AppController
      * Espera uma request com JSON no formato: {"password":"senha-para-verificacao"}
      *
      * @access public
+     * @param \App\Service\VerificadorSenhaInseguraInterface $verificador Injetado pelo container.
      * @return \Cake\Http\Response
      */
-    public function senhaInsegura()
+    public function senhaInsegura(VerificadorSenhaInseguraInterface $verificador)
     {
         $this->request->allowMethod(['post']);
         $request = $this->request->getParsedBody();
@@ -226,13 +228,7 @@ class EntradasController extends AppController
                 ->withStringBody(json_encode($erros));
         }
 
-        $password = $this->fetchTable('InsecurePasswords')
-            ->find()
-            ->where(['password' => strtolower($request['password'])])
-            ->limit(5)
-            ->first();
-
-        $resultado['localizado'] = $password ? true : false;
+        $resultado['localizado'] = $verificador->estaComprometida((string)$request['password']);
 
         return $this->response
             ->withType($this->contentType)

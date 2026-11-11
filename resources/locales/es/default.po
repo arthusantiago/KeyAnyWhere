@@ -488,3 +488,6 @@ msgstr "Nivel"
 
 msgid "IP"
 msgstr "IP"
+
+msgid "A configuração inicial não foi autorizada."
+msgstr "La configuración inicial no fue autorizada."

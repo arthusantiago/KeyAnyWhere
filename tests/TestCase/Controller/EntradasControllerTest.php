@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
+use App\Service\VerificadorSenhaInseguraInterface;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -428,5 +429,36 @@ class EntradasControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertResponseNotContains('<script>alert(1)</script>');
         $this->assertResponseContains('id="id-categoria-selecionada" value="0"');
+    }
+
+    /**
+     * A verificação usa a implementação de VerificadorSenhaInseguraInterface do container, que um plugin
+     * pode trocar.
+     *
+     * @return void
+     */
+    public function testSenhaInseguraUsaOVerificadorDoContainer(): void
+    {
+        $comprometida = self::gerarSenhaDeTeste();
+        $this->mockService(VerificadorSenhaInseguraInterface::class, function () use ($comprometida) {
+            return new class ($comprometida) implements VerificadorSenhaInseguraInterface {
+                public function __construct(private string $comprometida)
+                {
+                }
+
+                public function estaComprometida(string $senha): bool
+                {
+                    return $senha === $this->comprometida;
+                }
+            };
+        });
+        $this->loginAsUser();
+
+        $this->post('/entradas/senha-insegura', ['password' => $comprometida]);
+        $this->assertTrue(json_decode((string)$this->_response?->getBody(), true)['localizado']);
+
+        // O que está no catálogo local deixa de valer com o verificador trocado
+        $this->post('/entradas/senha-insegura', ['password' => self::gerarSenhaDeTeste()]);
+        $this->assertFalse(json_decode((string)$this->_response?->getBody(), true)['localizado']);
     }
 }
