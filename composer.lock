@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "arthusantiago/bootstrap-for-cakephp",
-            "version": "v1.2.0",
+            "version": "v1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/arthusantiago/bootstrap-for-cakephp.git",
-                "reference": "9b358cc4d006e7077978b0c333af55f497554077"
+                "reference": "c4fde0db8580ef846a02f7db3619e908f99c8eaa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/arthusantiago/bootstrap-for-cakephp/zipball/9b358cc4d006e7077978b0c333af55f497554077",
-                "reference": "9b358cc4d006e7077978b0c333af55f497554077",
+                "url": "https://api.github.com/repos/arthusantiago/bootstrap-for-cakephp/zipball/c4fde0db8580ef846a02f7db3619e908f99c8eaa",
+                "reference": "c4fde0db8580ef846a02f7db3619e908f99c8eaa",
                 "shasum": ""
             },
             "require": {
@@ -25,6 +25,7 @@
                 "php": ">=8.1"
             },
             "require-dev": {
+                "composer/composer": "^2.0",
                 "phpunit/phpunit": "^10.0"
             },
             "type": "library",
@@ -55,9 +56,9 @@
             ],
             "support": {
                 "issues": "https://github.com/arthusantiago/bootstrap-for-cakephp/issues",
-                "source": "https://github.com/arthusantiago/bootstrap-for-cakephp/tree/v1.2.0"
+                "source": "https://github.com/arthusantiago/bootstrap-for-cakephp/tree/v1.2.1"
             },
-            "time": "2026-01-18T00:06:59+00:00"
+            "time": "2026-11-11T22:40:45+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
