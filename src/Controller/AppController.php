@@ -16,10 +16,8 @@ declare(strict_types=1);
  */
 namespace App\Controller;
 
-use App\Model\Table\IpsBloqueadosTable;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Event\EventInterface;
 
 /**
  * Application Controller
@@ -50,7 +48,7 @@ class AppController extends Controller
 
         $userLogado = null;
         if ($this->getRequest()->getAttribute('authentication')) {
-            $userLogado = $this->Authentication->getResult()->getData();
+            $userLogado = $this->Authentication->getResult()?->getData();
         }
         $sessionTimeout = Configure::read('Session.timeout');
         $csrfToken = $this->request->getAttribute('csrfToken');
@@ -59,34 +57,20 @@ class AppController extends Controller
     }
 
     /**
-     * beforeFilter callback.
+     * Metodo que normalizar o recurso acessado.
+     * O CakePHP mapeia '/users/' para '/users/index', mas não adiciona no request->getPath() a action 'index'
+     * resultando na string '/users' ao invés de '/users/index'.
      *
-     * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event Event.
-     * @return \Cake\Http\Response|null|void
+     * @access protected
+     * @return array<int, string>
      */
-    public function beforeFilter(EventInterface $event)
+    protected function normalizaRecurso(): array
     {
-        if ($this->ipEstaBloqueado()) {
-            $this->viewBuilder()->setLayout('layout_vazio');
-
-            return $this->render('/IpsBloqueados/ip_bloqueado');
+        $caminho = array_values(array_filter(explode('/', $this->request->getPath())));
+        if (count($caminho) == 1) {
+            array_push($caminho, 'index');
         }
-    }
 
-    /**
-     * Verifica se o IP de quem está acessar, foi bloqueado
-     *
-     * @access private
-     * @return bool
-     */
-    private function ipEstaBloqueado(): bool
-    {
-        $ipBloqueado = (new IpsBloqueadosTable())
-            ->find()
-            ->where(['ip' => $this->request->clientIp()])
-            ->limit(1)
-            ->toArray();
-
-        return empty($ipBloqueado) ? false : true;
+        return $caminho;
     }
 }

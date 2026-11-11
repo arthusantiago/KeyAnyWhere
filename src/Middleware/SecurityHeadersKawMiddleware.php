@@ -6,7 +6,7 @@ namespace App\Middleware;
 use Cake\Http\Middleware\SecurityHeadersMiddleware;
 
 /**
- * Utilizando a estrutuda do SecurityHeadersMiddleware para ampliar as configurações de segurança.
+ * Utilizando a estrutura do SecurityHeadersMiddleware para ampliar as configurações de segurança.
  *
  * @see https://book.cakephp.org/4/en/security/security-headers.html
  * @global
@@ -14,19 +14,21 @@ use Cake\Http\Middleware\SecurityHeadersMiddleware;
 class SecurityHeadersKawMiddleware extends SecurityHeadersMiddleware
 {
     /**
-     * Se nenhum parâmetro for informado, é setado uma configuração padrão.
+     * Aplica a politica padrão de carregamento do conteúdo.
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
      * @access public
-     * @param string $policy
      * @return \App\Middleware\SecurityHeadersKawMiddleware $this
      */
-    public function setContentSecurityPolicy(string $policy = ''): SecurityHeadersKawMiddleware
+    public function setContentSecurityPolicy(): SecurityHeadersKawMiddleware
     {
-        if (empty($policy)) {
-            $policy = 'default-src https: \'self\'; img-src \'self\'; script-src \'self\'; '
-                . 'style-src \'self\'; object-src \'none\'';
-        }
+        $policy = "default-src https: 'self'; "
+        // data: é necessário para o QrCode do 2FA (UsersController::geraQrCode2fa() devolve um data URI
+        // SVG inserido via <img>). SVG carregado em <img> não executa scripts.
+        . "img-src 'self' data:; "
+        . "script-src 'self'; "
+        . "style-src 'self'; "
+        . "object-src 'none'; ";
 
         $this->headers['content-security-policy'] = $policy;
 

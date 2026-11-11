@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Auditoria\AuditavelTrait;
 use App\Model\Custom\ValidatorKaw;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -29,6 +30,8 @@ use Cake\Validation\Validator;
  */
 class CategoriasTable extends Table
 {
+    use AuditavelTrait;
+
     /**
      * Initialize method
      *
@@ -44,6 +47,10 @@ class CategoriasTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        // Mascara antes/depois: este app guarda segredos (credenciais) e a trilha de
+        // auditoria é imutável — guarda só o nome dos campos alterados.
+        $this->adicionarAuditoria('categoria', mascararAlteracoes: true);
 
         $this->hasMany('Entradas', [
             'foreignKey' => 'categoria_id',
@@ -66,10 +73,10 @@ class CategoriasTable extends Table
 
         $validator
             ->scalar('nome')
-            ->maxLength('nome', 88, 'O nome da categoria pode ter no máximo 88 caracteres')
-            ->requirePresence('nome', 'create', 'O nome da categoria precisa ser informado')
-            ->notEmptyString('nome', 'O nome da categoria precisa ser informado')
-            ->checkXSS('nome');
+            ->maxLength('nome', 88, ValidatorKaw::mensagemErroPadrao('maxLength', ['Nome', 88]))
+            ->requirePresence('nome', 'create', ValidatorKaw::mensagemErroPadrao('requirePresence', ['Nome']))
+            ->notEmptyString('nome', ValidatorKaw::mensagemErroPadrao('notEmptyString', ['Nome']))
+            ->checkXSS('nome', ValidatorKaw::mensagemErroPadrao('checkXSS', ['Nome']));
 
         return $validator;
     }
@@ -101,7 +108,9 @@ class CategoriasTable extends Table
             $idCategoria = substr($nomeCate, ++$posicao);
             $categoria = $this->get($idCategoria);
             $categoria->posicao = $novaPosicao;
-            $this->save($categoria);
+            // Reordenação interna, não é ação do usuário: sem isso, cada criação/edição de
+            // categoria geraria registros de 'edicao' a mais na auditoria.
+            $this->save($categoria, ['auditoria_acao' => false]);
             unset($nomeCate, $categoria);
         }
         unset($novaOrdenacao);

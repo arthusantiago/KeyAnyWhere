@@ -10,7 +10,7 @@
         'breadcrumb',
         [
             'caminho' => [
-                ['Pages', 'index', 'Home'],
+                ['Pages', 'home', 'Home'],
                 'Configurações',
                 'Usuários',
                 'Listagem'
@@ -22,7 +22,7 @@
 
 <div class="row">
     <div class="col-sm mb-3">
-        <span class="titulo">Usuários</span>
+        <span class="titulo"><?=__('Usuários')?></span>
     </div>
     <div class="col-sm mb-3 text-end">
         <?= $this->element('Diversos/btnNovo', ['parametros' => ['controller' => 'Users', 'texto' => 'Usuário']])?>
@@ -32,9 +32,9 @@
     <table class="table table-borderless table-striped table-hover">
         <thead>
             <tr class="text-center titulo-coluna-tabela">
-                <th><?= $this->Paginator->sort('username') ?></th>
+                <th><?= $this->Paginator->sort('username', __('Nome')) ?></th>
                 <th><?= $this->Paginator->sort('email', 'E-mail') ?></th>
-                <th>Ações</th>
+                <th><?=__('Ações')?></th>
             </tr>
         </thead>
         <tbody>
@@ -48,9 +48,7 @@
                         <div class="btn-group" role="group">
                             <button id="btnGroupDrop" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"></button>
                             <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="#"><i class="bi bi-envelope"></i>Rec. e-mail</a>
-                                </li>
+                                <!-- <li><a class="dropdown-item" href="#"><i class="bi bi-envelope"></i>Recuperação de senha</a></li> -->
                                 <li><?=$this->element('Diversos/btnExcluir', ['idRegistro' => $user->id])?></li>
                             </ul>
                         </div>

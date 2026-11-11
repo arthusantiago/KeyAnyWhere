@@ -1,0 +1,6 @@
+# Configuração do PDepend, lida pelo PHPMD (composer md) e pelo pdepend do bin/qualidade quando
+# rodam na raiz do projeto. Cache em memória: o cache em arquivo (padrão, em ~/.pdepend) pode
+# devolver as métricas de uma versão antiga de um arquivo já alterado.
+pdepend:
+  cache:
+    driver: memory

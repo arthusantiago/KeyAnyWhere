@@ -4,10 +4,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Middleware;
 
 use App\Middleware\SessionsKawMiddleware;
-use Authentication\AuthenticationServiceInterface;
-use Authentication\AuthenticationServiceProviderInterface;
-use Authentication\Authenticator\Result;
-use Authentication\Authenticator\ResultInterface;
+use Authentication\Identity;
 use Cake\Datasource\ConnectionManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -17,7 +14,8 @@ use Cake\TestSuite\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * App\Middleware\SessionsKawMiddleware Test Case
+ * Chama o middleware direto, sem a pilha HTTP: o usuário vem no atributo `identity`, como o
+ * AuthenticationMiddleware deixa. Em CLI o id da sessão é sempre 'cli' (tests/bootstrap.php).
  *
  * @uses \App\Middleware\SessionsKawMiddleware
  */
@@ -28,167 +26,159 @@ class SessionsKawMiddlewareTest extends TestCase
     protected array $fixtures = [
         'app.Users',
         'app.Sessions',
+        'app.Auditorias',
     ];
 
     /**
-     * Insere uma sessão diretamente via SQL, evitando a necessidade de gerar
-     * um UUID válido para 'id_secundario' (a coluna tem um default no banco).
+     * @return void
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // A fixture tem um registro de sessão; cada teste monta só o que precisa.
+        $this->fetchTable('Sessions')->deleteAll([]);
+    }
+
+    /**
+     * Insere uma sessão direto via SQL (o `id_secundario` tem default no banco).
      *
      * @param string $id
-     * @param array<string, mixed> $overrides
+     * @param array<string, mixed> $campos
      * @return void
      */
-    private function inserirSessao(string $id, array $overrides = []): void
+    private function inserirSessao(string $id, array $campos = []): void
     {
-        $dados = $overrides + [
+        $agora = DateTime::now()->i18nFormat('yyyy-MM-dd HH:mm:ss');
+        ConnectionManager::get('test')->insert('sessions', ['id' => $id] + $campos + [
             'user_id' => null,
             'user_agent' => null,
-            'expires' => null,
+            'expires' => time() + 3600,
             'data' => null,
-            'created' => DateTime::now()->i18nFormat('yyyy-MM-dd HH:mm:ss'),
-            'modified' => DateTime::now()->i18nFormat('yyyy-MM-dd HH:mm:ss'),
-        ];
-
-        ConnectionManager::get('test')->insert(
-            'sessions',
-            ['id' => $id] + $dados,
-        );
+            'created' => $agora,
+            'modified' => $agora,
+        ]);
     }
 
     /**
-     * Test process - Autenticação válida preenche user_id/user_agent quando a sessão ainda não os tem.
-     *
-     * @return void
+     * @param bool $autenticado
+     * @param string $userAgent
+     * @return \Cake\Http\ServerRequest
      */
-    public function testProcessPreenchesSessaoQuandoAutenticado(): void
+    private function requisicao(bool $autenticado, string $userAgent = 'Agente de Teste'): ServerRequest
     {
-        $this->inserirSessao('sessao-valida');
+        $request = (new ServerRequest(['url' => '/']))->withHeader('User-Agent', $userAgent);
+        if ($autenticado) {
+            $request = $request->withAttribute('identity', new Identity($this->fetchTable('Users')->get(1)));
+        }
 
-        $request = new ServerRequest(['url' => '/', 'session' => null]);
-        $request->getSession()->id('sessao-valida');
-        $request = $request->withHeader('User-Agent', 'Agente de Teste');
+        return $request;
+    }
 
-        $user = $this->fetchTable('Users')->get(1);
-
-        $result = new Result($user, Result::SUCCESS);
-        $authService = $this->createMock(AuthenticationServiceInterface::class);
-        $authService->method('authenticate')->willReturn($result);
-
-        $subject = $this->createMock(AuthenticationServiceProviderInterface::class);
-        $subject->method('getAuthenticationService')->willReturn($authService);
-
+    /**
+     * @param \Cake\Http\ServerRequest $request
+     * @param \App\Middleware\SessionsKawMiddleware|null $middleware
+     * @return \Cake\Http\Response
+     */
+    private function processar(ServerRequest $request, ?SessionsKawMiddleware $middleware = null): Response
+    {
         $handler = $this->createMock(RequestHandlerInterface::class);
-        $handler->method('handle')->willReturn(new Response());
+        $handler->method('handle')->willReturn(new Response(['body' => 'resposta']));
+        $resposta = ($middleware ?? new SessionsKawMiddleware())->process($request, $handler);
+        $this->assertInstanceOf(Response::class, $resposta);
 
-        $middleware = new SessionsKawMiddleware($subject);
-        $middleware->process($request, $handler);
-
-        $sessao = $this->fetchTable('Sessions')->get('sessao-valida');
-
-        $this->assertEquals(1, $sessao->user_id);
-        $this->assertNotEmpty($sessao->user_agent);
+        return $resposta;
     }
 
     /**
-     * Test process - Não sobrescreve user_id/user_agent quando a sessão já os possui.
+     * Logo após o login o handler de sessão do PHP ainda não gravou o registro: ele é criado com o
+     * usuário e o user-agent.
      *
      * @return void
      */
-    public function testProcessNaoSobrescreveSessaoJaPreenchida(): void
+    public function testAutenticadoSemSessaoGravadaCriaORegistro(): void
     {
-        $this->inserirSessao('sessao-preenchida', [
-            'user_id' => 1,
-            'user_agent' => 'Agente Original',
+        $this->processar($this->requisicao(true));
+
+        $sessao = $this->fetchTable('Sessions')->get('cli');
+        $this->assertSame(1, $sessao->get('user_id'));
+        $this->assertSame('Agente de Teste', $sessao->get('user_agent'));
+    }
+
+    /**
+     * Registro já gravado pelo handler de sessão, ainda sem os dados do usuário.
+     *
+     * @return void
+     */
+    public function testAutenticadoComSessaoSemUsuarioCompletaOsCampos(): void
+    {
+        $this->inserirSessao('cli');
+
+        $this->processar($this->requisicao(true));
+
+        $sessao = $this->fetchTable('Sessions')->get('cli');
+        $this->assertSame(1, $sessao->get('user_id'));
+        $this->assertSame('Agente de Teste', $sessao->get('user_agent'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testAutenticadoComSessaoJaPreenchidaNaoSobrescreve(): void
+    {
+        $this->inserirSessao('cli', ['user_id' => 1, 'user_agent' => 'Agente Original']);
+
+        $this->processar($this->requisicao(true, 'Agente Novo'));
+
+        $this->assertSame('Agente Original', $this->fetchTable('Sessions')->get('cli')->get('user_agent'));
+    }
+
+    /**
+     * Sem usuário, só as sessões vencidas (pelo `expires`) são apagadas, e nenhuma é criada.
+     *
+     * @return void
+     */
+    public function testNaoAutenticadoApagaSoAsSessoesVencidas(): void
+    {
+        $this->inserirSessao('vencida', ['expires' => time() - 60]);
+        $this->inserirSessao('ativa', ['expires' => time() + 3600]);
+        // Criada há dias, mas ainda ativa: não é apagada
+        $this->inserirSessao('antiga-ativa', [
+            'expires' => time() + 3600,
+            'created' => DateTime::now()->subDays(3)->i18nFormat('yyyy-MM-dd HH:mm:ss'),
         ]);
 
-        $request = new ServerRequest(['url' => '/', 'session' => null]);
-        $request->getSession()->id('sessao-preenchida');
-        $request = $request->withHeader('User-Agent', 'Agente Novo');
+        $this->processar($this->requisicao(false));
 
-        $user = $this->fetchTable('Users')->get(1);
-
-        $result = new Result($user, Result::SUCCESS);
-        $authService = $this->createMock(AuthenticationServiceInterface::class);
-        $authService->method('authenticate')->willReturn($result);
-
-        $subject = $this->createMock(AuthenticationServiceProviderInterface::class);
-        $subject->method('getAuthenticationService')->willReturn($authService);
-
-        $handler = $this->createMock(RequestHandlerInterface::class);
-        $handler->method('handle')->willReturn(new Response());
-
-        $middleware = new SessionsKawMiddleware($subject);
-        $middleware->process($request, $handler);
-
-        $sessao = $this->fetchTable('Sessions')->get('sessao-preenchida');
-
-        $this->assertEquals('Agente Original', $sessao->user_agent);
+        $sessoes = $this->fetchTable('Sessions');
+        $this->assertFalse($sessoes->exists(['id' => 'vencida']));
+        $this->assertTrue($sessoes->exists(['id' => 'ativa']));
+        $this->assertTrue($sessoes->exists(['id' => 'antiga-ativa']));
+        $this->assertFalse($sessoes->exists(['id' => 'cli']));
     }
 
     /**
-     * Test process - Autenticação inválida remove sessões expiradas (criadas há mais de 1 dia).
-     *
      * @return void
      */
-    public function testProcessRemoveSessoesAntigasQuandoNaoAutenticado(): void
+    public function testDevolveARespostaDoHandler(): void
     {
-        $antiga = DateTime::now()->subDays(2)->i18nFormat('yyyy-MM-dd HH:mm:ss');
-        $recente = DateTime::now()->i18nFormat('yyyy-MM-dd HH:mm:ss');
-
-        $this->inserirSessao('sessao-antiga', ['created' => $antiga, 'modified' => $antiga]);
-        $this->inserirSessao('sessao-recente', ['created' => $recente, 'modified' => $recente]);
-
-        $request = new ServerRequest(['url' => '/', 'session' => null]);
-        $request->getSession()->id('sessao-antiga');
-
-        $result = $this->createMock(ResultInterface::class);
-        $result->method('isValid')->willReturn(false);
-
-        $authService = $this->createMock(AuthenticationServiceInterface::class);
-        $authService->method('authenticate')->willReturn($result);
-
-        $subject = $this->createMock(AuthenticationServiceProviderInterface::class);
-        $subject->method('getAuthenticationService')->willReturn($authService);
-
-        $handler = $this->createMock(RequestHandlerInterface::class);
-        $handler->method('handle')->willReturn(new Response());
-
-        $middleware = new SessionsKawMiddleware($subject);
-        $middleware->process($request, $handler);
-
-        $sessions = $this->fetchTable('Sessions');
-        $this->assertFalse($sessions->exists(['id' => 'sessao-antiga']));
-        $this->assertTrue($sessions->exists(['id' => 'sessao-recente']));
+        $this->assertSame('resposta', (string)$this->processar($this->requisicao(false))->getBody());
     }
 
     /**
-     * Test que o middleware chama o handler e retorna a resposta produzida por ele.
+     * A mesma instância atende requisições seguidas sem levar dados de uma para a outra.
      *
      * @return void
      */
-    public function testProcessRetornaRespostaDoHandler(): void
+    public function testMesmaInstanciaNaoMisturaRequisicoes(): void
     {
-        $this->inserirSessao('sessao-resposta');
+        $middleware = new SessionsKawMiddleware();
+        $this->processar($this->requisicao(true, 'Primeiro'), $middleware);
+        $this->inserirSessao('vencida', ['expires' => time() - 60]);
 
-        $request = new ServerRequest(['url' => '/', 'session' => null]);
-        $request->getSession()->id('sessao-resposta');
-        $request = $request->withHeader('User-Agent', 'Agente de Teste');
+        $this->processar($this->requisicao(false), $middleware);
 
-        $user = $this->fetchTable('Users')->get(1);
-        $result = new Result($user, Result::SUCCESS);
-        $authService = $this->createMock(AuthenticationServiceInterface::class);
-        $authService->method('authenticate')->willReturn($result);
-
-        $subject = $this->createMock(AuthenticationServiceProviderInterface::class);
-        $subject->method('getAuthenticationService')->willReturn($authService);
-
-        $expectedResponse = new Response(['body' => 'resposta-esperada']);
-        $handler = $this->createMock(RequestHandlerInterface::class);
-        $handler->expects($this->once())->method('handle')->willReturn($expectedResponse);
-
-        $middleware = new SessionsKawMiddleware($subject);
-        $response = $middleware->process($request, $handler);
-
-        $this->assertSame($expectedResponse, $response);
+        $sessoes = $this->fetchTable('Sessions');
+        $this->assertSame('Primeiro', $sessoes->get('cli')->get('user_agent'));
+        $this->assertFalse($sessoes->exists(['id' => 'vencida']));
     }
 }

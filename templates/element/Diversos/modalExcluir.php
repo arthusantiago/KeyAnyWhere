@@ -30,15 +30,17 @@ $url = $this->Url->build([
     <div class="modal-content">
       <div class="modal-body">
         <br>
-        <p>Você tem certeza dessa ação?</p>
+        <p><?=__('Você tem certeza que deseja excluir?')?></p>
         <?= $this->Form->create(null, ['url' => $url, 'id' => 'formModalExcluirRegistro']); ?>
           <input type="hidden" id="idExclusao" name="id" value="">
           <input type="hidden" name="_csrfToken" autocomplete="off" value="<?=$csrfToken?>">
         <?= $this->Form->end(['data-type' => 'hidden']);?>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-secondary botoes" id="btnCancelarModalExcluir" data-id-form="formModalExcluirRegistro" data-bs-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-sm btn-danger botoes" form="formModalExcluirRegistro">Confirmar</button>
+        <button type="button" class="btn btn-sm btn-secondary botoes" id="btnCancelarModalExcluir" data-id-form="formModalExcluirRegistro" data-bs-dismiss="modal">
+          <?=__('Cancelar')?>
+        </button>
+        <button type="submit" class="btn btn-sm btn-danger botoes" form="formModalExcluirRegistro"><?=__('Excluir')?></button>
       </div>
     </div>
   </div>

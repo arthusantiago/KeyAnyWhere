@@ -83,5 +83,5 @@ if (isset($parametros['texto']) == true && empty($parametros['texto']) == false)
 ?>
 
 <a class="btn btn-sm btn-outline-secondary" role="button" href="<?=$url?>" <?=$atributoHTML?>>
-  <i class="bi bi-pencil"></i><?=$texto?>
+  <i class="bi bi-pencil"></i><?=__($texto)?>
 </a>

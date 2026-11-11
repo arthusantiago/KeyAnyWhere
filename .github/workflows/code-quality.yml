@@ -9,9 +9,11 @@ jobs:
   phpcs:
     name: Code Style (phpcs)
     runs-on: ubuntu-latest
+    # Só no repositório do community: quem recebe este código por merge tem o próprio CI.
+    if: github.repository == 'arthusantiago/KeyAnyWhere'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -25,7 +27,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.composercache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -42,9 +44,11 @@ jobs:
   phpstan:
     name: Static Analysis (phpstan)
     runs-on: ubuntu-latest
+    # Só no repositório do community: quem recebe este código por merge tem o próprio CI.
+    if: github.repository == 'arthusantiago/KeyAnyWhere'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -58,7 +62,7 @@ jobs:
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.composercache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -74,3 +78,84 @@ jobs:
 
       - name: Run PHPStan
         run: composer stan
+
+  # Índice de Qualidade (bin/qualidade): cobertura, mutação, PHPStan, PHPMD e Deptrac, com catraca
+  # contra qualidade-referencia.json. A dívida antiga fica nos baselines; reprova só o que for novo
+  # ou pior. O resumo sai na página da execução (Summary).
+  qualidade:
+    name: Qualidade
+    runs-on: ubuntu-latest
+    # Só no repositório do community: quem recebe este código por merge tem o próprio CI.
+    if: github.repository == 'arthusantiago/KeyAnyWhere'
+    timeout-minutes: 45
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: keyanywhere_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup PHP (com pcov para cobertura e mutação)
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_pgsql, mbstring, intl, sodium
+          coverage: pcov
+
+      - name: Get Composer Cache Directory
+        id: composercache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist --no-interaction
+
+      - name: Create .env and config/app.php
+        run: |
+          cp config/.env.example config/.env
+          KEY_CRIPTOGRAFIC=$(php -r "echo sodium_bin2hex(sodium_crypto_secretbox_keygen());")
+          sed -i "s/^export KEY_CRIPTOGRAFIC=.*/export KEY_CRIPTOGRAFIC=\"${KEY_CRIPTOGRAFIC}\"/" config/.env
+          cp config/app.example.php config/app.php
+          cp config/app_local.example.php config/app_local.php
+
+      # Roda a suíte uma vez, com a cobertura (test:cobertura), e o Infection reaproveita essa
+      # cobertura (um processo só: os testes dividem o banco de teste).
+      - name: Cobertura e mutação
+        run: composer mutacao
+
+      - name: Índice de Qualidade (portões + catraca)
+        run: |
+          set -o pipefail
+          composer qualidade | tee -a "$GITHUB_STEP_SUMMARY"
+
+      # Mutantes que escaparam (com o diff de cada um) e cobertura, para consultar sem rodar
+      # localmente. Não viram anotações no PR (--logger-github=false no composer mutacao).
+      - name: Relatórios de cobertura e mutação
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v6
+        with:
+          name: relatorios-qualidade
+          path: |
+            build/cobertura.xml
+            build/infection.log
+            build/infection-resumo.log
+          if-no-files-found: ignore
+          retention-days: 14

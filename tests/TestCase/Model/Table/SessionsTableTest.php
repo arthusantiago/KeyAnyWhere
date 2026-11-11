@@ -26,6 +26,7 @@ class SessionsTableTest extends TestCase
     protected array $fixtures = [
         'app.Users',
         'app.Sessions',
+        'app.Auditorias',
     ];
 
     /**
@@ -104,5 +105,20 @@ class SessionsTableTest extends TestCase
 
         $this->assertFalse($this->Sessions->save($sessao), 'Should enforce foreign key constraint on user_id');
         $this->assertArrayHasKey('user_id', $sessao->getErrors());
+    }
+
+    /**
+     * O validador do finalizarSessao exige um UUID no id da sessão.
+     *
+     * @return void
+     * @uses \App\Model\Table\SessionsTable::validationIdSession()
+     */
+    public function testValidationIdSession(): void
+    {
+        $validador = $this->Sessions->getValidator('idSession');
+
+        $this->assertSame([], $validador->validate(['id' => '0b7d7e6e-6f4b-4c3e-9a51-2f3c4d5e6f70'], false));
+        $this->assertArrayHasKey('uuid', $validador->validate(['id' => 'nao-e-um-uuid'], false)['id']);
+        $this->assertArrayHasKey('_empty', $validador->validate(['id' => ''], false)['id']);
     }
 }

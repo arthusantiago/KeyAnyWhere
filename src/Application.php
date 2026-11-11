@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace App;
 
+use App\Middleware\CsrfProtectionKawMiddleware;
 use App\Middleware\SecurityHeadersKawMiddleware;
 use App\Middleware\SessionsKawMiddleware;
 use Authentication\AuthenticationService;
@@ -28,7 +29,6 @@ use Cake\Datasource\FactoryLocator;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\BaseApplication;
 use Cake\Http\Middleware\BodyParserMiddleware;
-use Cake\Http\Middleware\CsrfProtectionMiddleware;
 use Cake\Http\Middleware\HttpsEnforcerMiddleware;
 use Cake\Http\Middleware\SecurityHeadersMiddleware;
 use Cake\Http\MiddlewareQueue;
@@ -91,6 +91,48 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
     public function isRunningUnitTests(): bool
     {
         return defined('PHPUNIT_TESTSUITE') || defined('PHPUNIT_COMPOSER_INSTALL');
+    }
+
+    /**
+     * Nome do cookie CSRF. O prefixo `__Secure-` exige HTTPS, que o servidor de desenvolvimento não tem.
+     * Público para os testes de integração usarem o mesmo nome (ver tests/TestCase/Controller/CsrfTestTrait.php).
+     *
+     * @return string
+     */
+    public static function nomeCookieCsrf(): string
+    {
+        return self::isTheExecutionEnvironment(self::DESENVOLVIMENTO) ? 'Secure-csrfToken' : '__Secure-csrfToken';
+    }
+
+    /**
+     * Se a requisição é de uma rota de API (`/api/...`).
+     *
+     * As rotas de API autenticam por token (cabeçalho), não pelo cookie de sessão: por isso não passam
+     * pelo CSRF e não são redirecionadas para o login. O core ainda não tem API; a regra serve a qualquer
+     * API registrada por um plugin (ver config/plugins_local.php).
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @return bool
+     */
+    public static function ehRotaApi(ServerRequestInterface $request): bool
+    {
+        $caminho = $request->getUri()->getPath();
+
+        return $caminho === '/api' || str_starts_with($caminho, '/api/');
+    }
+
+    /**
+     * Regra do `skipCheckCallback()` do CSRF. O middleware guarda um único callback: toda regra nova de
+     * exceção ao CSRF entra aqui.
+     *
+     * Os testes não pulam a verificação: validam o CSRF como em produção (ver CsrfTestTrait).
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @return bool
+     */
+    public function pulaVerificacaoCsrf(ServerRequestInterface $request): bool
+    {
+        return self::ehRotaApi($request);
     }
 
     /**
@@ -158,17 +200,16 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // Cross Site Request Forgery (CSRF) Protection Middleware
             // https://book.cakephp.org/4/en/controllers/middleware.html#cross-site-request-forgery-csrf-middleware
             $csrfProtecConfig = [
-                'cookieName' => self::isTheExecutionEnvironment(self::DESENVOLVIMENTO)
-                    ? 'Secure-csrfToken'
-                    : '__Secure-csrfToken',
+                'cookieName' => self::nomeCookieCsrf(),
                 'httponly' => true,
                 'secure' => true,
                 'samesite' => 'Strict',
             ];
-            $csrf = new CsrfProtectionMiddleware($csrfProtecConfig);
-            $csrf->skipCheckCallback(function () {
-                // Skip CSRF checks during unit tests
-                return $this->isRunningUnitTests();
+            // Renova, no GET, o cookie CSRF assinado com um SECURITY_SALT anterior (ver a classe).
+            $csrf = new CsrfProtectionKawMiddleware($csrfProtecConfig);
+            // Só as rotas de API (ver pulaVerificacaoCsrf()).
+            $csrf->skipCheckCallback(function (ServerRequestInterface $request): bool {
+                return $this->pulaVerificacaoCsrf($request);
             });
             $middlewareQueue->add($csrf);
 
@@ -197,7 +238,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         }
 
             $middlewareQueue->add($securityHeaders);
-            $middlewareQueue->add(new SessionsKawMiddleware($this));
+            $middlewareQueue->add(new SessionsKawMiddleware());
 
         return $middlewareQueue;
     }
@@ -223,7 +264,11 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
     protected function bootstrapCli(): void
     {
         $this->addOptionalPlugin('Cake/Repl');
-        $this->addOptionalPlugin('Bake');
+        // Em produção (composer install --no-dev) a classe do Bake não existe, mas o pacote pode continuar
+        // listado no vendor/cakephp-plugins.php; carregá-lo assim gera um deprecated em todo bin/cake.
+        if (class_exists('Bake\BakePlugin')) {
+            $this->addPlugin('Bake');
+        }
 
         $this->addPlugin('Migrations');
 
@@ -238,34 +283,32 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
      */
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
     {
+        // Sem redirecionamento para o login nos testes e nas rotas de API: a API responde com o próprio
+        // erro (401/403), não com a tela de login da aplicação web.
         $config = [
             'queryParam' => 'redirect',
-            'unauthenticatedRedirect' => null,
+            'unauthenticatedRedirect' => $this->isRunningUnitTests() || self::ehRotaApi($request)
+                ? null
+                : Router::url('/users/login'),
         ];
-
-        // During unit tests, disable automatic redirect
-        if (!$this->isRunningUnitTests()) {
-            $config['unauthenticatedRedirect'] = Router::url('/users/login');
-        }
 
         $authenticationService = new AuthenticationService($config);
 
-        // Load identifiers, ensure we check email and password fields
-        $authenticationService->loadIdentifier('Authentication.Password', [
-            'fields' => [
-                'username' => 'email',
-                'password' => 'password',
-            ],
-        ]);
+        $fields = [
+            'username' => 'email',
+            'password' => 'password',
+        ];
 
         // Load the authenticators, you want session first
         $authenticationService->loadAuthenticator('Authentication.Session');
-        // Configure form data check to pick email and password
+        // Configure form data check to pick email and password. O identifier é passado direto ao
+        // authenticator; no cakephp/authentication 4, a configuração dele exige `className`.
         $authenticationService->loadAuthenticator('Authentication.Form', [
-            'fields' => [
-                'username' => 'email',
-                'password' => 'password',
+            'identifier' => [
+                'className' => 'Authentication.Password',
+                'fields' => $fields,
             ],
+            'fields' => $fields,
             'loginUrl' => Router::url('/users/login'),
         ]);
 

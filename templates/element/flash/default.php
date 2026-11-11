@@ -13,12 +13,12 @@
    */
 ?>
 <div class="alert alert-primary" role="alert" id="alert-do-sistema">
-    <?=$message?>
+    <?=__(h($message))?>
     <?php if(isset($params['mensagens']) && is_array($params['mensagens'])):?>
         <ul>
             <?php foreach($params['mensagens'] AS $arrayMensagens):?>
                 <?php foreach($arrayMensagens AS $mensagem):?>
-                    <li><?=h($mensagem)?></li>
+                    <li><?=__(h($mensagem))?></li>
                 <?php endforeach;?>
             <?php endforeach;?>
         </ul>

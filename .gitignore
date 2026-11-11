@@ -2,8 +2,10 @@
 ##########################
 /config/app_local.php
 /config/app.php
+/config/plugins_local.php
 /config/.env
 /config/Migrations/schema-dump-default.lock
+/config/Migrations/schema-dump-test.lock
 /logs/*
 /tmp/*
 /vendor/*
@@ -26,6 +28,9 @@ Thumbs.db
 #######################
 # PHPUnit
 .phpunit.cache
+# Configuração local das ferramentas (sobrepõe a .dist): PHPStan e phpcs
+/phpstan.neon
+/phpcs.xml
 tests.sqlite
 # vim
 *~
@@ -53,3 +58,7 @@ nbproject/*
 # yarn
 yarn-debug.log
 yarn-error.log
+
+# Relatórios do bin/qualidade, cobertura e mutação
+/build/
+/.deptrac.cache

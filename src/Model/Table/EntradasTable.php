@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Model\Table;
 
+use App\Auditoria\AuditavelTrait;
 use App\Model\Custom\ValidatorKaw;
+use App\Model\Entity\Entrada;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -31,6 +33,8 @@ use Cake\Validation\Validator;
  */
 class EntradasTable extends Table
 {
+    use AuditavelTrait;
+
     /**
      * Initialize method
      *
@@ -46,6 +50,10 @@ class EntradasTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        // Mascara antes/depois: este app guarda segredos (credenciais) e a trilha de
+        // auditoria é imutável — guarda só o nome dos campos alterados.
+        $this->adicionarAuditoria('entrada', mascararAlteracoes: true);
 
         $this->belongsTo('Categorias', [
             'foreignKey' => 'categoria_id',
@@ -69,40 +77,104 @@ class EntradasTable extends Table
 
         $validator
             ->scalar('titulo')
-            ->maxLength('titulo', 87, 'A título pode ter no máximo 87 caracteres')
-            ->requirePresence('titulo', 'create', 'O título precisa ser informado')
-            ->notEmptyString('titulo', 'O título não pode estar vazio')
-            ->checkXSS('titulo');
+            ->maxLength('titulo', 87, ValidatorKaw::mensagemErroPadrao('maxLength', ['Título', 87]))
+            ->requirePresence('titulo', 'create', ValidatorKaw::mensagemErroPadrao('requirePresence', ['Título']))
+            ->notEmptyString('titulo', ValidatorKaw::mensagemErroPadrao('notEmptyString', ['Título']))
+            ->checkXSS('titulo', ValidatorKaw::mensagemErroPadrao('checkXSS', ['Título']));
 
         $validator
             ->scalar('username')
-            ->maxLength('username', 88, 'O username pode ter no máximo 88 caracteres')
-            ->requirePresence('username', 'create', 'O username precisa ser informado')
-            ->notEmptyString('username', 'O username não pode estar vazio')
-            ->checkXSS('username');
+            ->maxLength('username', 472, ValidatorKaw::mensagemErroPadrao('maxLength', ['Usuário', 472]))
+            ->requirePresence('username', 'create', ValidatorKaw::mensagemErroPadrao('requirePresence', ['Usuário']))
+            ->checkXSS('username', ValidatorKaw::mensagemErroPadrao('checkXSS', ['Usuário']));
 
         $validator
             ->scalar('password')
-            ->maxLength('password', 88, 'A senha pode ter no máximo 88 caracteres')
-            ->requirePresence('password', 'create', 'A senha precisa ser informada')
-            ->notEmptyString('password', 'A senha não pode estar vazia');
+            ->maxLength('password', 472, ValidatorKaw::mensagemErroPadrao('maxLength', ['Senha', 472]))
+            ->requirePresence('password', 'create', ValidatorKaw::mensagemErroPadrao('requirePresence', ['Senha']));
 
         $validator
-            ->numeric('categoria_id', 'Precisa informar um ID de categoria válido')
-            ->requirePresence('categoria_id', true, 'O ID da categoria precisa ser informado')
-            ->notEmptyString('categoria_id', 'O ID da categoria precisa ser informado');
+            ->numeric('posicao', ValidatorKaw::mensagemErroPadrao('numeric', ['posicao']))
+            ->notEmptyString('posicao', ValidatorKaw::mensagemErroPadrao('notEmptyString', ['posicao']));
 
         $validator
-            ->url('link', 'O link precisa ser uma URL válida')
-            ->urlWithProtocol('link', 'O link precisa ter o protocolo, exemplo: http:// ou https://')
-            ->maxLength('link', 400, 'O link pode ter no máximo 210 caracteres')
+            ->numeric('categoria_id', ValidatorKaw::mensagemErroPadrao('numeric', ['Categoria']))
+            ->requirePresence('categoria_id', true, ValidatorKaw::mensagemErroPadrao('requirePresence', ['Categoria']))
+            ->notEmptyString('categoria_id', ValidatorKaw::mensagemErroPadrao('notEmptyString', ['Categoria']));
+
+        $validator
+            ->url('link', ValidatorKaw::mensagemErroPadrao('url', ['Link']))
+            ->urlWithProtocol('link', ValidatorKaw::mensagemErroPadrao('urlWithProtocol', ['Link']))
+            ->maxLength('link', 400, ValidatorKaw::mensagemErroPadrao('maxLength', ['Link', 400]))
             ->allowEmptyString('link')
-            ->checkXSS('link');
+            ->checkXSS('link', ValidatorKaw::mensagemErroPadrao('checkXSS', ['Link']));
 
         $validator
-            ->maxLength('anotacoes', 1000, 'A anotação pode ter no máximo 1000 caracteres')
+            ->maxLength('anotacoes', 1000, ValidatorKaw::mensagemErroPadrao('maxLength', ['Anotações', 1000]))
             ->allowEmptyString('anotacoes')
-            ->checkXSS('anotacoes');
+            ->checkXSS('anotacoes', ValidatorKaw::mensagemErroPadrao('checkXSS', ['Anotações']));
+
+        return $validator;
+    }
+
+    /**
+     * Faz a validação dos dados recebidos na requisição para copiar dados para a área de transferência.
+     *
+     * @access public
+     * @param \App\Model\Custom\ValidatorKaw $validator Validator instance.
+     * @return \App\Model\Custom\ValidatorKaw
+     */
+    public function validationClipboard(Validator $validator): Validator
+    {
+        $validator
+            ->requirePresence('id', true, ValidatorKaw::mensagemErroPadrao('requirePresence', ['id']))
+            ->notEmptyString('id', ValidatorKaw::mensagemErroPadrao('notEmptyString', ['id']))
+            ->maxLength('id', 5, ValidatorKaw::mensagemErroPadrao('maxLength', ['id', 5]))
+            ->integer('id', ValidatorKaw::mensagemErroPadrao('integer', ['id']))
+            ->checkXSS('id', ValidatorKaw::mensagemErroPadrao('checkXSS', ['id']));
+
+        $validator
+            ->requirePresence('type', true, ValidatorKaw::mensagemErroPadrao('requirePresence', ['type']))
+            ->notEmptyString('type', ValidatorKaw::mensagemErroPadrao('notEmptyString', ['type']))
+            ->maxLength('type', 8, ValidatorKaw::mensagemErroPadrao('maxLength', ['type', 8]))
+            ->inList('type', ['password', 'user'], ValidatorKaw::mensagemErroPadrao('inList', ['type']))
+            ->checkXSS('type', ValidatorKaw::mensagemErroPadrao('checkXSS', ['type']));
+
+        return $validator;
+    }
+
+    /**
+     * Faz a validação dos dados recebidos na requisição para buscar por entradas.
+     *
+     * @access public
+     * @param \App\Model\Custom\ValidatorKaw $validator Validator instance.
+     * @return \App\Model\Custom\ValidatorKaw
+     */
+    public function validationBusca(Validator $validator): Validator
+    {
+        $validator
+            ->requirePresence('stringBusca', true, ValidatorKaw::mensagemErroPadrao('requirePresence', ['stringBusca']))
+            ->notEmptyString('stringBusca', ValidatorKaw::mensagemErroPadrao('notEmptyString', ['stringBusca']))
+            ->checkXSS('stringBusca', ValidatorKaw::mensagemErroPadrao('checkXSS', ['stringBusca']));
+
+        return $validator;
+    }
+
+    /**
+     * Faz a validação dos dados recebidos na requisição para verificar se a senha está na lista de senhas inseguras.
+     *
+     * @access public
+     * @param \App\Model\Custom\ValidatorKaw $validator Validator instance.
+     * @return \App\Model\Custom\ValidatorKaw
+     */
+    public function validationSenhaInsegura(Validator $validator): Validator
+    {
+        $validator
+            ->scalar('password')
+            ->maxLength('password', 88, ValidatorKaw::mensagemErroPadrao('maxLength', ['password', 88]))
+            // `true`, não 'create': o controller valida com `validate($dados, false)` (não é um registro novo).
+            ->requirePresence('password', true, ValidatorKaw::mensagemErroPadrao('requirePresence', ['password']))
+            ->notEmptyString('password', ValidatorKaw::mensagemErroPadrao('notEmptyString', ['password']));
 
         return $validator;
     }
@@ -117,10 +189,46 @@ class EntradasTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add(
-            $rules->existsIn('categoria_id', 'Categorias', 'Categoria não encontrada'),
+            $rules->existsIn(
+                'categoria_id',
+                'Categorias',
+                ValidatorKaw::mensagemErroPadrao('existsIn', ['Categoria', 'Categorias']),
+            ),
             ['errorField' => 'categoria_id'],
         );
 
         return $rules;
+    }
+
+    /**
+     * Define a `posicao` das entradas da categoria pela ordem alfabética do título. Os títulos são
+     * criptografados no banco, então a ordenação é feita aqui, com os títulos descriptografados.
+     *
+     * Grava só a `posicao`, com `updateAll()`: é uma reordenação interna, não uma ação do usuário, e não
+     * deve gerar registro de auditoria nem mudar o `modified` das entradas.
+     *
+     * @param int $categoriaId
+     * @return void
+     */
+    public function reordenar(int $categoriaId): void
+    {
+        $titulos = [];
+        $entradas = $this->find()
+            ->select(['id', 'titulo'])
+            ->where(['categoria_id' => $categoriaId])
+            ->all();
+        foreach ($entradas as $entrada) {
+            if ($entrada instanceof Entrada) {
+                $titulos[] = ['id' => $entrada->id, 'titulo' => $entrada->tituloDescrip()];
+            }
+        }
+        unset($entradas);
+
+        usort($titulos, fn(array $a, array $b): int => strcasecmp($a['titulo'], $b['titulo']) ?: $a['id'] <=> $b['id']);
+
+        foreach ($titulos as $posicao => $item) {
+            $this->updateAll(['posicao' => $posicao], ['id' => $item['id']]);
+        }
+        unset($titulos);
     }
 }

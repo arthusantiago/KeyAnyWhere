@@ -40,5 +40,5 @@ if (isset($parametros['texto']) == true && empty($parametros['texto']) == false)
 ?>
 
 <button type="submit" class="btn btn-sm btn-outline-primary botoes" <?=$atributoHTML?>>
-  <?=$texto?>
+  <i class="bi bi-floppy"></i><?=__($texto)?>
 </button>

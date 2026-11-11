@@ -27,6 +27,7 @@ use Cake\TestSuite\TestCase;
 class PagesControllerTest extends TestCase
 {
     use IntegrationTestTrait;
+    use CsrfTestTrait;
 
     /**
      * Test directory traversal protection - CRITICAL SECURITY TEST
@@ -54,15 +55,12 @@ class PagesControllerTest extends TestCase
      */
     public function testCsrfAppliedError()
     {
-        // POST without CSRF token should be rejected
+        // POST sem token CSRF: o CsrfTestTrait envia o token em toda requisição, então ele é desligado aqui.
+        $this->_csrfToken = false;
         $this->post('/pages/home', ['hello' => 'world']);
 
-        // Should reject with 403 Forbidden (CSRF protection) or 401 Unauthorized
-        $statusCode = $this->_response->getStatusCode();
-        $this->assertTrue(
-            in_array($statusCode, [403, 401]),
-            'Expected 403 Forbidden or 401 Unauthorized, got ' . $statusCode,
-        );
+        // Os testes validam o CSRF como em produção: a requisição para no middleware.
+        $this->assertResponseCode(403);
     }
 
     /**
@@ -73,7 +71,6 @@ class PagesControllerTest extends TestCase
     public function testCsrfAppliedOk()
     {
         // Enable CSRF token handling for this request
-        $this->enableCsrfToken();
 
         // POST with valid CSRF token should succeed
         $this->post('/pages/home', ['hello' => 'world']);

@@ -6,7 +6,7 @@
 ?>
 <div class="row">
     <div class="col-sm mb-3">
-        <span class="titulo">Categorias</span>
+        <span class="titulo"><?=__('Categorias')?></span>
     </div>
     <div class="col-sm mb-3 text-end">
         <?= $this->element('Diversos/btnNovo', ['parametros' => ['controller' => 'Categorias', 'texto' => 'Categoria']])?>
@@ -16,8 +16,8 @@
     <table class="table table-borderless table-striped table-hover">
         <thead>
             <tr class="text-center titulo-coluna-tabela">
-                <th>Nome</th>
-                <th>Ações</th>
+                <th><?=__('Nome')?></th>
+                <th><?=__('Ações')?></th>
             </tr>
         </thead>
         <tbody>

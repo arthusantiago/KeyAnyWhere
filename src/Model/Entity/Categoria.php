@@ -77,4 +77,24 @@ class Categoria extends Entity
 
         return $nomeDescrip;
     }
+
+    /**
+     * Ver Entrada::isModified() — mesmo ajuste, necessário porque 'nome'
+     * também é criptografado com nonce aleatório a cada save.
+     *
+     * @param string $field
+     * @param mixed $value
+     * @return bool
+     */
+    protected function isModified(string $field, mixed $value): bool
+    {
+        if ($field === 'nome' && is_string($value)) {
+            $atual = $this->get('nome');
+            if (is_string($atual) && Criptografia::descriptografar($atual) === $value) {
+                return false;
+            }
+        }
+
+        return parent::isModified($field, $value);
+    }
 }

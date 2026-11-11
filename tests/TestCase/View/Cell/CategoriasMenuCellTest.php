@@ -20,6 +20,7 @@ class CategoriasMenuCellTest extends TestCase
      */
     protected array $fixtures = [
         'app.Categorias',
+        'app.Auditorias',
     ];
 
     /**

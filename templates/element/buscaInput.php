@@ -16,5 +16,5 @@ if (!$inserirResultadoBusca) {
 $url = $this->Url->build(['controller' => 'Entradas', 'action' => 'busca']);
 ?>
 
-<input type="search" class="form-control input-busca inputs" id="buscaEntrada" placeholder="Ex: banco..." data-busca-url="<?=$url?>"
+<input type="search" class="form-control input-busca inputs" id="buscaEntrada" placeholder="<?=__('Exemplo')?>: Bank" data-busca-url="<?=$url?>"
 data-busca-inserir-resultado="<?=$inserirResultadoBusca?>">

@@ -3,6 +3,8 @@
 use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Postgres;
+use App\Log\ErrorLogger;
+use App\Log\JsonFormatter;
 use Cake\Log\Engine\FileLog;
 use Cake\Mailer\Transport\MailTransport;
 
@@ -175,6 +177,8 @@ return [
         'log' => true,
         'trace' => true,
         'ignoredDeprecationPaths' => [],
+        // Exceções e erros com campos estruturados no JSON, e 4xx como `warning` (App\Log\ErrorLogger).
+        'logger' => ErrorLogger::class,
     ],
 
     /*
@@ -354,13 +358,43 @@ return [
      * Configures logging options
      */
     'Log' => [
+        // Um arquivo por nível, em JSON (App\Log\JsonFormatter).
+        // `scopes => null`: estes motores só recebem log sem escopo; o escopo `seguranca` tem o seu.
         'debug' => [
             'className' => FileLog::class,
             'path' => LOGS,
             'file' => 'debug',
             'url' => env('LOG_DEBUG_URL', null),
             'scopes' => null,
-            'levels' => ['notice', 'info', 'debug'],
+            'levels' => ['debug'],
+            'formatter' => ['className' => JsonFormatter::class, 'app' => 'keyanywhere'],
+        ],
+        'notice' => [
+            'className' => FileLog::class,
+            'path' => LOGS,
+            'file' => 'notice',
+            'url' => env('LOG_DEBUG_URL', null),
+            'scopes' => null,
+            'levels' => ['notice'],
+            'formatter' => ['className' => JsonFormatter::class, 'app' => 'keyanywhere'],
+        ],
+        'info' => [
+            'className' => FileLog::class,
+            'path' => LOGS,
+            'file' => 'info',
+            'url' => env('LOG_DEBUG_URL', null),
+            'scopes' => null,
+            'levels' => ['info'],
+            'formatter' => ['className' => JsonFormatter::class, 'app' => 'keyanywhere'],
+        ],
+        'warning' => [
+            'className' => FileLog::class,
+            'path' => LOGS,
+            'file' => 'warning',
+            'url' => env('LOG_ERROR_URL', null),
+            'scopes' => null,
+            'levels' => ['warning'],
+            'formatter' => ['className' => JsonFormatter::class, 'app' => 'keyanywhere'],
         ],
         'error' => [
             'className' => FileLog::class,
@@ -368,7 +402,46 @@ return [
             'file' => 'error',
             'url' => env('LOG_ERROR_URL', null),
             'scopes' => null,
-            'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
+            'levels' => ['error'],
+            'formatter' => ['className' => JsonFormatter::class, 'app' => 'keyanywhere'],
+        ],
+        'critical' => [
+            'className' => FileLog::class,
+            'path' => LOGS,
+            'file' => 'critical',
+            'url' => env('LOG_ERROR_URL', null),
+            'scopes' => null,
+            'levels' => ['critical'],
+            'formatter' => ['className' => JsonFormatter::class, 'app' => 'keyanywhere'],
+        ],
+        'alert' => [
+            'className' => FileLog::class,
+            'path' => LOGS,
+            'file' => 'alert',
+            'url' => env('LOG_ERROR_URL', null),
+            'scopes' => null,
+            'levels' => ['alert'],
+            'formatter' => ['className' => JsonFormatter::class, 'app' => 'keyanywhere'],
+        ],
+        'emergency' => [
+            'className' => FileLog::class,
+            'path' => LOGS,
+            'file' => 'emergency',
+            'url' => env('LOG_ERROR_URL', null),
+            'scopes' => null,
+            'levels' => ['emergency'],
+            'formatter' => ['className' => JsonFormatter::class, 'app' => 'keyanywhere'],
+        ],
+        // Eventos de segurança (login errado, acesso negado, XSS...), em seguranca.log. `levels => []`: todos
+        // os níveis, para cada evento manter a gravidade; com um nível só, um evento de outro nível se perderia.
+        'seguranca' => [
+            'className' => FileLog::class,
+            'path' => LOGS,
+            'file' => 'seguranca',
+            'url' => env('LOG_ERROR_URL', null),
+            'scopes' => ['seguranca'],
+            'levels' => [],
+            'formatter' => ['className' => JsonFormatter::class, 'app' => 'keyanywhere'],
         ],
         // To enable this dedicated query log, you need set your datasource's log flag to true
         'queries' => [
@@ -378,11 +451,6 @@ return [
             'url' => env('LOG_QUERIES_URL', null),
             'scopes' => ['cake.database.queries'],
         ],
-        'database' => [
-            'className' => FileLog::class,
-            'levels' => [],
-            'scopes' => ['atividades'],
-        ]
     ],
 
     /*

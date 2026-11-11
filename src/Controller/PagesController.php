@@ -16,8 +16,7 @@ declare(strict_types=1);
  */
 namespace App\Controller;
 
-use App\Model\Table\IpsBloqueadosTable;
-use App\Model\Table\LogsTable;
+use App\Model\Table\AuditoriasTable;
 use App\Model\Table\SessionsTable;
 use Cake\Core\Configure;
 
@@ -37,13 +36,14 @@ class PagesController extends AppController
      */
     public function home()
     {
-        $logs = (new LogsTable())
-            ->find('countAtividadesSuspeitas')
-            ->toArray();
-
-        $ipsBloqueados = (new IpsBloqueadosTable())
-            ->find('ultimosBloqueados')
-            ->toArray();
+        // Últimas alterações da trilha de auditoria, para todos os usuários.
+        $ultimasAlteracoes = $this->fetchTable(AuditoriasTable::class)
+            ->find()
+            ->contain(['Users'])
+            ->orderByDesc('Auditorias.created')
+            ->orderByDesc('Auditorias.id')
+            ->limit(10)
+            ->all();
 
         $sessoes = (new SessionsTable())
             ->find('all')
@@ -59,6 +59,6 @@ class PagesController extends AppController
             }
         }
 
-        $this->set(compact('logs', 'ipsBloqueados', 'sessoesAtivas'));
+        $this->set(compact('ultimasAlteracoes', 'sessoesAtivas'));
     }
 }

@@ -3,7 +3,11 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Model\Table;
 
+use App\Model\Entity\Auditoria;
 use App\Model\Table\CategoriasTable;
+use Authentication\Identity;
+use Cake\Http\ServerRequest;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -27,6 +31,7 @@ class CategoriasTableTest extends TestCase
         'app.Categorias',
         'app.Entradas',
         'app.Users',
+        'app.Auditorias',
     ];
 
     /**
@@ -236,5 +241,131 @@ class CategoriasTableTest extends TestCase
         $abelhaRecarregada = $this->Categorias->get($abelha->id);
 
         $this->assertLessThan($zebraRecarregada->posicao, $abelhaRecarregada->posicao);
+    }
+
+    /**
+     * Test validationDefault method
+     *
+     * @return void
+     * @uses \App\Model\Table\CategoriasTable::validationDefault()
+     */
+    public function testValidationDefault(): void
+    {
+        // This is the legacy test - all real tests are above
+        $this->testValidationDefaultWithValidNome();
+    }
+
+    /**
+     * Salvar uma categoria com identidade autenticada deve criar um registro de auditoria
+     * listando o campo alterado, sem persistir os valores de 'antes'/'depois'.
+     *
+     * @return void
+     */
+    public function testSalvarCategoriaComIdentidadeCriaRegistroDeAuditoria(): void
+    {
+        $request = (new ServerRequest())->withAttribute('identity', new Identity(['id' => 1]));
+        Router::setRequest($request);
+
+        $categoria = $this->Categorias->newEntity(['nome' => 'Categoria Auditada']);
+        $resultado = $this->Categorias->save($categoria);
+        $this->assertNotFalse($resultado, 'Failed to save categoria: ' . json_encode($categoria->getErrors()));
+
+        $auditorias = $this->getTableLocator()->get('Auditorias');
+        $registro = $auditorias->find()
+            ->where(['contexto' => 'categoria', 'id_entidade' => $categoria->id])
+            ->first();
+
+        $this->assertInstanceOf(Auditoria::class, $registro, 'Nenhum registro de auditoria foi criado.');
+        $this->assertSame('criacao', $registro->acao);
+        $this->assertSame(1, $registro->usuario_id);
+        $alteracoes = $registro->alteracoes;
+        $this->assertIsArray($alteracoes);
+        $this->assertArrayHasKey('nome', $alteracoes);
+        $this->assertSame('', $alteracoes['nome']['antes']);
+        $this->assertSame('', $alteracoes['nome']['depois']);
+    }
+
+    /**
+     * Salvar uma categoria sem identidade não deve quebrar o save de negócio, e a ação
+     * deve ser auditada com usuario_id nulo (coluna nullable desde 2026-10-12).
+     *
+     * @return void
+     */
+    public function testSalvarCategoriaSemIdentidadeAuditaComUsuarioNulo(): void
+    {
+        $categoria = $this->Categorias->newEntity(['nome' => 'Categoria Sem Identidade']);
+        $resultado = $this->Categorias->save($categoria);
+        $this->assertNotFalse($resultado, 'Failed to save categoria: ' . json_encode($categoria->getErrors()));
+
+        $auditorias = $this->getTableLocator()->get('Auditorias');
+        $registro = $auditorias->find()
+            ->where(['contexto' => 'categoria', 'id_entidade' => $categoria->id])
+            ->first();
+
+        // Sem identidade (ex.: primeiro usuário em configInicial), a ação também é auditada.
+        $this->assertInstanceOf(Auditoria::class, $registro, 'A ação sem usuário autenticado também deve ser auditada.');
+        $this->assertSame('criacao', $registro->get('acao'));
+        $this->assertNull($registro->get('usuario_id'));
+        $this->assertSame(['antes' => '', 'depois' => ''], $registro->get('alteracoes')['nome']);
+    }
+
+    /**
+     * Atualizar uma categoria existente deve persistir a alteração no banco e,
+     * com identidade autenticada, criar um registro de auditoria de 'edicao'
+     * listando 'nome' como alterado, sem persistir os valores de 'antes'/'depois'.
+     *
+     * @return void
+     */
+    public function testAtualizarCategoriaComIdentidadeCriaRegistroDeAuditoriaDeEdicao(): void
+    {
+        $request = (new ServerRequest())->withAttribute('identity', new Identity(['id' => 1]));
+        Router::setRequest($request);
+
+        $categoria = $this->Categorias->get(1);
+        $categoria = $this->Categorias->patchEntity($categoria, ['nome' => 'Categoria Atualizada']);
+        $resultado = $this->Categorias->save($categoria);
+        $this->assertNotFalse($resultado, 'Failed to update categoria: ' . json_encode($categoria->getErrors()));
+
+        $categoriaRecarregada = $this->Categorias->get(1);
+        $this->assertSame('Categoria Atualizada', $categoriaRecarregada->nomeDescrip());
+
+        $auditorias = $this->getTableLocator()->get('Auditorias');
+        $registro = $auditorias->find()
+            ->where(['contexto' => 'categoria', 'id_entidade' => 1, 'acao' => 'edicao'])
+            ->first();
+
+        $this->assertInstanceOf(Auditoria::class, $registro, 'Nenhum registro de auditoria de edição foi criado.');
+        $alteracoes = $registro->alteracoes;
+        $this->assertIsArray($alteracoes);
+        $this->assertArrayHasKey('nome', $alteracoes);
+        $this->assertSame('', $alteracoes['nome']['antes']);
+        $this->assertSame('', $alteracoes['nome']['depois']);
+    }
+
+    /**
+     * Excluir uma categoria sem entradas dependentes deve removê-la do banco e,
+     * com identidade autenticada, criar um registro de auditoria de 'exclusao'.
+     *
+     * @return void
+     */
+    public function testExcluirCategoriaComIdentidadeCriaRegistroDeAuditoriaDeExclusao(): void
+    {
+        $request = (new ServerRequest())->withAttribute('identity', new Identity(['id' => 1]));
+        Router::setRequest($request);
+
+        $categoria = $this->Categorias->newEntity(['nome' => 'Categoria Descartável']);
+        $this->Categorias->save($categoria);
+        $id = $categoria->id;
+
+        $resultado = $this->Categorias->delete($categoria);
+        $this->assertTrue($resultado, 'Failed to delete categoria.');
+        $this->assertFalse($this->Categorias->exists(['id' => $id]));
+
+        $auditorias = $this->getTableLocator()->get('Auditorias');
+        $registro = $auditorias->find()
+            ->where(['contexto' => 'categoria', 'id_entidade' => $id, 'acao' => 'exclusao'])
+            ->first();
+
+        $this->assertInstanceOf(Auditoria::class, $registro, 'Nenhum registro de auditoria de exclusão foi criado.');
     }
 }

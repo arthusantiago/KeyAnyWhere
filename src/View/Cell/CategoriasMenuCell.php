@@ -53,7 +53,7 @@ class CategoriasMenuCell extends Cell
     /**
      * Monta a query das categorias ordenadas por posição, usada pelas actions do cell.
      *
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface>
      */
     private function queryCategorias(): SelectQuery
     {
