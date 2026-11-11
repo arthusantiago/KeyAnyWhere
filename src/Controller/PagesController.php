@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace App\Controller;
 
-use App\Model\Entity\User;
 use App\Model\Table\AuditoriasTable;
 use App\Model\Table\EventosSegurancaTable;
 use App\Model\Table\SessionsTable;
@@ -47,11 +46,8 @@ class PagesController extends AppController
             ->limit(10)
             ->all();
 
-        // Últimos eventos de segurança: os da própria conta (o root vê todos).
-        $usuario = $this->Authentication->getResult()?->getData();
-        $ultimosEventos = $usuario instanceof User
-            ? $this->fetchTable(EventosSegurancaTable::class)->find('visiveisPara', usuario: $usuario)->limit(5)->all()
-            : [];
+        // Últimos eventos de segurança, de todos os usuários.
+        $ultimosEventos = $this->fetchTable(EventosSegurancaTable::class)->find('recentes')->limit(5)->all();
 
         $sessoes = (new SessionsTable())
             ->find('all')

@@ -6,7 +6,6 @@ use Migrations\BaseMigration;
 /**
  * Eventos de segurança para os usuários (tela "Eventos de segurança" e bloco na home): uma linha por
  * evento do escopo `seguranca` (ver App\Log\Engine\EventosSegurancaLog), só com o que interessa mostrar.
- * A tabela `logs`, do antigo catálogo de eventos, fica como está.
  */
 class CreateEventosSeguranca extends BaseMigration
 {

@@ -34,11 +34,11 @@
     </div>
     <div class="col-sm mb-3">
         <h3><?=__('Eventos de segurança')?></h3>
-        <?php if (!empty($ultimosEventos) && count($ultimosEventos) > 0): ?>
+        <?php if (!$ultimosEventos->isEmpty()): ?>
             <ul class="list-group">
                 <?php foreach($ultimosEventos as $evento): ?>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <span><?=h($evento->created . ' - ' . $evento->titulo())?></span>
+                        <span><?=h($evento->created . ' - ' . $evento->titulo() . ' (' . $evento->descricaoUsuario() . ')')?></span>
                         <span class="badge <?=h($evento->classeNivel())?>"><?=h($evento->nivel)?></span>
                     </li>
                 <?php endforeach;?>

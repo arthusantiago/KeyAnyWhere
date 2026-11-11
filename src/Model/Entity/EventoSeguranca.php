@@ -61,4 +61,23 @@ class EventoSeguranca extends Entity
             default => 'text-bg-secondary',
         };
     }
+
+    /**
+     * O usuário afetado, para a tela: o nome, "Usuário excluído (#id)" ou um traço quando não há conta
+     * (ex.: login com um e-mail que não existe).
+     *
+     * @return string
+     */
+    public function descricaoUsuario(): string
+    {
+        if ($this->user !== null) {
+            return $this->user->username;
+        }
+
+        if ($this->usuario_id === null) {
+            return '—';
+        }
+
+        return __('Usuário excluído (#{0})', $this->usuario_id);
+    }
 }
