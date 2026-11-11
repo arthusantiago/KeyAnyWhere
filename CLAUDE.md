@@ -41,7 +41,7 @@ composer check                      # test + cs-check + stan, run this before co
 composer analise                    # PHPStan + PHPMD + Deptrac: only new errors fail; old debt lives in the baselines
 composer md                         # PHPMD (phpmd.xml.dist): size, complexity, coupling (SRP); old violations in phpmd.baseline.xml
 composer arquitetura                # Deptrac (deptrac.yaml): layer rules (DIP); old violations in deptrac.baseline.yaml
-composer mutacao                    # coverage (test:cobertura) + Infection on infection.json5's directories, 1 process (~10 min; needs pcov/xdebug and the test DB)
+composer mutacao                    # coverage (test:cobertura) + Infection on infection.json5's directories, in parallel (~2 min; needs pcov/xdebug and the test DB)
 composer mutacao:alteracoes         # Infection only on the lines changed since origin/main, escaped mutants in the output
 composer qualidade                  # bin/qualidade --comparar: quality index 0-100 + gates + ratchet against qualidade-referencia.json
 composer qualidade:referencia       # after improving a metric: write the new reference and commit it in the same PR
@@ -128,6 +128,8 @@ The root user picks the installation's time zone and language at `/configuracoes
 Bootstrap and Bootstrap Icons come from Composer (`twbs/bootstrap`, `twbs/bootstrap-icons`) and are copied into `webroot/` by `ArthuSantiago\BootstrapForCakePHP\BootstrapAssets::setupAssets` (`post-install-cmd`/`post-update-cmd`): `css/bootstrap.min.css`, `css/bootstrap-icons.min.css`, `js/bootstrap.min.js` and `fonts/bootstrap-icons/`. The copied files are versioned, so commit them after a `composer update` that bumps either package. The app's own assets (`css/geral.css`, `js/ferramentas.js`...) are served as they are; there is no minification tool. `js/popper.min.js` (needed by `bootstrap.min.js`, which is not the bundle) and `js/easytimer.min.js` are third-party files committed as is. Layouts load them by name (`$this->Html->css('bootstrap.min')`).
 
 ### Testing conventions
+
+- Parallel mutation: Infection gives each process a `TEST_TOKEN` (1, 2, ...); `tests/bootstrap.php` then points the `test` connection to `<DB_TEST_NAME>_<token>` (created on first use, schema by the Migrator), prefixes the caches and uses its own DebugKit SQLite file. Without `TEST_TOKEN` (plain phpunit, coverage) nothing changes. Anything new that tests share across processes (a file, a directory) needs the same per-token treatment.
 
 - Postgres sequences: any fixture with an explicit integer `id` must extend `tests/Fixture/AppFixture.php` (not `TestFixture` directly), which resyncs the sequence after insert — otherwise the next `save()` in that test collides on a duplicate key.
 - Controller integration tests `use CsrfTestTrait;` (a `#[Before]` hook that calls `enableCsrfToken(Application::nomeCookieCsrf())`). The cookie name depends on the environment (`Secure-csrfToken` in development, `__Secure-csrfToken` otherwise), so always use `Application::nomeCookieCsrf()`, never a literal; a test that flips `debug` must enable the token again afterwards. To send a request without the token, set `$this->_csrfToken = false;` (see `PagesControllerTest::testCsrfAppliedError()`, which expects 403).

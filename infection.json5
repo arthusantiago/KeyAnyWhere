@@ -17,9 +17,9 @@
             "src/Model/Entity"
         ]
     },
-    // Um processo só: os testes dividem o mesmo banco de teste, e mutantes em paralelo
-    // disputariam as fixtures.
-    "threads": 1,
+    // Todos os núcleos menos um. Cada processo usa o próprio banco de teste (`<banco>_<token>`,
+    // tests/bootstrap.php, pelo TEST_TOKEN do Infection): os mutantes não disputam as fixtures.
+    "threads": "max",
     "timeout": 30,
     // Pasta temporária do próprio projeto: com a padrão (/tmp/infection), duas execuções ao
     // mesmo tempo em projetos diferentes apagam a cobertura uma da outra.
