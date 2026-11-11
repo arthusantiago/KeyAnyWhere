@@ -21,9 +21,7 @@
     <div class="col-sm mb-3">
         <span class="titulo"><?= __('Eventos de segurança') ?></span>
         <p class="text-body-secondary mb-0">
-            <?= $userLogado->root
-                ? __('Tentativas de login com erro, acessos negados e conteúdo malicioso bloqueado, de todos os usuários.')
-                : __('Tentativas de login com erro na sua conta, acessos negados e conteúdo malicioso bloqueado.') ?>
+            <?= __('Tentativas de login com erro, acessos negados e conteúdo malicioso bloqueado, de todos os usuários.') ?>
         </p>
     </div>
 </div>
@@ -33,8 +31,8 @@
             <tr class="text-center titulo-coluna-tabela">
                 <th><?= __('Data') ?></th>
                 <th><?= __('Evento') ?></th>
+                <th><?= __('Usuário') ?></th>
                 <?php if ($userLogado->root): ?>
-                    <th><?= __('Usuário') ?></th>
                     <th><?= __('IP de origem') ?></th>
                 <?php endif; ?>
             </tr>
@@ -44,8 +42,8 @@
                 <tr class="text-center">
                     <td><?= h($evento->created) ?></td>
                     <td><span class="badge <?= h($evento->classeNivel()) ?>"><?= h($evento->titulo()) ?></span></td>
+                    <td><?= h($evento->descricaoUsuario()) ?></td>
                     <?php if ($userLogado->root): ?>
-                        <td><?= h($evento->user?->username ?? ($evento->usuario_id ? __('Usuário excluído (#{0})', $evento->usuario_id) : '—')) ?></td>
                         <td><?= h($evento->ip ?? '—') ?></td>
                     <?php endif; ?>
                 </tr>

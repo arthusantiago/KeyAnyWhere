@@ -5,7 +5,6 @@ namespace App\Model\Table;
 
 use App\Model\Custom\ValidatorKaw;
 use App\Model\Entity\EventoSeguranca;
-use App\Model\Entity\User;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -120,18 +119,13 @@ class EventosSegurancaTable extends Table
     }
 
     /**
-     * Os eventos que o usuário pode ver: o root vê todos; os demais, só os da própria conta.
+     * Os eventos de todos os usuários, do mais recente para o mais antigo, com o nome do usuário.
      *
      * @param \Cake\ORM\Query\SelectQuery<\App\Model\Entity\EventoSeguranca> $query
-     * @param \App\Model\Entity\User $usuario
      * @return \Cake\ORM\Query\SelectQuery<\App\Model\Entity\EventoSeguranca>
      */
-    public function findVisiveisPara(SelectQuery $query, User $usuario): SelectQuery
+    public function findRecentes(SelectQuery $query): SelectQuery
     {
-        if (!$usuario->root) {
-            $query->where(['EventosSeguranca.usuario_id' => $usuario->id]);
-        }
-
         return $query
             ->contain(['Users' => ['fields' => ['id', 'username']]])
             ->orderByDesc('EventosSeguranca.created')

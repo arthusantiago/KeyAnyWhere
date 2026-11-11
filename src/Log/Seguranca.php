@@ -9,7 +9,7 @@ use Cake\Log\Log;
  * Registro dos eventos de segurança (login errado, acesso negado, possível XSS) no escopo `seguranca`,
  * que o config/app.php manda para o `seguranca.log`.
  *
- * Substitui o antigo catálogo de eventos (GerenciadorEventos/Evento/EventosComplexos e a tabela `logs`).
+ * Substitui o antigo catálogo de eventos (GerenciadorEventos/Evento/EventosComplexos e a tabela `logs`, removida).
  * Cada linha tem o nome do evento entre colchetes no começo da mensagem e também no contexto (`evento`),
  * para filtrar e alertar pelo campo, sem depender do texto. Os dados variáveis (e-mail digitado, campo)
  * vão no contexto, não na mensagem. IP, rota e usuário entram sozinhos no bloco `requisicao` do

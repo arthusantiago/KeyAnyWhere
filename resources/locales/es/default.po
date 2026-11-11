@@ -474,9 +474,6 @@ msgstr "Eventos de seguridad"
 msgid "Tentativas de login com erro, acessos negados e conteúdo malicioso bloqueado, de todos os usuários."
 msgstr "Intentos de inicio de sesión con error, accesos denegados y contenido malicioso bloqueado, de todos los usuarios."
 
-msgid "Tentativas de login com erro na sua conta, acessos negados e conteúdo malicioso bloqueado."
-msgstr "Intentos de inicio de sesión con error en su cuenta, accesos denegados y contenido malicioso bloqueado."
-
 msgid "Evento"
 msgstr "Evento"
 

@@ -9,7 +9,7 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * Tela "Eventos de segurança": cada usuário vê os da própria conta; o root vê todos e o IP.
+ * Tela "Eventos de segurança": todos veem os eventos de todos; só o root vê o IP.
  *
  * @uses \App\Controller\EventosSegurancaController
  */
@@ -53,11 +53,11 @@ class EventosSegurancaControllerTest extends TestCase
     }
 
     /**
-     * O usuário comum vê só os eventos da própria conta, sem IP.
+     * O usuário comum vê os eventos de todos os usuários, com o nome, mas sem o IP.
      *
      * @return void
      */
-    public function testUsuarioComumVeSoOsDaPropriaConta(): void
+    public function testUsuarioComumVeOsEventosDeTodosSemIp(): void
     {
         $this->eventosDeDoisUsuarios();
         $this->loginAsNonRootUser();
@@ -66,7 +66,10 @@ class EventosSegurancaControllerTest extends TestCase
 
         $this->assertResponseOk();
         $this->assertResponseContains('Login com senha incorreta');
-        $this->assertResponseNotContains('Conteúdo malicioso bloqueado');
+        $this->assertResponseContains('Conteúdo malicioso bloqueado');
+        $this->assertResponseContains('Usuário');
+        $this->assertResponseNotContains('IP de origem');
+        $this->assertResponseNotContains('198.51.100.1');
         $this->assertResponseNotContains('198.51.100.2');
     }
 
@@ -85,16 +88,17 @@ class EventosSegurancaControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertResponseContains('Login com senha incorreta');
         $this->assertResponseContains('Conteúdo malicioso bloqueado');
+        $this->assertResponseContains('IP de origem');
         $this->assertResponseContains('198.51.100.1');
         $this->assertResponseContains('198.51.100.2');
     }
 
     /**
-     * A home mostra os últimos eventos da conta, com o link para a lista.
+     * A home mostra os últimos eventos de todos, sem IP, com o link para a lista.
      *
      * @return void
      */
-    public function testHomeMostraOsUltimosEventosDaConta(): void
+    public function testHomeMostraOsUltimosEventosDeTodos(): void
     {
         $this->eventosDeDoisUsuarios();
         $this->loginAsNonRootUser();
@@ -104,7 +108,8 @@ class EventosSegurancaControllerTest extends TestCase
         $this->assertResponseOk();
         $this->assertResponseContains('Eventos de segurança');
         $this->assertResponseContains('Login com senha incorreta');
-        $this->assertResponseNotContains('Conteúdo malicioso bloqueado');
+        $this->assertResponseContains('Conteúdo malicioso bloqueado');
+        $this->assertResponseNotContains('198.51.100.');
         $this->assertResponseContains('/eventos-seguranca');
     }
 
