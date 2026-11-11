@@ -454,3 +454,37 @@ msgstr "Otros"
 
 msgid "Nesta instalação, o fuso horário e o idioma são definidos fora desta tela"
 msgstr "En esta instalación, el huso horario y el idioma se definen fuera de esta pantalla"
+
+##################### Eventos de segurança #####################
+msgid "Login com senha incorreta"
+msgstr "Inicio de sesión con contraseña incorrecta"
+
+msgid "Login com código do segundo fator incorreto"
+msgstr "Inicio de sesión con código del segundo factor incorrecto"
+
+msgid "Tentativa de acessar uma tela de administrador"
+msgstr "Intento de acceder a una pantalla de administrador"
+
+msgid "Conteúdo malicioso bloqueado"
+msgstr "Contenido malicioso bloqueado"
+
+msgid "Eventos de segurança"
+msgstr "Eventos de seguridad"
+
+msgid "Tentativas de login com erro, acessos negados e conteúdo malicioso bloqueado, de todos os usuários."
+msgstr "Intentos de inicio de sesión con error, accesos denegados y contenido malicioso bloqueado, de todos los usuarios."
+
+msgid "Tentativas de login com erro na sua conta, acessos negados e conteúdo malicioso bloqueado."
+msgstr "Intentos de inicio de sesión con error en su cuenta, accesos denegados y contenido malicioso bloqueado."
+
+msgid "Evento"
+msgstr "Evento"
+
+msgid "Nenhum evento de segurança registrado."
+msgstr "Ningún evento de seguridad registrado."
+
+msgid "Nível"
+msgstr "Nivel"
+
+msgid "IP"
+msgstr "IP"

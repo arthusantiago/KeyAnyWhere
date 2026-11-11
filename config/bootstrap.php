@@ -49,6 +49,7 @@ use Cake\I18n\DateTime;
 use Cake\ORM\TableRegistry;
 use App\Application;
 use App\I18n\Regional;
+use App\Log\Engine\EventosSegurancaLog;
 
 /**
  * Load global functions.
@@ -185,6 +186,17 @@ ConnectionManager::setConfig(Configure::consume('Datasources'));
 TransportFactory::setConfig(Configure::consume('EmailTransport'));
 Mailer::setConfig(Configure::consume('Email'));
 Log::setConfig(Configure::consume('Log'));
+
+// Eventos de segurança também na tabela `eventos_seguranca`, para a tela "Eventos de segurança" (além
+// do arquivo do escopo `seguranca` configurado no config/app.php). Uma instalação pode trocar ou
+// desligar o engine definindo `eventos_seguranca` no config/app.php.
+if (!in_array('eventos_seguranca', Log::configured(), true)) {
+    Log::setConfig('eventos_seguranca', [
+        'className' => EventosSegurancaLog::class,
+        'scopes' => ['seguranca'],
+        'levels' => [],
+    ]);
+}
 Security::setSalt(Configure::consume('Security.salt'));
 
 /*
