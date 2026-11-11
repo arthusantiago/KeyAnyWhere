@@ -52,7 +52,7 @@
     </div>
 </div>
 <div class='row'>
-    <div class="col-sm mb-3">
+    <div class="col-xl-6 mb-3">
         <h3><?=__('Usuários ativos')?></h3>
         <ul class="list-group">
         <?php foreach($sessoesAtivas as $sessao): ?>
