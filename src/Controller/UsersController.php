@@ -12,9 +12,7 @@ use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
-use Cake\Event\Event;
 use Cake\Event\EventInterface;
-use Cake\Http\Exception\ForbiddenException;
 use Cake\I18n\I18n;
 use PragmaRX\Google2FA\Google2FA;
 use function Cake\I18n\__;
@@ -503,7 +501,9 @@ class UsersController extends AppController
         }
 
         if (!$autorizador->autoriza($this->request)) {
-            throw new ForbiddenException(__('A configuração inicial não foi autorizada.'));
+            return $this->response
+                ->withStatus(403)
+                ->withStringBody(__('A configuração inicial não foi autorizada.'));
         }
 
         // Antes do primeiro usuário ainda não há idioma escolhido: vale o do navegador.
@@ -518,7 +518,7 @@ class UsersController extends AppController
             return $this->redirect(['controller' => 'Users', 'action' => 'configInicialTfa']);
         }
 
-        $this->getEventManager()->dispatch(new Event(self::EVENTO_CONFIG_INICIAL_INICIO, $this));
+        $this->dispatchEvent(self::EVENTO_CONFIG_INICIAL_INICIO);
 
         if ($this->request->is('post')) {
             $user = $this->Users->newEmptyEntity();
@@ -555,7 +555,9 @@ class UsersController extends AppController
         }
 
         if (!$autorizador->autoriza($this->request)) {
-            throw new ForbiddenException(__('A configuração inicial não foi autorizada.'));
+            return $this->response
+                ->withStatus(403)
+                ->withStringBody(__('A configuração inicial não foi autorizada.'));
         }
 
         // Antes do primeiro usuário ainda não há idioma escolhido: vale o do navegador.
@@ -571,9 +573,7 @@ class UsersController extends AppController
             return $this->redirect(['controller' => 'Users', 'action' => 'configInicial']);
         }
 
-        $this->getEventManager()->dispatch(
-            new Event(self::EVENTO_CONFIG_INICIAL_SEGUNDO_FATOR, $this, ['user' => $user]),
-        );
+        $this->dispatchEvent(self::EVENTO_CONFIG_INICIAL_SEGUNDO_FATOR, ['user' => $user]);
 
         if ($this->request->is('post')) {
             $user = $this->Users->get($this->request->getData('id'));
