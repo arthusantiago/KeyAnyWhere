@@ -439,21 +439,26 @@ class EntradasControllerTest extends TestCase
      */
     public function testSenhaInseguraUsaOVerificadorDoContainer(): void
     {
-        $this->mockService(VerificadorSenhaInseguraInterface::class, function () {
-            return new class implements VerificadorSenhaInseguraInterface {
+        $comprometida = self::gerarSenhaDeTeste();
+        $this->mockService(VerificadorSenhaInseguraInterface::class, function () use ($comprometida) {
+            return new class ($comprometida) implements VerificadorSenhaInseguraInterface {
+                public function __construct(private string $comprometida)
+                {
+                }
+
                 public function estaComprometida(string $senha): bool
                 {
-                    return $senha === 'senha-do-teste';
+                    return $senha === $this->comprometida;
                 }
             };
         });
         $this->loginAsUser();
 
-        $this->post('/entradas/senha-insegura', ['password' => 'senha-do-teste']);
+        $this->post('/entradas/senha-insegura', ['password' => $comprometida]);
         $this->assertTrue(json_decode((string)$this->_response?->getBody(), true)['localizado']);
 
-        // '123456' está no catálogo local, mas o verificador trocado não o considera
-        $this->post('/entradas/senha-insegura', ['password' => '123456']);
+        // O que está no catálogo local deixa de valer com o verificador trocado
+        $this->post('/entradas/senha-insegura', ['password' => self::gerarSenhaDeTeste()]);
         $this->assertFalse(json_decode((string)$this->_response?->getBody(), true)['localizado']);
     }
 }
