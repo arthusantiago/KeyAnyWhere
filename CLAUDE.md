@@ -22,6 +22,8 @@ cp config/.env.example config/.env  # then fill in DB_DEFAULT_*, DB_TEST_*, SECU
 cp config/app.example.php config/app.php
 cp config/app_local.example.php config/app_local.php
 bin/cake migrations migrate         # apply migrations to the `default` connection
+bin/cake seeds run PasswordsInsecurePt1Seed,PasswordsInsecurePt2Seed,PasswordsInsecurePt3Seed,PasswordsInsecurePt4Seed  # insecure-password catalog (~1M, `insecure_passwords`)
+bin/cake seeds run CategoriasSeed,EntradasSeed  # dev only: example categories and entries (encrypted like the entity mutators do)
 
 composer test                       # run the full PHPUnit suite (needs DB_TEST_* pointed at a real Postgres db)
 vendor/bin/phpunit tests/TestCase/Controller/UsersControllerTest.php          # single file
