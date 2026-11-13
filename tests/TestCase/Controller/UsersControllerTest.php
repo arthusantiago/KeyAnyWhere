@@ -1154,11 +1154,44 @@ class UsersControllerTest extends TestCase
         ]));
 
         $this->enableSecurityToken();
-        $this->post('/users/config-inicial-tfa', ['id' => $user->id, 'tfa' => true]);
+        $this->post('/users/config-inicial-tfa', ['tfa' => '1']);
 
         $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
         $recarregado = $users->get($user->id);
         $this->assertTrue($recarregado->tfa_ativo);
+    }
+
+    /**
+     * O POST da etapa do 2FA vale só para o usuário da configuração inicial (o último criado): um `id`
+     * no formulário não muda o usuário, e um `tfa` adulterado não ativa nada (nem é erro 500).
+     *
+     * @return void
+     */
+    public function testConfigInicialTfaPostSoAtivaOUsuarioDaEtapaComTfaUm(): void
+    {
+        $users = $this->fetchTable(UsersTable::class);
+        $users->deleteAll([]);
+        $primeiro = $users->saveOrFail($users->newEntity([
+            'username' => 'usuario_bootstrap3',
+            'email' => 'usuario_bootstrap3@example.com',
+            'password' => self::gerarSenhaDeTeste(),
+        ]));
+        $daEtapa = $users->saveOrFail($users->newEntity([
+            'username' => 'usuario_bootstrap4',
+            'email' => 'usuario_bootstrap4@example.com',
+            'password' => self::gerarSenhaDeTeste(),
+        ]));
+
+        $this->enableSecurityToken();
+        $this->post('/users/config-inicial-tfa', ['tfa' => '239469']);
+        $this->assertResponseOk();
+        $this->assertFalse($users->get($daEtapa->id)->tfa_ativo);
+
+        $this->enableSecurityToken();
+        $this->post('/users/config-inicial-tfa', ['id' => $primeiro->id, 'tfa' => '1']);
+        $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
+        $this->assertTrue($users->get($daEtapa->id)->tfa_ativo);
+        $this->assertFalse($users->get($primeiro->id)->tfa_ativo);
     }
 
     /**
