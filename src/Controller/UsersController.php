@@ -7,14 +7,12 @@ use App\I18n\Regional;
 use App\Log\Seguranca;
 use App\Model\Entity\User;
 use App\Service\AutorizadorConfigInicialInterface;
+use App\Service\DadosCadastro2fa;
 use Authentication\Authenticator\ResultInterface;
-use BaconQrCode\Renderer\Image\SvgImageBackEnd;
-use BaconQrCode\Renderer\ImageRenderer;
-use BaconQrCode\Renderer\RendererStyle\RendererStyle;
-use BaconQrCode\Writer;
+use Cake\Core\Configure;
 use Cake\Event\EventInterface;
+use Cake\Http\Response;
 use Cake\I18n\I18n;
-use PragmaRX\Google2FA\Google2FA;
 use function Cake\I18n\__;
 
 /**
@@ -57,9 +55,6 @@ class UsersController extends AppController
      * primeiro usuário criado (`$event->getData('user')`). Também pode disparar mais de uma vez.
      */
     public const EVENTO_CONFIG_INICIAL_SEGUNDO_FATOR = 'Kaw.ConfigInicial.segundoFator';
-
-    /* Nome do emissor exibido no aplicativo de 2FA */
-    private const EMISSOR_2FA = 'KeyAnyWhere';
 
     /**
      * beforeFilter callback.
@@ -378,7 +373,7 @@ class UsersController extends AppController
             $user = $this->geraNovoSecret2FA($user->id);
         }
 
-        $dados2fa = $this->dados2fa($user, 300);
+        $dados2fa = DadosCadastro2fa::doUsuario($user, 300);
 
         // QrCode retornado como data URI (não como markup SVG bruto): o cliente insere isso via
         // um <img src="..."> em vez de innerHTML, o que evita expor um sink de DOM XSS.
@@ -389,34 +384,6 @@ class UsersController extends AppController
                 'chave' => $dados2fa['chave'],
                 'codinome' => $dados2fa['codinome'],
             ]));
-    }
-
-    /**
-     * Monta os dados para cadastrar o 2FA do usuário no aplicativo autenticador:
-     * o QrCode (SVG) e, para quem não conseguir escanea-lo, a chave e o codinome para cadastro manual.
-     *
-     * @access private
-     * @param \App\Model\Entity\User $user Usuário dono do 2FA.
-     * @param int $tamanhoQrCode Tamanho, em pixels, do QrCode.
-     * @return array{svgQrCode: string, chave: string, codinome: string}
-     */
-    private function dados2fa(User $user, int $tamanhoQrCode): array
-    {
-        $secret = $user->descripSecret2FA();
-
-        $g2faUrl = (new Google2FA())->getQRCodeUrl(self::EMISSOR_2FA, $user->email, $secret);
-
-        $render = new ImageRenderer(
-            new RendererStyle($tamanhoQrCode),
-            new SvgImageBackEnd(),
-        );
-
-        return [
-            'svgQrCode' => (new Writer($render))->writeString($g2faUrl),
-            // Agrupada de 4 em 4 caracteres para facilitar a digitação; os apps de 2FA ignoram os espaços.
-            'chave' => trim(chunk_split($secret, 4, ' ')),
-            'codinome' => self::EMISSOR_2FA . ' (' . $user->email . ')',
-        ];
     }
 
     /**
@@ -487,6 +454,31 @@ class UsersController extends AppController
     }
 
     /**
+     * Resposta da configuração inicial recusada pelo AutorizadorConfigInicialInterface: redireciona para
+     * `Kaw.ConfigInicial.urlRecusa` quando a instalação a define (ex.: uma página que explica como obter
+     * o acesso) e, sem ela, responde 403 em texto.
+     *
+     * Nunca devolve nulo: a action não pode seguir para a renderização da etapa recusada, nem quando um
+     * ouvinte do `Controller.beforeRedirect` cancela o redirect (aí vale o 403).
+     *
+     * @return \Cake\Http\Response
+     */
+    private function recusaConfigInicial(): Response
+    {
+        $urlRecusa = Configure::read('Kaw.ConfigInicial.urlRecusa');
+        if ((is_string($urlRecusa) && $urlRecusa !== '') || (is_array($urlRecusa) && $urlRecusa !== [])) {
+            $redirect = $this->redirect($urlRecusa);
+            if ($redirect !== null) {
+                return $redirect;
+            }
+        }
+
+        return $this->response
+            ->withStatus(403)
+            ->withStringBody(__('A configuração inicial não foi autorizada.'));
+    }
+
+    /**
      * Metodo que inicia a Configuração Inicial da ferramenta.
      * Esse processo deve ser executado ao acessar o KAW pela primeira vez.
      *
@@ -501,9 +493,7 @@ class UsersController extends AppController
         }
 
         if (!$autorizador->autoriza($this->request)) {
-            return $this->response
-                ->withStatus(403)
-                ->withStringBody(__('A configuração inicial não foi autorizada.'));
+            return $this->recusaConfigInicial();
         }
 
         // Antes do primeiro usuário ainda não há idioma escolhido: vale o do navegador.
@@ -555,9 +545,7 @@ class UsersController extends AppController
         }
 
         if (!$autorizador->autoriza($this->request)) {
-            return $this->response
-                ->withStatus(403)
-                ->withStringBody(__('A configuração inicial não foi autorizada.'));
+            return $this->recusaConfigInicial();
         }
 
         // Antes do primeiro usuário ainda não há idioma escolhido: vale o do navegador.
@@ -592,7 +580,7 @@ class UsersController extends AppController
             $this->Flash->error('', ['params' => ['mensagens' => $user->getErrors()]]);
         }
 
-        $dados2fa = $this->dados2fa($user, 400);
+        $dados2fa = DadosCadastro2fa::doUsuario($user, 400);
 
         $this->viewBuilder()->setLayout('config_inicial');
         $this->set([

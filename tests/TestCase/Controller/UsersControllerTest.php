@@ -1396,6 +1396,55 @@ class UsersControllerTest extends TestCase
     }
 
     /**
+     * Com `Kaw.ConfigInicial.urlRecusa`, a recusa das duas etapas redireciona para ela (string ou array
+     * de rota), sem disparar os eventos; vazia, volta o 403.
+     *
+     * @return void
+     */
+    public function testConfigInicialRecusadaRedirecionaParaUrlRecusa(): void
+    {
+        $this->mockService(AutorizadorConfigInicialInterface::class, function () {
+            return new class implements AutorizadorConfigInicialInterface {
+                public function autoriza(ServerRequest $request): bool
+                {
+                    return false;
+                }
+            };
+        });
+        $inicio = $this->ouvirEvento(UsersController::EVENTO_CONFIG_INICIAL_INICIO);
+        $segundoFator = $this->ouvirEvento(UsersController::EVENTO_CONFIG_INICIAL_SEGUNDO_FATOR);
+        $this->getTableLocator()->get('Users')->deleteAll([]);
+
+        Configure::write('Kaw.ConfigInicial.urlRecusa', '/pages/acesso-recusado');
+        $this->get('/users/config-inicial');
+        $this->assertRedirect('/pages/acesso-recusado');
+        $this->get('/users/config-inicial-tfa');
+        $this->assertRedirect('/pages/acesso-recusado');
+
+        Configure::write('Kaw.ConfigInicial.urlRecusa', ['controller' => 'Users', 'action' => 'login']);
+        $this->get('/users/config-inicial');
+        $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
+
+        Configure::write('Kaw.ConfigInicial.urlRecusa', '');
+        $this->get('/users/config-inicial-tfa');
+        $this->assertResponseCode(403);
+
+        // Um ouvinte que cancela o redirect não pode fazer a etapa recusada ser renderizada.
+        Configure::write('Kaw.ConfigInicial.urlRecusa', '/pages/acesso-recusado');
+        $cancelaRedirect = function (EventInterface $event): void {
+            $event->stopPropagation();
+        };
+        EventManager::instance()->on('Controller.beforeRedirect', $cancelaRedirect);
+        $this->ouvintes[] = ['Controller.beforeRedirect', $cancelaRedirect];
+        $this->get('/users/config-inicial');
+        $this->assertResponseCode(403);
+        $this->assertNoRedirect();
+
+        $this->assertCount(0, $inicio);
+        $this->assertCount(0, $segundoFator);
+    }
+
+    /**
      * Elements listados em `Kaw.Layout.avisos` aparecem nas páginas dos layouts default e administrativo.
      *
      * @return void
