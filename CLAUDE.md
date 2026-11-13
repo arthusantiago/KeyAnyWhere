@@ -77,7 +77,7 @@ CI (`.github/workflows/tests.yml`, `code-quality.yml`, `security.yml`) runs agai
 
 ### Middleware queue order matters
 
-In `Application::middleware()`: ErrorHandler → Asset → Routing → BodyParser → Authentication → CSRF → HttpsEnforcer → SecurityHeadersKaw → **SessionsKawMiddleware** (must run after Authentication). `SessionsKawMiddleware` reads the current PHP session's row from the `sessions` table (populated by CakePHP's `DatabaseSession` handler) and stamps `user_id`/`user_agent` onto it once authenticated, or purges sessions older than a day when unauthenticated. In integration tests, that row doesn't exist unless you insert it yourself (see `AuthenticatedTestTrait`).
+In `Application::middleware()`: ErrorHandler → Asset → Routing → BodyParser → **EmailLoginNormalizado** (trims and lowercases the `email` of the login POST, like `User::_setEmail()` does on save, so `Pessoa@Exemplo.com ` logs in) → Authentication → CSRF → HttpsEnforcer → SecurityHeadersKaw → **SessionsKawMiddleware** (must run after Authentication). `SessionsKawMiddleware` reads the current PHP session's row from the `sessions` table (populated by CakePHP's `DatabaseSession` handler) and stamps `user_id`/`user_agent` onto it once authenticated, or purges sessions older than a day when unauthenticated. In integration tests, that row doesn't exist unless you insert it yourself (see `AuthenticatedTestTrait`).
 
 ### Everything sensitive is encrypted at rest with libsodium, not hashed
 
