@@ -497,6 +497,26 @@ class UsersControllerTest extends TestCase
     }
 
     /**
+     * O e-mail é gravado em minúsculas (User::_setEmail()); o login aceita o e-mail digitado com
+     * maiúsculas e com espaços nas pontas (comum no celular).
+     *
+     * @return void
+     */
+    public function testLoginComEmailEmMaiusculasEEspacosAutentica(): void
+    {
+        $credenciais = $this->criarUsuarioParaLogin();
+
+        $this->post('/users/login', [
+            'email' => '  ' . strtoupper($credenciais['email']) . ' ',
+            'password' => $credenciais['senha'],
+            '2fa' => self::codigo2faAtual($credenciais['secret']),
+        ]);
+
+        $this->assertRedirect(['controller' => 'Pages', 'action' => 'home']);
+        $this->assertSame($credenciais['email'], $this->identidadeNaSessao()?->email);
+    }
+
+    /**
      * Login com senha incorreta não deve autenticar: fica na tela de login, com a
      * mensagem de erro e sem identidade na sessão.
      *
