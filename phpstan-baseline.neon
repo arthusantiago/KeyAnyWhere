@@ -1389,7 +1389,7 @@ parameters:
 		-
 			message: '#^Cannot access property \$id on Cake\\Datasource\\EntityInterface\|false\.$#'
 			identifier: property.nonObject
-			count: 6
+			count: 5
 			path: tests/TestCase/Controller/UsersControllerTest.php
 
 		-

@@ -563,9 +563,10 @@ class UsersController extends AppController
 
         $this->dispatchEvent(self::EVENTO_CONFIG_INICIAL_SEGUNDO_FATOR, ['user' => $user]);
 
-        if ($this->request->is('post')) {
-            $user = $this->Users->get($this->request->getData('id'));
-            $user->tfa_ativo = $this->request->getData('tfa');
+        // Ativa o 2FA do usuário da configuração inicial (o último criado, acima), e não de um `id` do
+        // formulário; um valor de `tfa` diferente de "1" (formulário adulterado) só mostra a etapa de novo.
+        if ($this->request->is('post') && $this->request->getData('tfa') === '1') {
+            $user->tfa_ativo = true;
             if ($this->Users->save($user)) {
                 $this->Flash->success('Usuário configurado com sucesso');
 
