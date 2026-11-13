@@ -46,7 +46,8 @@ deptrac:
         - type: classLike
           value: '^App\\Middleware\\.*'
     # O ValidatorKaw é usado pelas Tables (`_validatorClass`).
-    # Serviços com interface no container (trocáveis por um plugin): usam as Tables.
+    # Serviços: os com interface no container (trocáveis por um plugin), que usam as Tables, e os
+    # auxiliares dos controllers (ex.: DadosCadastro2fa).
     - name: Service
       collectors:
         - type: classLike
