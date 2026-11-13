@@ -44,14 +44,16 @@ class EmailLoginNormalizadoMiddlewareTest extends TestCase
      */
     public function testPostDoLoginNormalizaOEmailEMantemOResto(): void
     {
+        // Senha gerada (e com espaços nas pontas, que não podem sumir): o Snyk recusa senha fixa no código.
+        $senha = ' Aa1!' . bin2hex(random_bytes(8)) . ' ';
         $request = new ServerRequest([
             'url' => '/users/login',
             'environment' => ['REQUEST_METHOD' => 'POST'],
-            'post' => ['email' => "  Pessoa@Exemplo.COM \t", 'password' => ' Senha ', '2fa' => '123456'],
+            'post' => ['email' => "  Pessoa@Exemplo.COM \t", 'password' => $senha, '2fa' => '123456'],
         ]);
 
         $this->assertSame(
-            ['email' => 'pessoa@exemplo.com', 'password' => ' Senha ', '2fa' => '123456'],
+            ['email' => 'pessoa@exemplo.com', 'password' => $senha, '2fa' => '123456'],
             $this->corpoRepassado($request),
         );
     }
