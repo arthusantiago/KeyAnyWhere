@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Middleware\CsrfProtectionKawMiddleware;
+use App\Middleware\EmailLoginNormalizadoMiddleware;
 use App\Middleware\SecurityHeadersKawMiddleware;
 use App\Middleware\SessionsKawMiddleware;
 use App\Service\AutorizadorConfigInicialInterface;
@@ -198,6 +199,8 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             // available as array through $request->getData()
             // https://book.cakephp.org/4/en/controllers/middleware.html#body-parser-middleware
             ->add(new BodyParserMiddleware())
+            // E-mail do login sem espaços e em minúsculas, antes de o Authentication procurar o usuário.
+            ->add(new EmailLoginNormalizadoMiddleware())
             // add Authentication after RoutingMiddleware
             ->add(new AuthenticationMiddleware($this));
 
