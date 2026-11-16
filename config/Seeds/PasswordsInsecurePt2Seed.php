@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 /**
  * Passwords seed.
  */
-class PasswordsInsecurePt2Seed extends AbstractSeed
+class PasswordsInsecurePt2Seed extends BaseSeed
 {
     /**
      * Run Method.

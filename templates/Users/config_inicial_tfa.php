@@ -39,8 +39,7 @@
 </div>
 
 <?= $this->Form->create(null, ['url' => ['controller' => 'users', 'action' => 'configInicialTfa']]); ?>
-<?php $this->Form->secure(['id', 'tfa']); ?>
-    <input type="hidden" name="id" value="<?=$user->id?>"/>
+<?php $this->Form->secure(['tfa']); ?>
     <input type="hidden" name="tfa" value="1"/>
     <div class="row justify-content-center">
         <div class="col-sm-2">

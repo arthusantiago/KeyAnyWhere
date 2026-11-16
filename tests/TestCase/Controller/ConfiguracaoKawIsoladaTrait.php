@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\After;
 use PHPUnit\Framework\Attributes\Before;
 
 /**
- * Isola os testes das configurações `Kaw.*` (pontos de extensão: menu, login, tela regional) que os
+ * Isola os testes das configurações `Kaw.*` (pontos de extensão: menu, login, tela regional, recusa da configuração inicial) que os
  * plugins da instalação gravam no bootstrap: cada teste começa com os valores padrão do core gravados
  * explicitamente e, no fim, a configuração da instalação volta.
  *
@@ -35,6 +35,7 @@ trait ConfiguracaoKawIsoladaTrait
             'Configuracoes' => ['regionalEditavel' => true],
             'Layout' => ['avisos' => []],
             'Seguranca' => ['csp' => []],
+            'ConfigInicial' => ['urlRecusa' => null],
         ]);
     }
 

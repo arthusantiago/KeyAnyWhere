@@ -497,6 +497,26 @@ class UsersControllerTest extends TestCase
     }
 
     /**
+     * O e-mail é gravado em minúsculas (User::_setEmail()); o login aceita o e-mail digitado com
+     * maiúsculas e com espaços nas pontas (comum no celular).
+     *
+     * @return void
+     */
+    public function testLoginComEmailEmMaiusculasEEspacosAutentica(): void
+    {
+        $credenciais = $this->criarUsuarioParaLogin();
+
+        $this->post('/users/login', [
+            'email' => '  ' . strtoupper($credenciais['email']) . ' ',
+            'password' => $credenciais['senha'],
+            '2fa' => self::codigo2faAtual($credenciais['secret']),
+        ]);
+
+        $this->assertRedirect(['controller' => 'Pages', 'action' => 'home']);
+        $this->assertSame($credenciais['email'], $this->identidadeNaSessao()?->email);
+    }
+
+    /**
      * Login com senha incorreta não deve autenticar: fica na tela de login, com a
      * mensagem de erro e sem identidade na sessão.
      *
@@ -1134,11 +1154,44 @@ class UsersControllerTest extends TestCase
         ]));
 
         $this->enableSecurityToken();
-        $this->post('/users/config-inicial-tfa', ['id' => $user->id, 'tfa' => true]);
+        $this->post('/users/config-inicial-tfa', ['tfa' => '1']);
 
         $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
         $recarregado = $users->get($user->id);
         $this->assertTrue($recarregado->tfa_ativo);
+    }
+
+    /**
+     * O POST da etapa do 2FA vale só para o usuário da configuração inicial (o último criado): um `id`
+     * no formulário não muda o usuário, e um `tfa` adulterado não ativa nada (nem é erro 500).
+     *
+     * @return void
+     */
+    public function testConfigInicialTfaPostSoAtivaOUsuarioDaEtapaComTfaUm(): void
+    {
+        $users = $this->fetchTable(UsersTable::class);
+        $users->deleteAll([]);
+        $primeiro = $users->saveOrFail($users->newEntity([
+            'username' => 'usuario_bootstrap3',
+            'email' => 'usuario_bootstrap3@example.com',
+            'password' => self::gerarSenhaDeTeste(),
+        ]));
+        $daEtapa = $users->saveOrFail($users->newEntity([
+            'username' => 'usuario_bootstrap4',
+            'email' => 'usuario_bootstrap4@example.com',
+            'password' => self::gerarSenhaDeTeste(),
+        ]));
+
+        $this->enableSecurityToken();
+        $this->post('/users/config-inicial-tfa', ['tfa' => '239469']);
+        $this->assertResponseOk();
+        $this->assertFalse($users->get($daEtapa->id)->tfa_ativo);
+
+        $this->enableSecurityToken();
+        $this->post('/users/config-inicial-tfa', ['id' => $primeiro->id, 'tfa' => '1']);
+        $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
+        $this->assertTrue($users->get($daEtapa->id)->tfa_ativo);
+        $this->assertFalse($users->get($primeiro->id)->tfa_ativo);
     }
 
     /**
@@ -1393,6 +1446,55 @@ class UsersControllerTest extends TestCase
         $this->get('/users/config-inicial?token=certo');
         $this->assertResponseOk();
         $this->assertCount(1, $inicio);
+    }
+
+    /**
+     * Com `Kaw.ConfigInicial.urlRecusa`, a recusa das duas etapas redireciona para ela (string ou array
+     * de rota), sem disparar os eventos; vazia, volta o 403.
+     *
+     * @return void
+     */
+    public function testConfigInicialRecusadaRedirecionaParaUrlRecusa(): void
+    {
+        $this->mockService(AutorizadorConfigInicialInterface::class, function () {
+            return new class implements AutorizadorConfigInicialInterface {
+                public function autoriza(ServerRequest $request): bool
+                {
+                    return false;
+                }
+            };
+        });
+        $inicio = $this->ouvirEvento(UsersController::EVENTO_CONFIG_INICIAL_INICIO);
+        $segundoFator = $this->ouvirEvento(UsersController::EVENTO_CONFIG_INICIAL_SEGUNDO_FATOR);
+        $this->getTableLocator()->get('Users')->deleteAll([]);
+
+        Configure::write('Kaw.ConfigInicial.urlRecusa', '/pages/acesso-recusado');
+        $this->get('/users/config-inicial');
+        $this->assertRedirect('/pages/acesso-recusado');
+        $this->get('/users/config-inicial-tfa');
+        $this->assertRedirect('/pages/acesso-recusado');
+
+        Configure::write('Kaw.ConfigInicial.urlRecusa', ['controller' => 'Users', 'action' => 'login']);
+        $this->get('/users/config-inicial');
+        $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
+
+        Configure::write('Kaw.ConfigInicial.urlRecusa', '');
+        $this->get('/users/config-inicial-tfa');
+        $this->assertResponseCode(403);
+
+        // Um ouvinte que cancela o redirect não pode fazer a etapa recusada ser renderizada.
+        Configure::write('Kaw.ConfigInicial.urlRecusa', '/pages/acesso-recusado');
+        $cancelaRedirect = function (EventInterface $event): void {
+            $event->stopPropagation();
+        };
+        EventManager::instance()->on('Controller.beforeRedirect', $cancelaRedirect);
+        $this->ouvintes[] = ['Controller.beforeRedirect', $cancelaRedirect];
+        $this->get('/users/config-inicial');
+        $this->assertResponseCode(403);
+        $this->assertNoRedirect();
+
+        $this->assertCount(0, $inicio);
+        $this->assertCount(0, $segundoFator);
     }
 
     /**

@@ -2,48 +2,40 @@
 declare(strict_types=1);
 
 use App\Criptografia\Criptografia;
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 /**
- * Entradas seed.
+ * Entradas de exemplo, 20 por categoria, para o ambiente de desenvolvimento (rode o CategoriasSeed
+ * antes): `bin/cake seeds run EntradasSeed`.
+ *
+ * Título, usuário, senha, link e anotações vão cifrados, como os mutators da Entrada gravam (o insert do
+ * seed não passa pela entidade).
  */
-class EntradasSeed extends AbstractSeed
+class EntradasSeed extends BaseSeed
 {
     /**
-     * Run Method.
-     *
-     * Write your database seeder using this method.
-     *
-     * More information on writing seeds is available here:
-     * https://book.cakephp.org/phinx/0/en/seeding.html
-     *
      * @return void
      */
     public function run(): void
     {
-        //Obtendo as categtorias cadastradas
-        $categorias = $this->fetchAll('SELECT * FROM categorias');
-
+        $agora = date('Y-m-d H:i:s');
         $data = [];
-
-        foreach($categorias as $categoria)
-        {
-            for ($i = 0; $i < 20; $i++)
-            {
+        foreach ($this->fetchAll('SELECT id FROM categorias ORDER BY id') as $categoria) {
+            for ($i = 1; $i <= 20; $i++) {
                 $data[] = [
-                    'titulo' => 'REFAZER-ESSE-SEED',
-                    'username' =>'REFAZER-ESSE-SEED@REFAZER.COM',
-                    'password' => Criptografia::criptografar('REFAZER-ESSE-SEED'),
-                    'link' =>  'https://' . 'REFAZER-ESSE-SEED',
-                    'anotacoes' => 'Ut ab voluptas sed a nam. Sint autem inventore aut officia aut aut blanditiis. Ducimus eos odit amet et est ut eum.',
+                    'titulo' => Criptografia::criptografar('Exemplo ' . $i),
+                    'username' => Criptografia::criptografar('exemplo' . $i . '@example.com'),
+                    'password' => Criptografia::criptografar(bin2hex(random_bytes(8))),
+                    'link' => Criptografia::criptografar('https://example.com/' . $i),
+                    'anotacoes' => Criptografia::criptografar('Entrada de exemplo gerada pelo EntradasSeed.'),
                     'categoria_id' => $categoria['id'],
-                    'created' => date('Y-m-d H:i:s'),
-                    'modified' => date('Y-m-d H:i:s')
+                    'posicao' => $i,
+                    'created' => $agora,
+                    'modified' => $agora,
                 ];
             }
         }
 
-        $table = $this->table('entradas');
-        $table->insert($data)->save();
+        $this->table('entradas')->insert($data)->save();
     }
 }
