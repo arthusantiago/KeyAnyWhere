@@ -1,6 +1,30 @@
 # KeyAnyWhere
 
-O KAW é um gerenciador de credenciais de acesso como usuário, senha ou informações sensíveis. Com foco nas funcionalidades essenciais, ele é ideal para um uso pessoal ou familiar. Para utilizá-lo você deve baixa-lo e executar na sua infraestrutura. Para entender a origem, princípios do projeto e acessar o ambiente de demonstração, entre nosso site [keyanywhere.com.br](https://keyanywhere.com.br/).
+O KeyAnyWhere (KAW) é um gerenciador de credenciais de acesso, como usuários, senhas e informações sensíveis. Com foco nas funcionalidades essenciais, serve para uso pessoal, familiar ou de pequenas equipes. Há duas formas de usar:
+
+- **Versão hospedada, para contratar:** crie a conta em [keyanywhere.com.br](https://keyanywhere.com.br/) e teste grátis por 60 dias, sem cartão. Depois, R$ 10,00 por mês. A Curie Tecnologia cuida do servidor, das atualizações e das cópias de segurança.
+- **Edição comunitária (este repositório):** código aberto, para baixar, instalar e manter na sua própria infraestrutura.
+
+# Princípios
+
+- Segurança antes da conveniência: algumas funcionalidades são projetadas para serem mais seguras do que práticas.
+- Só as funcionalidades essenciais. Com essa abordagem:
+  - a superfície de ataque é menor;
+  - o uso é fácil, com menos cliques para as principais ações;
+  - o desenvolvimento e a manutenção são rápidos.
+
+# Como surgiu
+
+Durante muito tempo o KeePassXC atendeu perfeitamente, mas surgiu a necessidade de transitar com as senhas entre o computador pessoal, o do trabalho e o celular. Insatisfeito com as opções do mercado, o autor criou a própria ferramenta, como tema do seu TCC em Sistemas para Internet no Instituto Federal de Mato Grosso do Sul.
+
+# Ambiente de demonstração
+
+Para conhecer a edição comunitária sem instalar:
+
+- **Site:** [demo.keyanywhere.com.br](https://demo.keyanywhere.com.br/)
+- **Usuário:** demo@avds.eti.br
+- **Senha:** d3m0$tr@c*o$
+- **Segundo fator de autenticação:** 111222
 
 # Documentação
 
@@ -8,7 +32,7 @@ Toda a documentação está na [wiki do projeto](https://github.com/arthusantiag
 
 # Pesquisa de satisfação
 
-Por favor responda a nossa [pesquisa de satisfação](https://docs.google.com/forms/d/e/1FAIpQLSdFOKGfRWYIRdJcH3Zvi4947GLwipajLjXW5Fa2FdnlG78V3w/viewform?usp=sf_link). Ela é rápida e vai me ajudar muito a melhorar a ferramenta.
+Já usou o KeyAnyWhere? Por favor, responda à nossa [pesquisa de satisfação](https://docs.google.com/forms/d/e/1FAIpQLSdFOKGfRWYIRdJcH3Zvi4947GLwipajLjXW5Fa2FdnlG78V3w/viewform?usp=sf_link). Ela é rápida e vai me ajudar muito a melhorar a ferramenta.
 
 # Contribuir com o projeto
 
