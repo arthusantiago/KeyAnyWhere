@@ -165,6 +165,22 @@ class SecurityHeadersKawMiddlewareTest extends TestCase
     }
 
     /**
+     * `noIndex()`: as páginas do sistema ficam fora dos buscadores.
+     *
+     * @return void
+     */
+    public function testNoIndex(): void
+    {
+        $this->assertSame($this->middleware, $this->middleware->noIndex());
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->method('handle')->willReturn(new Response());
+        $response = $this->middleware->process(new ServerRequest(), $handler);
+
+        $this->assertSame('noindex, nofollow', $response->getHeaderLine('X-Robots-Tag'));
+    }
+
+    /**
      * Fontes extras (`Kaw.Seguranca.csp`) somam às da diretiva padrão; diretiva nova entra só com elas.
      *
      * @return void
