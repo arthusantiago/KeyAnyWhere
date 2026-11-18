@@ -1365,6 +1365,19 @@ class UsersControllerTest extends TestCase
     }
 
     /**
+     * O login (e todo o sistema) fica fora dos buscadores: `X-Robots-Tag` do SecurityHeadersKawMiddleware.
+     *
+     * @return void
+     */
+    public function testLoginForaDosBuscadores(): void
+    {
+        $this->get('/users/login');
+
+        $this->assertResponseOk();
+        $this->assertHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
+
+    /**
      * Elements listados em `Kaw.Login.elementos` aparecem abaixo do formulário de login.
      *
      * @return void

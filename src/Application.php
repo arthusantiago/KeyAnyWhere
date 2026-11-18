@@ -237,7 +237,8 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             ->setXssProtection(SecurityHeadersMiddleware::XSS_DISABLED)
             ->setCrossDomainPolicy(SecurityHeadersMiddleware::NONE)
             ->noSniff()
-            ->noOpen();
+            ->noOpen()
+            ->noIndex();
 
         if (self::isTheExecutionEnvironment()) {
             $securityHeaders->setXFrameOptions(SecurityHeadersMiddleware::DENY);
