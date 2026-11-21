@@ -63,7 +63,7 @@ parameters:
 		-
 			message: '#^Cannot access offset ''type'' on array\|object\|null\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: src/Controller/EntradasController.php
 
 		-
